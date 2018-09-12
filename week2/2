@@ -1,0 +1,2 @@
+#!/bin/bash
+java -jar Aux/auz.jar
