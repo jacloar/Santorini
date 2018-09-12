@@ -38,7 +38,7 @@ public class JSONParser {
 
   /**
    * Interprets the InputStream to a queue of JsonNodes
-   * 
+   *
    * @param stream InputStream to interpret
    * @return Queue of JsonNodes represented by the InputStream
    * @throws IOException if something goes wrong processing the input stream, eg, invalid input
