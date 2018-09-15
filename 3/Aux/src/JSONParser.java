@@ -16,6 +16,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -107,16 +108,16 @@ class JsonServerHandler extends ChannelInboundHandlerAdapter {
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     ByteBuf inBuffer = (ByteBuf) msg;
 
-    ByteBufInputStream bufInStream = new ByteBufInputStream(inBuffer);
+    ByteBufInputStream bufInStream = new ByteBufInputStream(inBuffer, true);
     Queue<JsonNode> nodes = JSONParser.getJsonNodes(bufInStream);
     JSONParser.printJsonNodes(nodes, System.out);
   }
 
-  @Override
-  public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-    ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)
-            .addListener(ChannelFutureListener.CLOSE);
-  }
+//  @Override
+//  public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+//    ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)
+//            .addListener(ChannelFutureListener.CLOSE);
+//  }
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {

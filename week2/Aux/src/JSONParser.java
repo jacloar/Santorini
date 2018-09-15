@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.Queue;
+import kryonet-2.21-all.jar;
+
 
 public class JSONParser {
 
