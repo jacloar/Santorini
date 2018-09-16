@@ -7,22 +7,6 @@ import java.net.InetSocketAddress;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.util.CharsetUtil;
-
 public class JSONParser {
 
   private static ObjectMapper mapper = new ObjectMapper();
@@ -41,27 +25,7 @@ public class JSONParser {
   }
 
   public static void startServer() throws InterruptedException {
-    EventLoopGroup group = new NioEventLoopGroup();
-
-    try{
-      ServerBootstrap serverBootstrap = new ServerBootstrap();
-      serverBootstrap.group(group);
-      serverBootstrap.channel(NioServerSocketChannel.class);
-      serverBootstrap.localAddress(new InetSocketAddress("localhost", 8000));
-
-      serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
-        protected void initChannel(SocketChannel socketChannel) throws Exception {
-          socketChannel.pipeline().addLast(new JsonServerHandler());
-        }
-      });
-      ChannelFuture channelFuture = serverBootstrap.bind().sync();
-      channelFuture.channel().closeFuture().sync();
-    } catch(Exception e){
-      e.printStackTrace();
-    } finally {
-      group.shutdownGracefully().sync();
-    }
-
+    
   }
 
   /**
@@ -102,26 +66,3 @@ public class JSONParser {
   }
 }
 
-class JsonServerHandler extends ChannelInboundHandlerAdapter {
-
-  @Override
-  public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-    ByteBuf inBuffer = (ByteBuf) msg;
-
-    ByteBufInputStream bufInStream = new ByteBufInputStream(inBuffer, true);
-    Queue<JsonNode> nodes = JSONParser.getJsonNodes(bufInStream);
-    JSONParser.printJsonNodes(nodes, System.out);
-  }
-
-//  @Override
-//  public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-//    ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)
-//            .addListener(ChannelFutureListener.CLOSE);
-//  }
-
-  @Override
-  public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-    cause.printStackTrace();
-    ctx.close();
-  }
-}
