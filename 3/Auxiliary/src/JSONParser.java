@@ -1,9 +1,15 @@
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -17,15 +23,19 @@ public class JSONParser {
    * @throws Exception if issue with read/write
    */
   public static void main(String[] args) throws Exception {
-    startServer();
+//    startServer();
 
-    //Queue<JsonNode> objects = getJsonNodes(System.in);
+    Queue<JsonNode> objects = getJsonNodes(new InputStreamReader(System.in));
 
-    //printJsonNodes(objects, System.out);
+    printJsonNodes(objects, System.out);
   }
 
-  public static void startServer() throws InterruptedException {
-    
+  public static void startServer() throws IOException {
+    int portNumber = 8000;
+    ServerSocket serverSocket = new ServerSocket(portNumber);
+    Socket clientSocket = serverSocket.accept();
+    PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
+    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
   }
 
   /**
@@ -50,7 +60,7 @@ public class JSONParser {
    * @return Queue of JsonNodes represented by the InputStream
    * @throws IOException if something goes wrong processing the input stream, eg, invalid input
    */
-  public static Queue<JsonNode> getJsonNodes(InputStream stream) throws IOException {
+  public static Queue<JsonNode> getJsonNodes(Reader stream) throws IOException {
     Queue<JsonNode> objects = new LinkedList<>();
     JsonParser parser = new JsonFactory().createParser(stream);
 

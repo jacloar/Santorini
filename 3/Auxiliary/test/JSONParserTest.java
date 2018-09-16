@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.Queue;
 import org.junit.Test;
 
@@ -14,9 +15,7 @@ public class JSONParserTest {
    */
   @Test
   public void testBasicInput() throws IOException {
-    byte[] data = "[1,2]\n{\"a\":1}".getBytes();
-
-    InputStream input = new ByteArrayInputStream(data);
+    StringReader input = new StringReader("[1,2]\n{\"a\":1}");
 
     Queue<JsonNode> nodes = JSONParser.getJsonNodes(input);
 
@@ -31,8 +30,7 @@ public class JSONParserTest {
    */
   @Test
   public void testBlankLines() throws IOException {
-    byte[] data = "[\n1\n\n   ]".getBytes();
-    InputStream input = new ByteArrayInputStream(data);
+    StringReader input = new StringReader("[\n1\n\n   ]");
 
     Queue<JsonNode> nodes = JSONParser.getJsonNodes(input);
 
@@ -47,8 +45,7 @@ public class JSONParserTest {
    */
   @Test
   public void testEmptyInput() throws IOException {
-    byte[] data = "".getBytes();
-    InputStream input = new ByteArrayInputStream(data);
+    StringReader input = new StringReader("");
 
     Queue<JsonNode> nodes = JSONParser.getJsonNodes(input);
 
@@ -63,8 +60,7 @@ public class JSONParserTest {
    */
   @Test(expected = com.fasterxml.jackson.core.JsonParseException.class)
   public void testException() throws IOException {
-    byte[] data = ",".getBytes();
-    InputStream input = new ByteArrayInputStream(data);
+    StringReader input = new StringReader(",");
 
     JSONParser.getJsonNodes(input);
   }
