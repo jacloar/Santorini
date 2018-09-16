@@ -33,7 +33,7 @@ public class JSONParser {
     ServerSocket serverSocket = new ServerSocket(portNumber);
     Socket clientSocket = serverSocket.accept();
     PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
-    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+    InputStreamReader in = new InputStreamReader(clientSocket.getInputStream());
 
     Queue<JsonNode> nodes = getJsonNodes(in);
     printJsonNodes(nodes, System.out);
