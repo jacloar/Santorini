@@ -3,11 +3,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -23,11 +21,11 @@ public class JSONParser {
    * @throws Exception if issue with read/write
    */
   public static void main(String[] args) throws Exception {
-//    startServer();
+    startServer();
 
-    Queue<JsonNode> objects = getJsonNodes(new InputStreamReader(System.in));
-
-    printJsonNodes(objects, System.out);
+//    Queue<JsonNode> objects = getJsonNodes(new InputStreamReader(System.in));
+//
+//    printJsonNodes(objects, System.out);
   }
 
   public static void startServer() throws IOException {
@@ -36,6 +34,9 @@ public class JSONParser {
     Socket clientSocket = serverSocket.accept();
     PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
     BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+    Queue<JsonNode> nodes = getJsonNodes(in);
+    printJsonNodes(nodes, System.out);
   }
 
   /**
@@ -62,7 +63,15 @@ public class JSONParser {
    */
   public static Queue<JsonNode> getJsonNodes(Reader stream) throws IOException {
     Queue<JsonNode> objects = new LinkedList<>();
-    JsonParser parser = new JsonFactory().createParser(stream);
+    StringBuilder stringBuilder = new StringBuilder();
+    BufferedReader bufferedReader = new BufferedReader(stream);
+
+    String inputLine;
+    while ((inputLine = bufferedReader.readLine()) != null) {
+      stringBuilder.append(inputLine);
+    }
+
+    JsonParser parser = new JsonFactory().createParser(stringBuilder.toString());
 
     while (!parser.isClosed()) {
       JsonNode node = mapper.readTree(parser);
