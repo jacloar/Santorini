@@ -1,16 +1,22 @@
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.logging.StreamHandler;
 
 public class JSONParser {
 
@@ -32,13 +38,37 @@ public class JSONParser {
   public static void startServer() throws IOException {
     int portNumber = 8000;
     ServerSocket serverSocket = new ServerSocket(portNumber);
-    Socket clientSocket = serverSocket.accept();
-    OutputStreamWriter out = new OutputStreamWriter(clientSocket.getOutputStream());
-    BufferedReader in  = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+    while(true){
+      System.out.println("Waiting for client request");
+      //creating socket and waiting for client connection
+      Socket socket = serverSocket.accept();
+      //read from socket to ObjectInputStream object
+      BufferedReader ois = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+      //convert ObjectInputStream object to String
+      Queue<JsonNode> nodes = getJsonNodes(ois);
+//      Queue<JsonNode> nodes = getJsonNodes(ois);
+      System.out.println("Message Received: " );
+      //create ObjectOutputStream object
+      PrintStream oos = new PrintStream(socket.getOutputStream());
 
-    Queue<JsonNode> nodes = getJsonNodes(in);
-    printJsonNodes(nodes, out);
-    out.flush();
+      printJsonNodes(nodes,oos);
+      //write object to Socket
+      oos.println("Hi Client");
+
+
+      //close resources
+      ois.close();
+      oos.close();
+      socket.close();
+      //terminate the server if client sends exit request
+    }
+//    Socket clientSocket = serverSocket.accept();
+//    PrintStream out = new PrintStream(clientSocket.getOutputStream(), true);
+//    BufferedReader in  = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+//    out.println("ONE");
+////    Queue<JsonNode> nodes = getJsonNodes(in);
+//    out.println(in + "TWO");
+////    printJsonNodes(nodes, out);
   }
 
   /**
