@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,6 +17,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Scanner;
 import java.util.logging.StreamHandler;
 
 public class JSONParser {
@@ -38,37 +40,13 @@ public class JSONParser {
   public static void startServer() throws IOException {
     int portNumber = 8000;
     ServerSocket serverSocket = new ServerSocket(portNumber);
-    while(true){
-      System.out.println("Waiting for client request");
-      //creating socket and waiting for client connection
-      Socket socket = serverSocket.accept();
-      //read from socket to ObjectInputStream object
-      BufferedReader ois = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-      //convert ObjectInputStream object to String
-      Queue<JsonNode> nodes = getJsonNodes(ois);
-//      Queue<JsonNode> nodes = getJsonNodes(ois);
-      System.out.println("Message Received: " );
-      //create ObjectOutputStream object
-      PrintStream oos = new PrintStream(socket.getOutputStream());
+    Socket socket = serverSocket.accept();
 
-      printJsonNodes(nodes,oos);
-      //write object to Socket
-      oos.println("Hi Client");
+    Queue<JsonNode> nodes = getJsonNodes(new InputStreamReader(socket.getInputStream()));
 
+    PrintStream oos = new PrintStream(socket.getOutputStream());
 
-      //close resources
-      ois.close();
-      oos.close();
-      socket.close();
-      //terminate the server if client sends exit request
-    }
-//    Socket clientSocket = serverSocket.accept();
-//    PrintStream out = new PrintStream(clientSocket.getOutputStream(), true);
-//    BufferedReader in  = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-//    out.println("ONE");
-////    Queue<JsonNode> nodes = getJsonNodes(in);
-//    out.println(in + "TWO");
-////    printJsonNodes(nodes, out);
+    printJsonNodes(nodes, oos);
   }
 
   /**
@@ -96,17 +74,31 @@ public class JSONParser {
   public static Queue<JsonNode> getJsonNodes(Reader stream) throws IOException {
     Queue<JsonNode> objects = new LinkedList<>();
 
-    JsonParser parser = new JsonFactory().createParser(stream);
+    BufferedReader bufferedReader = new BufferedReader(stream);
 
+    StringBuilder builder = new StringBuilder();
+    String nextLine;
+
+
+    while ((nextLine = bufferedReader.readLine()) != null) {
+
+      builder.append(nextLine);
+      builder.append("\n");
+
+    }
+
+    JsonParser parser = new JsonFactory().createParser(builder.toString());
     while (!parser.isClosed()) {
       JsonNode node = mapper.readTree(parser);
 
       if (node != null) {
         objects.offer(node);
+        System.out.println(node);
+
       }
     }
-
     return objects;
+
   }
 }
 
