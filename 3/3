@@ -1,0 +1,2 @@
+#!/bin/bash
+java -jar Auxiliary/out/artifacts/3_jar/three.jar
