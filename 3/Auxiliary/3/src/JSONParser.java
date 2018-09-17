@@ -42,11 +42,13 @@ public class JSONParser {
     ServerSocket serverSocket = new ServerSocket(portNumber);
     Socket socket = serverSocket.accept();
 
+    PrintStream oos = new PrintStream(socket.getOutputStream());
+    oos.print("test");
+
     Queue<JsonNode> nodes = getJsonNodes(new InputStreamReader(socket.getInputStream()));
 
-    PrintStream oos = new PrintStream(socket.getOutputStream());
-
     printJsonNodes(nodes, oos);
+    oos.flush();
   }
 
   /**
@@ -76,25 +78,23 @@ public class JSONParser {
 
     BufferedReader bufferedReader = new BufferedReader(stream);
 
-    StringBuilder builder = new StringBuilder();
-    String nextLine;
+//    StringBuilder builder = new StringBuilder();
+//    String nextLine;
+//
+//
+//    while ((nextLine = bufferedReader.readLine()) != null) {
+//
+//      builder.append(nextLine);
+//      builder.append("\n");
+//
+//    }
 
-
-    while ((nextLine = bufferedReader.readLine()) != null) {
-
-      builder.append(nextLine);
-      builder.append("\n");
-
-    }
-
-    JsonParser parser = new JsonFactory().createParser(builder.toString());
+    JsonParser parser = new JsonFactory().createParser(stream);
     while (!parser.isClosed()) {
       JsonNode node = mapper.readTree(parser);
 
       if (node != null) {
         objects.offer(node);
-        System.out.println(node);
-
       }
     }
     return objects;
