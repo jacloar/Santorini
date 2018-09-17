@@ -30,11 +30,7 @@ public class JSONParser {
    * @throws Exception if issue with read/write
    */
   public static void main(String[] args) throws Exception {
-//    startServer();
-
-    Queue<JsonNode> objects = getJsonNodes(new InputStreamReader(System.in));
-
-    printJsonNodes(objects, System.out);
+    startServer();
   }
 
   public static void startServer() throws IOException {
@@ -43,7 +39,6 @@ public class JSONParser {
     Socket socket = serverSocket.accept();
 
     PrintStream oos = new PrintStream(socket.getOutputStream());
-    oos.print("test");
 
     Queue<JsonNode> nodes = getJsonNodes(new InputStreamReader(socket.getInputStream()));
 
@@ -75,19 +70,6 @@ public class JSONParser {
    */
   public static Queue<JsonNode> getJsonNodes(Reader stream) throws IOException {
     Queue<JsonNode> objects = new LinkedList<>();
-
-    BufferedReader bufferedReader = new BufferedReader(stream);
-
-//    StringBuilder builder = new StringBuilder();
-//    String nextLine;
-//
-//
-//    while ((nextLine = bufferedReader.readLine()) != null) {
-//
-//      builder.append(nextLine);
-//      builder.append("\n");
-//
-//    }
 
     JsonParser parser = new JsonFactory().createParser(stream);
     while (!parser.isClosed()) {
