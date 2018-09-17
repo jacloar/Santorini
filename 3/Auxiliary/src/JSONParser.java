@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.net.ServerSocket;
@@ -32,11 +33,12 @@ public class JSONParser {
     int portNumber = 8000;
     ServerSocket serverSocket = new ServerSocket(portNumber);
     Socket clientSocket = serverSocket.accept();
-    PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
-    InputStreamReader in = new InputStreamReader(clientSocket.getInputStream());
+    OutputStreamWriter out = new OutputStreamWriter(clientSocket.getOutputStream());
+    BufferedReader in  = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
     Queue<JsonNode> nodes = getJsonNodes(in);
-    printJsonNodes(nodes, System.out);
+    printJsonNodes(nodes, out);
+    out.flush();
   }
 
   /**
@@ -63,15 +65,8 @@ public class JSONParser {
    */
   public static Queue<JsonNode> getJsonNodes(Reader stream) throws IOException {
     Queue<JsonNode> objects = new LinkedList<>();
-    StringBuilder stringBuilder = new StringBuilder();
-    BufferedReader bufferedReader = new BufferedReader(stream);
 
-    String inputLine;
-    while ((inputLine = bufferedReader.readLine()) != null) {
-      stringBuilder.append(inputLine);
-    }
-
-    JsonParser parser = new JsonFactory().createParser(stringBuilder.toString());
+    JsonParser parser = new JsonFactory().createParser(stream);
 
     while (!parser.isClosed()) {
       JsonNode node = mapper.readTree(parser);
