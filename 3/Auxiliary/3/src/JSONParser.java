@@ -22,11 +22,11 @@ public class JSONParser {
    * @throws Exception if issue with read/write
    */
   public static void main(String[] args) throws Exception {
-    startServer();
+//    startServer();
 
-//    Queue<JsonNode> objects = getJsonNodes(new InputStreamReader(System.in));
-//
-//    printJsonNodes(objects, System.out);
+    Queue<JsonNode> objects = getJsonNodes(new InputStreamReader(System.in));
+
+    printJsonNodes(objects, System.out);
   }
 
   public static void startServer() throws IOException {

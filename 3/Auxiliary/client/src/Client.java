@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
 
 // row = y, col = x
-public class client {
+public class Client {
 
   private static ObjectMapper mapper = new ObjectMapper();
 
@@ -16,7 +18,12 @@ public class client {
   private static HashMap<String, Spreadsheet> sheets = new HashMap<>();
 
   public static void main(String[] args) throws IOException {
-    JsonParser parser = new JsonFactory().createParser(System.in);
+    InputStreamReader inputStreamReader = new InputStreamReader(System.in);
+    parseInput(inputStreamReader);
+  }
+
+  private static void parseInput(Reader reader) throws IOException {
+    JsonParser parser = new JsonFactory().createParser(reader);
 
     while (!parser.isClosed()) {
       ArrayNode node = mapper.readTree(parser);
