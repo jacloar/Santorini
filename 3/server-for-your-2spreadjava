@@ -1,0 +1,104 @@
+import java.util.ArrayList;
+
+// THESE CLASSES AND INTERFACES ARE NOT PUBLIC BECAUSE THEY ARE IN THE SAME FILE
+// WE INTEND FOR THEM TO BE SAVED AS DIFFERENT CLASS AND INTERFACE FILES BUT KEPT THEM IN ONE FILE FOR THE
+// ASSIGNMENT SUBMISSION
+
+// SPREADSHEET INTERFACE
+interface Spreadsheet {
+
+    Spreadsheet buildSpreadsheet(ArrayList<ArrayList<Formula>> formulas);
+    int findValue(int x, int y);
+    Spreadsheet addFormula(Formula formula, int x, int y);
+
+}
+
+// POSITION CLASS
+class Position {
+
+    int x;
+    int y;
+
+    public Position(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+}
+
+// FORMULA INTERFACE
+interface Formula {
+
+    int evaluate();
+
+}
+
+// NUMBER FORMULA
+class NumberFormula implements Formula {
+
+    int number;
+
+    public NumberFormula(int number) {
+        this.number = number;
+    }
+
+    @Override
+    public int evaluate() {
+        return this.number;
+    }
+}
+
+// CELL POSITION FORMULA
+class CellPositionFormula implements Formula{
+    static Spreadsheet s;
+
+    Position pos;
+
+    public CellPositionFormula(Position pos) {
+        this.pos = pos;
+    }
+
+
+    @Override
+    public int evaluate() {
+        return s.findValue(pos.x, pos.y);
+    }
+}
+
+// ADDITION FORMULA
+class AdditionFormula implements Formula {
+
+    Formula formula1;
+    Formula formula2;
+
+    public AdditionFormula(Formula formula1, Formula formula2) {
+        this.formula1 = formula1;
+        this.formula2 = formula2;
+    }
+
+
+    @Override
+    public int evaluate() {
+        return formula1.evaluate() + formula2.evaluate();
+    }
+}
+
+// MULTIPLICATION FORMULA
+class MultiplicationFormula implements Formula {
+
+    Formula formula1;
+    Formula formula2;
+
+    public MultiplicationFormula(Formula formula1, Formula formula2) {
+        this.formula1 = formula1;
+        this.formula2 = formula2;
+    }
+
+    @Override
+    public int evaluate() {
+        return formula1.evaluate() * formula2.evaluate();
+    }
+}
+
+
+
