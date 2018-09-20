@@ -24,8 +24,7 @@ public class Client {
     int portNumber = 8000;
     Socket socket = new Socket(args[0], portNumber);
     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-    InputStreamReader inputStreamReader2 = new InputStreamReader(socket.getInputStream());
-    BufferedReader in = new BufferedReader(inputStreamReader2);
+    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     String signUpName = "jolo-luba";
     out.println(signUpName);
     internalName = in.readLine();

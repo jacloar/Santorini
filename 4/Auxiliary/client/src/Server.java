@@ -15,7 +15,7 @@ public class Server {
     BufferedReader in = new BufferedReader(inputStreamReader);
     String inputString;
     while ((inputString = in.readLine()) != null) {
-      out.println(0);
+      out.println(inputString);
     }
   }
 }
