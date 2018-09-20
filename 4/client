@@ -1,2 +1,2 @@
 #!/bin/bash
-java -jar Auxiliary/client.jar
+java -jar Auxiliary/client.jar $1
