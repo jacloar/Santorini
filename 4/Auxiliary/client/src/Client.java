@@ -1,7 +1,7 @@
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class Client {
     Socket socket = new Socket(args[0], portNumber);
     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-    String signUpName = "jolo-luba";
+    String signUpName = "\"jolo-luba\"";
     out.println(signUpName);
     internalName = in.readLine();
     parseInput(inputStreamReader, out, in);
@@ -40,10 +40,10 @@ public class Client {
    */
   private static void parseInput(Reader reader, PrintWriter out, BufferedReader in) throws IOException {
     JsonParser parser = new JsonFactory().createParser(reader);
-    StringBuilder commands = new StringBuilder();
+    StringBuilder commands = new StringBuilder("[");
     while (!parser.isClosed()) {
-      ArrayNode node = mapper.readTree(parser);
-      if(node != null) {
+      JsonNode node = mapper.readTree(parser);
+      if(node != null && node.isArray()) {
         commands.append(node.toString());
         if (node.size() > 0) {
           String type = node.get(0).asText();
@@ -51,9 +51,14 @@ public class Client {
                   node.get(1).isTextual() &&
                   node.get(2).isNumber() &&
                   node.get(3).isNumber()) {
+            commands.append("]");
             sendCommands(commands, out, in);
-            commands = new StringBuilder();
+            commands = new StringBuilder("[");
+          } else {
+            commands.append(",");
           }
+        } else {
+          commands.append(",");
         }
       }
     }
@@ -67,10 +72,15 @@ public class Client {
    * @throws IOException handle IOException
    */
   private static void sendCommands(StringBuilder commands, PrintWriter out, BufferedReader in) throws IOException {
+    System.out.println(commands);
     out.println(commands.toString());
     String returnText;
     returnText = in.readLine();
-    System.out.println(returnText);
+    if ("-666".equals(returnText)) {
+      System.out.println("false");
+    } else {
+      System.out.println(returnText);
+    }
   }
 
 }
