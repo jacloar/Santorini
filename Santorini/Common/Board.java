@@ -32,7 +32,15 @@ public class Board implements IBoard{
    * @param size Size of the grid
    */
   private Building[][] createGrid(int size) {
-    return new Building[size][size];
+    Building[][] grid = new Building[size][size];
+
+    for (int i = 0; i < grid.length; i += 1) {
+      for (int j = 0; j < grid[i].length; j += 1) {
+        grid[i][j] = new Building();
+      }
+    }
+
+    return grid;
   }
 
 
