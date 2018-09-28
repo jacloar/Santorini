@@ -26,8 +26,9 @@ public class Board implements IBoard{
   }
 
   /**
-   * Creates a size by size 2 dimensional array of Buildings with height 0. **This method should be
-   * private, but we think it is important and wanted to include it here**
+   * Creates a size by size 2 dimensional array of Buildings with height 0.
+   *
+   * If given 6, will return a 6x6 array of Buildings
    *
    * @param size Size of the grid
    */
@@ -82,7 +83,11 @@ public class Board implements IBoard{
 
 
   /**
-   * Ensures that the given x and y coordinates are on the grid. (within [0,6])
+   * Ensures that the given x and y coordinates are on the grid. (within [0,5])
+   *
+   * If given (0, 3) will do nothing
+   * If given (-1, 2) will throw error
+   * If given (2, 6) will throw error
    *
    * @param x x coordinate to check
    * @param y y coordinate to check

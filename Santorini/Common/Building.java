@@ -17,6 +17,7 @@ public class Building {
 
   /**
    * Creates a new Building with the specified height.
+   *
    * @param height height of new Building.
    */
   public Building(int height) {
@@ -34,6 +35,9 @@ public class Building {
 
   /**
    * Increases the height of this building by 1
+   *
+   * If this height is 2, new height will be 3.
+   * If this height is 4, will throw error.
    *
    * @throws IllegalStateException if increasing the height would make the building taller than 4
    */

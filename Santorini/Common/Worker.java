@@ -24,6 +24,8 @@ public class Worker {
   /**
    * Returns the x coordinate of this worker
    *
+   * If worker at posn (3, 2), will return 3.
+   *
    * @return x coordinate of this worker
    */
   public int getX() {
@@ -33,6 +35,8 @@ public class Worker {
   /**
    * Returns the y coordinate of this worker
    *
+   * If worker at posn (3, 2), will return 2.
+   *
    * @return y coordinate of this worker
    */
   public int getY() {
@@ -41,6 +45,9 @@ public class Worker {
 
   /**
    * Does this worker have the given position?
+   *
+   * If worker at posn (3, 2) and given (3, 2) will return true.
+   * If worker at posn (3, 2) and given (1, 2) will return false.
    *
    * @param x x to check for
    * @param y y to check for
