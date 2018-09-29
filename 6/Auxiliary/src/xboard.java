@@ -6,16 +6,25 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * Class that interprets JSON input and uses the Santorini board to make appropriate decisions
+ */
 public class xboard {
   private static ObjectMapper mapper = new ObjectMapper();
   private static Map<String, Worker> workerMap = new HashMap<>();
 
-  public static void main(String[] args) throws Exception {
+  /**
+   * Main method for the xboard class
+   *
+   * @param args ignored
+   * @throws IOException if something goes wrong reading the input
+   */
+  public static void main(String[] args) throws IOException {
     JsonParser parser = new JsonFactory().createParser(System.in);
 
     JsonNode boardNode = mapper.readTree(parser);
@@ -34,9 +43,11 @@ public class xboard {
       switch(node.get(0).asText()) {
         case "move":
           move(board, worker, ew, ns);
+          System.out.println("[]");
           break;
         case "build":
           build(board, worker, ew, ns);
+          System.out.println("[]");
           break;
         case "neighbors":
           yesTrueNoFalse(neighbors(worker, ew, ns));
@@ -53,6 +64,12 @@ public class xboard {
     }
   }
 
+  /**
+   * Builds the board for the game
+   *
+   * @param boardNode JsonNode describing the board
+   * @param board IBoard to update
+   */
   private static void buildBoard(JsonNode boardNode, IBoard board) {
     Building[][] grid = board.getGrid();
     for (int i = 0; i < boardNode.size(); i += 1) {
@@ -74,6 +91,11 @@ public class xboard {
     }
   }
 
+  /**
+   * Prints "yes" if the condition is true, "no" if it is false
+   *
+   * @param condition boolean contidion
+   */
   private static void yesTrueNoFalse(boolean condition) {
     if (condition) {
       System.out.println("yes");
@@ -82,14 +104,39 @@ public class xboard {
     }
   }
 
+  /**
+   * Moves the given worker on the board in the given direction.
+   *
+   * @param board Board the worker is on
+   * @param worker Worker to move
+   * @param ew EastWest direction
+   * @param ns NorthSouth direction
+   */
   private static void move(IBoard board, Worker worker, EastWest ew, NorthSouth ns) {
     board.workerMove(worker, ns.getDirection(), ew.getDirection());
   }
 
+  /**
+   * Constructs on the tile in the given direction relative to the given worker
+   *
+   * @param board Board the worker is on
+   * @param worker Worker to move
+   * @param ew EastWest direction
+   * @param ns NorthSouth direction
+   */
   private static void build(IBoard board, Worker worker, EastWest ew, NorthSouth ns) {
     board.workerBuild(worker, ns.getDirection(), ew.getDirection());
   }
 
+  /**
+   * Returns the height of the tile in the given direction relative to the given worker
+   *
+   * @param board Board the game is being played on
+   * @param worker Worker to get for reference
+   * @param ew EastWest direction
+   * @param ns NorthSouth direction
+   * @return the height of the specified tile
+   */
   private static int height(IBoard board, Worker worker, EastWest ew, NorthSouth ns) {
     int x = worker.getX() + ns.getDirection();
     int y = worker.getY() + ew.getDirection();
@@ -97,6 +144,14 @@ public class xboard {
     return board.getGrid()[x][y].getHeight();
   }
 
+  /**
+   * Is the specified tile on the board?
+   *
+   * @param worker Worker for reference
+   * @param ew EastWest direction
+   * @param ns NorthSouth direction
+   * @return true if there is a tile, false otherwise
+   */
   private static boolean neighbors(Worker worker, EastWest ew, NorthSouth ns) {
     int x = worker.getX() + ns.getDirection();
     int y = worker.getY() + ew.getDirection();
@@ -104,6 +159,15 @@ public class xboard {
     return x >= 0 && x <= Board.gridSize && y >= 0 && y <= Board.gridSize;
   }
 
+  /**
+   * Is the specified tile occupied by a worker?
+   *
+   * @param board Board the game is played on
+   * @param worker Worker for frame of reference
+   * @param ew EastWest direction
+   * @param ns NorthSouth direction
+   * @return true if there is a worker, false otherwise
+   */
   private static boolean isOccupied(IBoard board, Worker worker, EastWest ew, NorthSouth ns) {
     List<Worker> workers = board.getWorkers();
 
@@ -120,6 +184,9 @@ public class xboard {
   }
 }
 
+/**
+ * Enum for the EastWest direction.
+ */
 enum EastWest {
   EAST(1),
   PUT(0),
@@ -131,11 +198,18 @@ enum EastWest {
     this.direction = direction;
   }
 
+  /**
+   * Returns the direction as an integer
+   * @return direction
+   */
   public int getDirection() {
     return direction;
   }
 }
 
+/**
+ * Enum for the NorthSouth direction.
+ */
 enum NorthSouth {
   SOUTH(1),
   PUT(0),
@@ -147,6 +221,10 @@ enum NorthSouth {
     this.direction = direction;
   }
 
+  /**
+   * Returns the direction as an integer
+   * @return direction
+   */
   public int getDirection() {
     return direction;
   }
