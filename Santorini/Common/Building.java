@@ -1,4 +1,3 @@
-package Common;
 
 /**
  * Represents a Building on the board of a Santorini game.

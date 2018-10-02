@@ -1,4 +1,3 @@
-package Common;
 
 /**
  * Interface for checking the rules of the game.
@@ -26,7 +25,7 @@ public interface IRules {
    * @param dy change in y
    * @return true if valid move, false otherwise
    */
-  boolean validWorkerMove(IBoard board, Worker worker, int dx, int dy);
+  boolean isValidWorkerMove(IBoard board, Worker worker, int dx, int dy);
 
   /**
    * Is the proposed construction valid?
@@ -49,7 +48,7 @@ public interface IRules {
    * @param dy change in y
    * @return true if valid construction, false otherwise
    */
-  boolean validWorkerBuild(IBoard board, Worker worker, int dx, int dy);
+  boolean isValidWorkerBuild(IBoard board, Worker worker, int dx, int dy);
 
   /**
    * Is the proposed place worker valid?
@@ -63,5 +62,5 @@ public interface IRules {
    * @param y y coordinate of new worker
    * @return true if valid placement, false otherwise
    */
-  boolean validPlaceWorker(IBoard board, int x, int y);
+  boolean isValidPlaceWorker(IBoard board, int x, int y);
 }

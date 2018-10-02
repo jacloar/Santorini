@@ -1,4 +1,3 @@
-package Common;
 
 import java.util.List;
 
@@ -22,8 +21,9 @@ public interface IBoard {
    * @param worker Worker to move
    * @param dx Change in x
    * @param dy Change in y
+   * @throws IllegalArgumentException if worker is getting moved off the board.
    */
-  void workerMove(Worker worker, int dx, int dy);
+  void workerMove(Worker worker, int dx, int dy) throws IllegalArgumentException;
 
   /**
    * Builds one floor onto the Building at the worker's current x + dx and its current y + dy.
@@ -34,8 +34,10 @@ public interface IBoard {
    * @param worker Worker to build
    * @param dx Change in x
    * @param dy Change in y
+   * @throws IllegalArgumentException if given invalid coordinates
+   * @throws IllegalStateException if building height would become greater max height
    */
-  void workerBuild(Worker worker, int dx, int dy);
+  void workerBuild(Worker worker, int dx, int dy) throws IllegalArgumentException, IllegalStateException;
 
   /**
    * Creates a worker at the given coordinates. Called during game set up when Players are
@@ -51,7 +53,7 @@ public interface IBoard {
    * @return the created Worker so the player knows which workers are theirs
    * @throws IllegalArgumentException if given coordinates not on board
    */
-  Worker placeWorker(int x, int y);
+  Worker placeWorker(int x, int y) throws IllegalArgumentException;
 
   /**
    * Returns a copy of the 2 dimensional array of Buildings.
@@ -66,4 +68,13 @@ public interface IBoard {
    * @return list of workers
    */
   List<Worker> getWorkers();
+
+  /**
+   * Gets the height of the building at the given x and y
+   * @param x x position on the grid
+   * @param y y position on the grid
+   * @return the height of the specified building.
+   * @throws IllegalArgumentException if the specified coordinates are off the board.
+   */
+  int getHeightAt(int x, int y) throws IllegalArgumentException;
 }

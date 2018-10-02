@@ -1,4 +1,3 @@
-package Common;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +62,7 @@ public class Board implements IBoard{
   }
 
   @Override
-  public Worker placeWorker(int x, int y) {
+  public Worker placeWorker(int x, int y) throws IllegalArgumentException {
     validateCoordinates(x, y);
 
     Worker worker = new Worker(x, y);
@@ -79,6 +78,12 @@ public class Board implements IBoard{
   @Override
   public List<Worker> getWorkers() {
     return workers;
+  }
+
+  @Override
+  public int getHeightAt(int x, int y) throws IllegalArgumentException {
+    validateCoordinates(x,y);
+    return grid[x][y].getHeight();
   }
 
 

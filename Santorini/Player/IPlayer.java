@@ -1,4 +1,3 @@
-package Common;
 
 /**
  * Interface to for internal representation of a player.
