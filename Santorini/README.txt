@@ -10,6 +10,10 @@ Files in this directory:
 - Common/Worker.java: Represents a worker on the Board
 - Common/Building.java: Represents a building on the Board
 - Common/IRules.java: Interface to check if proposed moves are valid
+- Common/IPlayer.java: Interface for an administrator to take the player through the phases of the game
 
 - Player/: Directory for everything relating to the player
-- Player/IPlayer.java: Interface for an administrator to take the player through the phases of the game
+
+- Admin/: Directory for everything related to the administrator
+
+- Lib/: Directory for any library-like code
