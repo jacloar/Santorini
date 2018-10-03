@@ -9,7 +9,6 @@
       <sourceFolder url="file://$MODULE_DIR$/Player" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/Lib" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Design" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

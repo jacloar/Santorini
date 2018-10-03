@@ -6,7 +6,7 @@ import java.util.List;
  *
  * The Board has a 2D array of Buildings and a List of Workers.
  */
-interface Board {
+interface iBoard {
 
   // Fields:
   //   2D array of Buildings
@@ -69,19 +69,19 @@ interface Board {
  * A Worker has a position.
  * It can move in 8 directions: N, NE, E, SE, S, SW, W, or NW by increments of 1.
  */
-class Worker {
+/*class Worker {
 
   int x;
   int y;
 
-}
+}*/
 
 /**
  * A Building has a height.
  * Buildings can increase their height from 0 up to 4 by increments of 1.
  */
-class Building {
+/*class Building {
 
   int height;
 
-}
+}*/

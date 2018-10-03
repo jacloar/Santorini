@@ -4,10 +4,8 @@
  */
 public class Worker {
 
-  // Represents the x coordinate of this worker
-  private int x;
-  // Represents the y coordinate of this worker
-  private int y;
+  // Represents the position of this worker
+  private Posn posn;
 
   /**
    * Creates a new worker with the specified position.
@@ -15,9 +13,12 @@ public class Worker {
    * @param x x coordinate of the new worker
    * @param y y coordinate of the new worker
    */
-  Worker(int x, int y) {
-    this.x = x;
-    this.y = y;
+  public Worker(int x, int y) {
+    this.posn = new Posn(x, y);
+  }
+
+  public Worker(Posn posn) {
+    this.posn = posn;
   }
 
   /**
@@ -28,7 +29,7 @@ public class Worker {
    * @return x coordinate of this worker
    */
   public int getX() {
-    return x;
+    return posn.getX();
   }
 
   /**
@@ -39,7 +40,16 @@ public class Worker {
    * @return y coordinate of this worker
    */
   public int getY() {
-    return y;
+    return posn.getY();
+  }
+
+  /**
+   * Returns the Posn representing the position of this worker
+   *
+   * @return position of this worker
+   */
+  public Posn getPosn() {
+    return posn;
   }
 
   /**
@@ -66,8 +76,10 @@ public class Worker {
    * @param dy change in y
    */
   void moveBy(int dx, int dy) {
-    this.x += dx;
-    this.y += dy;
+    int x = this.posn.getX() + dx;
+    int y = this.posn.getY() + dy;
+
+    this.posn = new Posn(x, y);
   }
 
 }

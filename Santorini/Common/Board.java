@@ -19,9 +19,48 @@ public class Board implements IBoard{
   private Building[][] grid;
   private List<Worker> workers;
 
+  /**
+   * Creates a new empty board with no buildings and no workers
+   */
   public Board() {
     this.grid = createGrid(gridSize);
     this.workers = new ArrayList<>(4);
+  }
+
+  /**
+   * Creates a new board with buildings in the inputGrid and any given workers.
+   *
+   * inputGrid does not need to be rectangular, however, it cannot exceed gridSize x gridSize
+   * ie, cannot have more than gridSize rows, and no row can have more than gridSize elements.
+   *
+   * Unspecified cells are given new Building of height 0.
+   * If any Building in the inputGrid is null, creates new Building of height 0.
+   *
+   * @param inputGrid grid to generate this grid from
+   * @param workers list of Workers
+   */
+  public Board(Building[][] inputGrid, List<Worker> workers) {
+    if (inputGrid.length > gridSize) {
+      throw new IllegalArgumentException(String.format("grid size cannot be larger than %d", gridSize));
+    }
+
+    this.grid = createGrid(gridSize);
+
+    for (int i = 0; i < inputGrid.length; i += 1) {
+      if (inputGrid[i].length > gridSize) {
+        throw new IllegalArgumentException(String.format("grid size cannot be larger than %d", gridSize));
+      }
+
+      for (int j = 0; j < inputGrid[i].length; j += 1) {
+        if (inputGrid[i][j] != null) {
+          grid[i][j] = inputGrid[i][j];
+        } else {
+          grid[i][j] = new Building(0);
+        }
+      }
+    }
+
+    this.workers = workers;
   }
 
   /**
@@ -71,13 +110,27 @@ public class Board implements IBoard{
   }
 
   @Override
-  public Building[][] getGrid() {
-    return grid;
+  public int[][] getGrid() {
+    int[][] intGrid = new int[gridSize][gridSize];
+
+    for (int i = 0; i < intGrid.length; i += 1) {
+      for (int j = 0; j < intGrid[i].length; j += 1) {
+        intGrid[i][j] = grid[i][j].getHeight();
+      }
+    }
+
+    return intGrid;
   }
 
   @Override
-  public List<Worker> getWorkers() {
-    return workers;
+  public List<Posn> getWorkers() {
+    ArrayList<Posn> workerPosns = new ArrayList<>(workers.size());
+
+    for (Worker w : workers) {
+      workerPosns.add(w.getPosn());
+    }
+
+    return workerPosns;
   }
 
   @Override

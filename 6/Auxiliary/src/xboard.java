@@ -1,12 +1,9 @@
-import Common.Board;
-import Common.Building;
-import Common.IBoard;
-import Common.Worker;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +25,7 @@ public class xboard {
     JsonParser parser = new JsonFactory().createParser(System.in);
 
     JsonNode boardNode = mapper.readTree(parser);
-    IBoard board = new Board();
-
-    buildBoard(boardNode, board);
+    IBoard board = buildBoard(boardNode);
 
     while (!parser.isClosed()) {
       JsonNode node = mapper.readTree(parser);
@@ -68,10 +63,13 @@ public class xboard {
    * Builds the board for the game
    *
    * @param boardNode JsonNode describing the board
-   * @param board IBoard to update
+   * @returns IBoard built
    */
-  private static void buildBoard(JsonNode boardNode, IBoard board) {
-    Building[][] grid = board.getGrid();
+  private static IBoard buildBoard(JsonNode boardNode) {
+
+    Building[][] grid = new Building[Board.gridSize][Board.gridSize];
+    List<Worker> workers = new ArrayList<>(4);
+
     for (int i = 0; i < boardNode.size(); i += 1) {
       for (int j = 0; j < boardNode.get(i).size(); j += 1) {
         JsonNode current = boardNode.get(i).get(j);
@@ -84,11 +82,14 @@ public class xboard {
           grid[i][j] = new Building(height);
 
           String name = buildingWorker.substring(1);
-          Worker worker = board.placeWorker(i, j);
+          Worker worker = new Worker(i, j);
+          workers.add(worker);
           workerMap.put(name, worker);
         }
       }
     }
+
+    return new Board(grid, workers);
   }
 
   /**
@@ -141,7 +142,7 @@ public class xboard {
     int x = worker.getX() + ns.getDirection();
     int y = worker.getY() + ew.getDirection();
 
-    return board.getGrid()[x][y].getHeight();
+    return board.getGrid()[x][y];
   }
 
   /**
@@ -169,13 +170,13 @@ public class xboard {
    * @return true if there is a worker, false otherwise
    */
   private static boolean isOccupied(IBoard board, Worker worker, EastWest ew, NorthSouth ns) {
-    List<Worker> workers = board.getWorkers();
+    List<Posn> workers = board.getWorkers();
 
     int x = worker.getX() + ns.getDirection();
     int y = worker.getY() + ew.getDirection();
 
-    for (Worker w : workers) {
-      if (w.hasPosn(x, y)) {
+    for (Posn p : workers) {
+      if (p.samePosn(new Posn(x, y))) {
         return true;
       }
     }

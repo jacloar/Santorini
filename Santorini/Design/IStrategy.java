@@ -8,7 +8,7 @@ public interface IStrategy {
   // The strategy knows the maximum height for a building.
 
   /**
-   * determines where to place a new worker based on the current state
+   * Determines where to place a new worker based on the current state
    * of the board.
    * @param board The current state of the board. This should be a copy.
    * @return Posn to place the new worker at a valid location on the board.
@@ -27,6 +27,8 @@ public interface IStrategy {
 
 }
 
+/* DATA DEFINITIONS */
+
 /**
  * This is a data definition for a move. A move always has a worker. A move occurs in
  * two steps. First the given worker moves int moveDx and int moveDy [-1,1]. Then
@@ -41,14 +43,4 @@ class Move {
   int buildDx;
   int buildDy;
 
-}
-
-
-/**
- * This is a data definition for a Posn. A posn has an int x and an int y. These should
- * correspond to buildings on the board.
- */
-class Posn {
-  int x;
-  int y;
 }

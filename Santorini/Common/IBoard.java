@@ -56,18 +56,18 @@ public interface IBoard {
   Worker placeWorker(int x, int y) throws IllegalArgumentException;
 
   /**
-   * Returns a copy of the 2 dimensional array of Buildings.
+   * Returns a representation of the 2d array of buildings as heights.
    *
-   * @return 2d array of Buildings
+   * @return 2d array of integers representing building heights
    */
-  Building[][] getGrid();
+  int[][] getGrid();
 
   /**
-   * Returns a copy of the list of Workers.
+   * Returns a representation of the list of workers as Posns
    *
-   * @return list of workers
+   * @return List of Posns representing the workers
    */
-  List<Worker> getWorkers();
+  List<Posn> getWorkers();
 
   /**
    * Gets the height of the building at the given x and y
