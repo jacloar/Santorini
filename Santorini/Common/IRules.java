@@ -13,19 +13,19 @@ public interface IRules {
    * plus one, and the building height is 3 or less.
    *
    * For the move to be valid:
-   * dx must be in range [-1, 1]
-   * dy must be in range [-1, 1]
-   * dx and dy cannot both be 0
+   * dRow must be in range [-1, 1]
+   * dCol must be in range [-1, 1]
+   * dRow and dCol cannot both be 0
    *
    * The worker must belong to the Player making the call and it must be that player's turn
    *
    * @param board IBoard for the game that is currently being played
    * @param worker Worker to possibly move
-   * @param dx change in x
-   * @param dy change in y
+   * @param dRow change in row
+   * @param dCol change in col
    * @return true if valid move, false otherwise
    */
-  boolean isValidWorkerMove(IBoard board, Worker worker, int dx, int dy);
+  boolean isValidWorkerMove(IBoard board, Worker worker, int dRow, int dCol);
 
   /**
    * Is the proposed construction valid?
@@ -36,31 +36,31 @@ public interface IRules {
    * The worker that is proposing a build must have just moved for it to be valid.
    *
    * For the construction to be valid:
-   * dx must be in range [-1, 1]
-   * dy must be in range [-1, 1]
-   * dx and dy cannot both be 0
+   * dRow must be in range [-1, 1]
+   * dCol must be in range [-1, 1]
+   * dRow and dCol cannot both be 0
    *
    * The worker must belong to the Player making the call and it must be that player's turn
    *
    * @param board IBoard for the game that is currently being played
    * @param worker Worker to possibly build
-   * @param dx change in x
-   * @param dy change in y
+   * @param dRow change in row
+   * @param dCol change in col
    * @return true if valid construction, false otherwise
    */
-  boolean isValidWorkerBuild(IBoard board, Worker worker, int dx, int dy);
+  boolean isValidWorkerBuild(IBoard board, Worker worker, int dRow, int dCol);
 
   /**
    * Is the proposed place worker valid?
    *
    * For the placement to be valid:
-   * The specified x and y coordinates must be on the grid
+   * The specified row and col coordinates must be on the grid
    * The specified tile must be empty
    * The building at the specified position must not be greater than 3
    *
-   * @param x x coordinate of new worker
-   * @param y y coordinate of new worker
+   * @param row row coordinate of new worker
+   * @param col col coordinate of new worker
    * @return true if valid placement, false otherwise
    */
-  boolean isValidPlaceWorker(IBoard board, int x, int y);
+  boolean isValidPlaceWorker(IBoard board, int row, int col);
 }
