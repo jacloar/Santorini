@@ -3,36 +3,36 @@
  */
 public class Posn {
 
-  // x coordinate of the position
-  private int x;
-  // y coordinate of the position
-  private int y;
+  // row coordinate of the position
+  private int row;
+  // col coordinate of the position
+  private int col;
 
   /**
    * Creates a new position at the specified coordinates
    *
-   * @param x x coordinate of the position
-   * @param y y coordinate of the position
+   * @param row row coordinate of the position
+   * @param col col coordinate of the position
    */
-  public Posn(int x, int y) {
-    this.x = x;
-    this.y = y;
+  public Posn(int row, int col) {
+    this.row = row;
+    this.col = col;
   }
 
   /**
-   * Returns the x coordinate of this position
-   * @return x coordinate of this position
+   * Returns the row coordinate of this position
+   * @return row coordinate of this position
    */
-  public int getX() {
-    return x;
+  public int getRow() {
+    return row;
   }
 
   /**
-   * Returns the y coordinate of this position
-   * @return y coordinate of this position
+   * Returns the col coordinate of this position
+   * @return col coordinate of this position
    */
-  public int getY() {
-    return y;
+  public int getCol() {
+    return col;
   }
 
   /**
@@ -41,6 +41,6 @@ public class Posn {
    * @return true if refer to same position, false otherwise
    */
   public boolean samePosn(Posn p) {
-    return getX() == p.getX() && getY() == p.getY();
+    return getRow() == p.getRow() && getCol() == p.getCol();
   }
 }

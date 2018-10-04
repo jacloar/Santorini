@@ -10,11 +10,11 @@ public class Worker {
   /**
    * Creates a new worker with the specified position.
    *
-   * @param x x coordinate of the new worker
-   * @param y y coordinate of the new worker
+   * @param row row coordinate of the new worker
+   * @param col col coordinate of the new worker
    */
-  public Worker(int x, int y) {
-    this.posn = new Posn(x, y);
+  public Worker(int row, int col) {
+    this.posn = new Posn(row, col);
   }
 
   public Worker(Posn posn) {
@@ -22,25 +22,25 @@ public class Worker {
   }
 
   /**
-   * Returns the x coordinate of this worker
+   * Returns the row coordinate of this worker
    *
    * If worker at posn (3, 2), will return 3.
    *
-   * @return x coordinate of this worker
+   * @return row of this worker
    */
-  public int getX() {
-    return posn.getX();
+  public int getRow() {
+    return posn.getRow();
   }
 
   /**
-   * Returns the y coordinate of this worker
+   * Returns the col coordinate of this worker
    *
    * If worker at posn (3, 2), will return 2.
    *
-   * @return y coordinate of this worker
+   * @return col of this worker
    */
-  public int getY() {
-    return posn.getY();
+  public int getCol() {
+    return posn.getCol();
   }
 
   /**
@@ -58,26 +58,26 @@ public class Worker {
    * If worker at posn (3, 2) and given (3, 2) will return true.
    * If worker at posn (3, 2) and given (1, 2) will return false.
    *
-   * @param x x to check for
-   * @param y y to check for
+   * @param row row to check for
+   * @param col col to check for
    * @return true if the positions match
    */
-  public boolean hasPosn(int x, int y) {
-    return getX() == x && getY() == y;
+  public boolean hasPosn(int row, int col) {
+    return getRow() == row && getCol() == col;
   }
 
   /**
-   * Moves this worker by the given change in x and change in y.
+   * Moves this worker by the given change in row and change in col.
    *
    * Example: If this worker is at (1, 1)
    * moveBy(-1, 1) will make the new position (0, 2)
    *
-   * @param dx change in x
-   * @param dy change in y
+   * @param dRow change in row
+   * @param dCol change in col
    */
-  void moveBy(int dx, int dy) {
-    int x = this.posn.getX() + dx;
-    int y = this.posn.getY() + dy;
+  void moveBy(int dRow, int dCol) {
+    int x = this.posn.getRow() + dRow;
+    int y = this.posn.getCol() + dCol;
 
     this.posn = new Posn(x, y);
   }

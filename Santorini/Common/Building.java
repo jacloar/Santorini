@@ -11,7 +11,7 @@ public class Building {
    * Creates a new Building with height 0.
    */
   public Building() {
-    this.height = 0;
+    this(0);
   }
 
   /**
@@ -20,6 +20,14 @@ public class Building {
    * @param height height of new Building.
    */
   public Building(int height) {
+    if (height > Board.maxHeight) {
+      throw new IllegalArgumentException(String.format("Building cannot have height greater than %d", Board.maxHeight));
+    }
+
+    if (height < 0) {
+      throw new IllegalArgumentException("Building cannot have height less than 0");
+    }
+
     this.height = height;
   }
 
@@ -42,7 +50,8 @@ public class Building {
    */
   void increaseHeight() throws IllegalStateException {
     if (height == Board.maxHeight) {
-      throw new IllegalArgumentException("Cannot increase height of Building that has height 4");
+      throw new IllegalStateException(
+          String.format("Cannot increase height of Building that has height %d", Board.maxHeight));
     }
 
     height += 1;
