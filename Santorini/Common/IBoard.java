@@ -60,7 +60,7 @@ public interface IBoard {
    *
    * @return 2d array of integers representing building heights
    */
-  int[][] getGrid();
+  int[][] getHeights();
 
   /**
    * Returns a representation of the list of workers as Posns

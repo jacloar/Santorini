@@ -110,7 +110,7 @@ public class Board implements IBoard{
   }
 
   @Override
-  public int[][] getGrid() {
+  public int[][] getHeights() {
     int[][] intGrid = new int[gridSize][gridSize];
 
     for (int i = 0; i < intGrid.length; i += 1) {

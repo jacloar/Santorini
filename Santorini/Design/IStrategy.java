@@ -10,19 +10,24 @@ public interface IStrategy {
   /**
    * Determines where to place a new worker based on the current state
    * of the board.
-   * @param board The current state of the board. This should be a copy.
-   * @return Posn to place the new worker at a valid location on the board.
+   *
+   * @param heights the heights of all the Buildings on the board
+   * @param workersOnBoard a list of the positions of all the workers on the board
+   * @param myWorkers a list of the positions of the workers, if any, belonging to the player
+   * @return Posn representing the position to place a new worker
    */
-  Posn placeWorker(IBoard board);
+  Posn placeWorker(int[][] heights, List<Posn> workersOnBoard, List<Posn> myWorkers);
 
 
   /**
    * Determines which worker to move, where to move them, and where to build (if not at
    * target height already).
-   * @param board The current state of the board.
-   * @return an instance of the Move class.
+   * @param heights the heights of all the Buildings on the board
+   * @param workersOnBoard a list of the positions of all the workers on the board
+   * @param myWorkers a list of the positions of the workers, if any, belonging to the player
+   * @return Move representing how the player should move
    */
-  Move makeMove(IBoard board);
+  Move makeMove(int[][] heights, List<Posn> workersOnBoard, List<Posn> myWorkers);
 
 
 }
@@ -30,16 +35,18 @@ public interface IStrategy {
 /* DATA DEFINITIONS */
 
 /**
- * This is a data definition for a move. A move always has a worker. A move occurs in
- * two steps. First the given worker moves int moveDx and int moveDy [-1,1]. Then
- * from THAT location the worker may build to an adjacent building specified by buildDx
- * and buildDy [-1,1].
+ * A move always has a Posn representing a worker. A move occurs in
+ * two steps. First the specified worker moves moveDx, moveDy in [-1,1]. Then
+ * from THAT location the worker may build to an adjacent building specified
+ * by buildDx, buildDy in [-1,1].
  */
 class Move {
 
-  Worker worker;
+  Posn workerPosn;
+
   int moveDx;
   int moveDy;
+
   int buildDx;
   int buildDy;
 

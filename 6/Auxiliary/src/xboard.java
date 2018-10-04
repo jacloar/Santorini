@@ -142,7 +142,7 @@ public class xboard {
     int x = worker.getX() + ns.getDirection();
     int y = worker.getY() + ew.getDirection();
 
-    return board.getGrid()[x][y];
+    return board.getHeights()[x][y];
   }
 
   /**
