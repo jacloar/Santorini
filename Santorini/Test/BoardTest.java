@@ -13,8 +13,8 @@ public class BoardTest {
     Board emptyBoard = new Board();
     Worker worker = emptyBoard.placeWorker(1,2);
 
-    assertEquals(worker.getX(), 1);
-    assertEquals(worker.getY(), 2);
+    assertEquals(worker.getRow(), 1);
+    assertEquals(worker.getCol(), 2);
 
   }
   /**
@@ -66,8 +66,8 @@ public class BoardTest {
     Board emptyBoard = new Board();
     Worker worker = emptyBoard.placeWorker(1,2);
     emptyBoard.workerMove(worker, -1, 1);
-    assertEquals(worker.getX(), 0);
-    assertEquals(worker.getY(), 3);
+    assertEquals(worker.getRow(), 0);
+    assertEquals(worker.getCol(), 3);
   }
 
   /**
@@ -93,10 +93,32 @@ public class BoardTest {
     assertEquals(emptyBoard.getHeightAt(2,2),1);
   }
 
+  /**
+   * Tests that a worker building out of bounds throws an IllegalArgumentException
+   */
   @Test(expected = IllegalArgumentException.class)
   public void testInvalidWorkerBuild() {
     Board emptyBoard = new Board();
     Worker worker = emptyBoard.placeWorker(0,2);
     emptyBoard.workerBuild(worker, -1, 0);
+  }
+
+  /**
+   * Tests that the empty constructor creates an empty board.
+   */
+  @Test
+  public void testEmptyConstructor() {
+    Board emptyBoard = new Board();
+
+    // Check that every building has height 0
+    int[][] heights = emptyBoard.getHeights();
+    for (int i = 0; i < heights.length; i += 1) {
+      for (int j = 0; j < heights[i].length; j += 1) {
+        assertEquals(heights[i][j], 0);
+      }
+    }
+
+    // Check that there are no workers on the board
+    assertEquals(emptyBoard.getWorkers().size(), 0);
   }
 }
