@@ -10,9 +10,13 @@ Files in this directory:
 - Common/Worker.java: Represents a worker on the Board
 - Common/Building.java: Represents a building on the Board
 - Common/IRules.java: Interface to check if proposed moves are valid
+- Common/Rules.java: Implementation of IRules. This class enforces valid moves, builds, and placements
 - Common/IPlayer.java: Interface for an administrator to take the player through the phases of the game
+- Common/Posn.java: Class that represents a Position. A position has a row and a column
 
 - Player/: Directory for everything relating to the player
+- Player/IPlayer: Interface for the player class. Allows the player to perform moves.
+- Player/Player: Implementation of the player class.
 
 - Admin/: Directory for everything related to the administrator
 
