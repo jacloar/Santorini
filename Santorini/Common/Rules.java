@@ -8,6 +8,22 @@ public class Rules implements IRules {
   // Stores the worker that most recently moved.
   private Worker lastMoved;
 
+  /**
+   * Constructor for rules class.
+   * Doesnt do anything.
+   */
+  public Rules() {
+
+  }
+
+  /**
+   * Constructor that receives the worker last moved from admin
+   * @param lastMoved The worker that last moved.
+   */
+  public Rules(Worker lastMoved) {
+    this.lastMoved = lastMoved;
+  }
+
   @Override
   public boolean isValidWorkerMove(IBoard board, Worker worker, int dRow, int dCol) {
 
