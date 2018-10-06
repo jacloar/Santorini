@@ -5,23 +5,12 @@ import java.util.List;
  */
 public class Rules implements IRules {
 
-  // Stores the worker that most recently moved.
-  private Worker lastMoved;
-
   /**
    * Constructor for rules class.
    * Doesnt do anything.
    */
   public Rules() {
 
-  }
-
-  /**
-   * Constructor that receives the worker last moved from admin
-   * @param lastMoved The worker that last moved.
-   */
-  public Rules(Worker lastMoved) {
-    this.lastMoved = lastMoved;
   }
 
   @Override
@@ -37,29 +26,16 @@ public class Rules implements IRules {
     int currentHeight = board.getHeightAt(worker.getRow(), worker.getCol());
     int toHeight = board.getHeightAt(toRow, toCol);
 
-    // Verify worker not moving to building of max height
-    if (toHeight == Board.maxHeight) {
-      return false;
-    }
-
     // Verify that the building moving to is not more than 1 greater than current building
     if (toHeight - currentHeight > 1) {
       return false;
     }
-
-    // Marks this worker as the worker that just moved
-    this.lastMoved = worker;
 
     return true;
   }
 
   @Override
   public boolean isValidWorkerBuild(IBoard board, Worker worker, int dRow, int dCol) {
-
-    // Verifies that the worker building is the same worker that just moved.
-    if (!worker.equals(lastMoved)) {
-      return false;
-    }
 
     return isValidModification(board, worker, dRow, dCol);
 
@@ -94,7 +70,14 @@ public class Rules implements IRules {
     int toRow = worker.getRow() + dRow;
     int toCol = worker.getCol() + dCol;
 
-    return isEmptySpace(board, toRow, toCol);
+    if(!isEmptySpace(board, toRow, toCol)) {
+      return false;
+    }
+
+    int toHeight = board.getHeightAt(toRow, toCol);
+
+    // Verify worker not modifying to building of max height
+    return toHeight < Board.maxHeight;
   }
 
   private boolean isEmptySpace(IBoard board, int row, int col) {

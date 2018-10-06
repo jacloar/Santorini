@@ -141,7 +141,7 @@ public class RulesTest {
     IBoard board = new Board();
     Posn p = new Posn(2,1);
     Worker worker = new Worker(p);
-    IRules rules = new Rules(worker);
+    IRules rules = new Rules();
     boolean isValidBuild = rules.isValidWorkerBuild(board, worker, 1,1);
     assertTrue(isValidBuild);
   }
@@ -154,7 +154,7 @@ public class RulesTest {
     IBoard board = new Board();
     Posn p = new Posn(0,0);
     Worker worker = new Worker(p);
-    IRules rules = new Rules(worker);
+    IRules rules = new Rules();
     boolean isValidBuild = rules.isValidWorkerBuild(board, worker, -1,0);
     assertFalse(isValidBuild);
   }
@@ -167,7 +167,7 @@ public class RulesTest {
     IBoard board = new Board();
     Posn p = new Posn(0,0);
     Worker worker = new Worker(p);
-    IRules rules = new Rules(worker);
+    IRules rules = new Rules();
     boolean isValidMove = rules.isValidWorkerBuild(board, worker, 0,0);
     assertEquals(isValidMove, false);
   }
@@ -180,7 +180,7 @@ public class RulesTest {
     IBoard board = new Board();
     Posn p = new Posn(0,0);
     Worker worker = new Worker(p);
-    IRules rules = new Rules(worker);
+    IRules rules = new Rules();
     boolean isValidBuild = rules.isValidWorkerBuild(board, worker, 0,2);
     assertFalse(isValidBuild);
   }
@@ -193,7 +193,7 @@ public class RulesTest {
     IBoard board = new Board();
     Posn p = new Posn(0,0);
     Worker worker = new Worker(p);
-    IRules rules = new Rules(worker);
+    IRules rules = new Rules();
     boolean isValidBuild = rules.isValidWorkerBuild(board, worker, 1,1);
     assertTrue(isValidBuild);
   }
@@ -207,7 +207,7 @@ public class RulesTest {
     Posn p = new Posn(0,0);
     Worker worker = new Worker(p);
     board.placeWorker(1,0);
-    IRules rules = new Rules(worker);
+    IRules rules = new Rules();
     boolean isValidBuild = rules.isValidWorkerBuild(board, worker, 1,0);
     assertFalse(isValidBuild);
   }
@@ -226,7 +226,7 @@ public class RulesTest {
     Posn p = new Posn(0,0);
     Worker worker = new Worker(p);
     board.placeWorker(0,0);
-    IRules rules = new Rules(worker);
+    IRules rules = new Rules();
     boolean isValidBuild = rules.isValidWorkerBuild(board, worker, 1,0);
     assertTrue(isValidBuild);
   }
@@ -245,7 +245,7 @@ public class RulesTest {
     Posn p = new Posn(0,0);
     Worker worker = new Worker(p);
     board.placeWorker(0,0);
-    IRules rules = new Rules(worker);
+    IRules rules = new Rules();
     boolean isValidBuild = rules.isValidWorkerBuild(board, worker, 1,0);
     assertTrue(isValidBuild);
   }

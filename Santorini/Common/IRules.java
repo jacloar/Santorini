@@ -34,6 +34,8 @@ public interface IRules {
    * unoccupied, and the building height is less than 4.
    *
    * The worker that is proposing a build must have just moved for it to be valid.
+   * It will be impossible to give the referee a move/build request with more than
+   * one worker.
    *
    * For the construction to be valid:
    * dRow must be in range [-1, 1]
