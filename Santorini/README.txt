@@ -3,6 +3,8 @@ Files in this directory:
 - Design/: Directory for design documents
 - Design/plan.pdf: Our initial design plans for the Santorini game
 - Design/board.java: Our interface for the Board. Allows players to move, place, and build with workers.
+- Design/IRules.java: Interface to check if proposed moves are valid
+- Design/IPlayer: Interface for the player class. Allows the player to perform moves.
 
 - Common/: Directory for everything that is common knowledge on the board
 - Common/IBoard.java: The interface we implement for Board. Enables placing and moving workers and building.
@@ -21,3 +23,9 @@ Files in this directory:
 - Admin/: Directory for everything related to the administrator
 
 - Lib/: Directory for any library-like code
+
+- Test/: Directory for unit tests
+- Test/BoardTest.java: File for unit tests of Board
+- Test/BuildingTest.java: File for tests of Building
+- Test/WorkerTest.java: File for tests of Worker
+- Test/Posn.java: File for tests of posn

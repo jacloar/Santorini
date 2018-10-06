@@ -3,12 +3,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents the board in a game of Santorini. Allows the Workers to move and build.
+ * Represents the board in a game of Santorini. Allows the Workers to
+ * move and build.
  * Can create a grid of Buildings. Can add a worker to the list of workers.
  *
  * The Board has a rectangular 2D array of Buildings and a List of Workers.
+ *
+ * Positive changes in row move south
+ * Positive changes in col move east
  */
-public class Board implements IBoard{
+public class Board implements IBoard {
 
   // The size of the buildings is a gridSize x gridSize square
   public static int gridSize = 6;
@@ -28,20 +32,25 @@ public class Board implements IBoard{
   }
 
   /**
-   * Creates a new board with buildings in the inputGrid and any given workers.
+   * Creates a new board with buildings in the inputGrid and any given
+   * workers.
    *
-   * inputGrid does not need to be rectangular, however, it cannot exceed gridSize x gridSize
-   * ie, cannot have more than gridSize rows, and no row can have more than gridSize elements.
+   * inputGrid does not need to be rectangular, however, it cannot exceed
+   * gridSize x gridSize
+   * ie, cannot have more than gridSize rows, and no row can have more
+   * than gridSize elements.
    *
    * Unspecified cells are given new Building of height 0.
-   * If any Building in the inputGrid is null, creates new Building of height 0.
+   * If any Building in the inputGrid is null, creates new Building of
+   * height 0.
    *
    * @param inputGrid buildings to generate this buildings from
    * @param workers list of Workers
    */
   public Board(Building[][] inputGrid, List<Worker> workers) {
     if (inputGrid.length > gridSize) {
-      throw new IllegalArgumentException(String.format("buildings size cannot be larger than %d", gridSize));
+      throw new IllegalArgumentException(
+          String.format("buildings size cannot be larger than %d", gridSize));
     }
 
     this.buildings = createBuildings(gridSize);
@@ -64,14 +73,19 @@ public class Board implements IBoard{
   }
 
   /**
-   * Updates the buildings field to have the buildings from the inputBuildings.
+   * Updates the buildings field to have the buildings from the
+   * inputBuildings.
    *
    * @param inputBuildings buildings to generate this.buildings from.
    */
   private void updateBuildings(Building[][] inputBuildings) {
     for (int i = 0; i < inputBuildings.length; i += 1) {
       if (inputBuildings[i].length > gridSize) {
-        throw new IllegalArgumentException(String.format("buildings size cannot be larger than %d", gridSize));
+        throw new IllegalArgumentException(
+            String.format(
+                "buildings size cannot be larger than %d",
+                gridSize
+            ));
       }
 
       for (int j = 0; j < inputBuildings[i].length; j += 1) {
@@ -106,13 +120,17 @@ public class Board implements IBoard{
 
   @Override
   public void workerMove(Worker worker, int dRow, int dCol) {
-    validateCoordinates(worker.getRow() + dRow, worker.getCol() + dCol);
+    validateCoordinates(
+        worker.getRow() + dRow,
+        worker.getCol() + dCol
+    );
 
     worker.moveBy(dRow, dCol);
   }
 
   @Override
-  public void workerBuild(Worker worker, int dRow, int dCol) throws IllegalArgumentException, IllegalStateException {
+  public void workerBuild(Worker worker, int dRow, int dCol)
+      throws IllegalArgumentException, IllegalStateException {
     int x = worker.getRow() + dRow;
     int y = worker.getCol() + dCol;
 
@@ -122,7 +140,8 @@ public class Board implements IBoard{
   }
 
   @Override
-  public Worker placeWorker(int row, int col) throws IllegalArgumentException {
+  public Worker placeWorker(int row, int col)
+      throws IllegalArgumentException {
     validateCoordinates(row, col);
 
     Worker worker = new Worker(row, col);
@@ -162,7 +181,8 @@ public class Board implements IBoard{
 
 
   /**
-   * Ensures that the given row and col coordinates are on the grid. (within [0,5])
+   * Ensures that the given row and col coordinates are on the grid.
+   * (within [0,5])
    *
    * If given (0, 3) will do nothing
    * If given (-1, 2) will throw error
@@ -172,13 +192,16 @@ public class Board implements IBoard{
    * @param col col coordinate to check
    * @throws IllegalArgumentException if given row or col is not on the grid.
    */
-  private void validateCoordinates(int row, int col) throws IllegalArgumentException {
+  private void validateCoordinates(int row, int col)
+      throws IllegalArgumentException {
     if (row >= buildings.length || row < 0) {
-      throw new IllegalArgumentException(String.format("row must be within [0,%d]", buildings.length - 1));
+      throw new IllegalArgumentException(
+          String.format("row must be within [0,%d]", buildings.length - 1));
     }
 
     if (col >= buildings[0].length || col < 0) {
-      throw new IllegalArgumentException(String.format("col must be within [0,%d]", buildings[0].length - 1));
+      throw new IllegalArgumentException(
+          String.format("col must be within [0,%d]", buildings[0].length - 1));
     }
   }
 }

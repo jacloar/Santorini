@@ -2,20 +2,23 @@
 import java.util.List;
 
 /**
- * Represents the board in a game of Santorini. Allows the Workers to move and build.
+ * Represents the board in a game of Santorini. Allows the Workers to move
+ * and build.
  * Can create a grid of Buildings. Can add a worker to the list of workers.
  *
  * The Board has a 2D array of Buildings and a List of Workers.
  *
- * Changes in x occur in the north/south direction
+ * Changes in row occur in the north/south direction
  * Changes in y occur in the east/west direction
  */
 public interface IBoard {
 
   /**
-   * Moves the given worker to the position at its current x + dx and its current y + dy.
+   * Moves the given worker to the position at its current x + dx and
+   * its current y + dy.
    *
-   * If worker has posn (1, 2), dRow = 1, dCol = -1: New worker posn will be (2, 1)
+   * If worker has posn (1, 2), dRow = 1, dCol = -1: New worker posn will be
+   * (2, 1)
    * If worker has posn (0, 1), dRow = -1, dCol = 1: Will throw error
    *
    * @param worker Worker to move

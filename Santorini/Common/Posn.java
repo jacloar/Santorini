@@ -21,6 +21,7 @@ public class Posn {
 
   /**
    * Returns the row coordinate of this position
+   *
    * @return row coordinate of this position
    */
   public int getRow() {
@@ -29,6 +30,7 @@ public class Posn {
 
   /**
    * Returns the col coordinate of this position
+   *
    * @return col coordinate of this position
    */
   public int getCol() {
@@ -37,6 +39,7 @@ public class Posn {
 
   /**
    * Is this posn the same as the given posn?
+   *
    * @param p posn to check for equality
    * @return true if refer to same position, false otherwise
    */

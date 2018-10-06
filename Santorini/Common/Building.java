@@ -21,11 +21,17 @@ public class Building {
    */
   public Building(int height) {
     if (height > Board.maxHeight) {
-      throw new IllegalArgumentException(String.format("Building cannot have height greater than %d", Board.maxHeight));
+      throw new IllegalArgumentException(
+          String.format(
+              "Building cannot have height greater than %d",
+              Board.maxHeight
+          ));
     }
 
     if (height < 0) {
-      throw new IllegalArgumentException("Building cannot have height less than 0");
+      throw new IllegalArgumentException(
+          "Building cannot have height less than 0"
+      );
     }
 
     this.height = height;
@@ -46,12 +52,16 @@ public class Building {
    * If this height is 2, new height will be 3.
    * If this height is 4, will throw error.
    *
-   * @throws IllegalStateException if increasing the height would make the building taller than 4
+   * @throws IllegalStateException if increasing the height would make the
+   * building taller than maxHeight
    */
   void increaseHeight() throws IllegalStateException {
     if (height == Board.maxHeight) {
       throw new IllegalStateException(
-          String.format("Cannot increase height of Building that has height %d", Board.maxHeight));
+          String.format(
+              "Cannot increase height of Building that has height %d",
+              Board.maxHeight
+          ));
     }
 
     height += 1;

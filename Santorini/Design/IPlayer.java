@@ -7,6 +7,9 @@
  */
 public interface IPlayer {
 
+  // Player has a copy of the IBoard
+  // Player has a list of workers
+
   /**
    * During the startup phase of the game the admin will tell the player
    * it is their turn to place a worker on the board.

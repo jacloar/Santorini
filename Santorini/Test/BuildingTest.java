@@ -42,8 +42,8 @@ public class BuildingTest {
   }
 
   /**
-   * Tests that the Building constructor throws an IllegalArgumentException if given a height
-   * larger than the max height.
+   * Tests that the Building constructor throws an IllegalArgumentException
+   * if given a height larger than the max height.
    */
   @Test(expected = IllegalArgumentException.class)
   public void testConstructInvalidHeightBig() {
@@ -52,8 +52,8 @@ public class BuildingTest {
   }
 
   /**
-   * Tests that the Building constructor throws an IllegalArgumentException if given a height
-   * less than 0.
+   * Tests that the Building constructor throws an IllegalArgumentException
+   * if given a height less than 0.
    */
   @Test(expected = IllegalArgumentException.class)
   public void testConstructorInvalidHeightSmall() {
