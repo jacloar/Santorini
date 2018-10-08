@@ -1,2 +1,2 @@
 #!/bin/bash
-java -jar Auxiliary/xboard.jar
+java -jar ./Auxiliary/xboard.jar
