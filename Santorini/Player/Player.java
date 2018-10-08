@@ -1,29 +1,52 @@
+package Player;
+
+import Common.IBoard;
+import Common.Posn;
+import Common.Worker;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * implementation of the player class
+ * Implementation of Player. Wrapper around the IStrategy it is given.
  */
 public class Player implements IPlayer {
 
-  private List<Worker> workers;
+  private IBoard board;
+  private IStrategy strategy;
 
-  @Override
-  public void placeWorker() {
+  private List<Worker> workers = new ArrayList<>(2);
 
+  public Player(IBoard board, IStrategy strategy) {
+    this.board = board;
+    this.strategy = strategy;
   }
 
   @Override
-  public void receiveBoard(IBoard board) {
-
+  public void addWorker(Worker w) {
+    workers.add(w);
   }
 
   @Override
-  public void completeTurn() {
-
+  public Posn placeWorker() {
+    return strategy.placeWorker(board.getHeights(), board.getWorkers(), getWorkerPosns());
   }
 
   @Override
-  public void gameOver(boolean didWin) {
+  public Move completeTurn() {
+    return strategy.makeMove(board.getHeights(), board.getWorkers(), getWorkerPosns());
+  }
 
+  /**
+   * Converts the list of workers to a list of positions
+   *
+   * @return a list of positions representing the workers.
+   */
+  private List<Posn> getWorkerPosns() {
+    List<Posn> workerPosns = new ArrayList<>(2);
+
+    for (Worker w : workers) {
+      workerPosns.add(w.getPosn());
+    }
+    return workerPosns;
   }
 }
