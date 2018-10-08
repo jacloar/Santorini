@@ -1,6 +1,9 @@
-import org.junit.Test;
+package Common;
+
 
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Tests for the Board class
