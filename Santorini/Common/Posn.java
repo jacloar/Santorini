@@ -1,3 +1,5 @@
+package Common;
+
 /**
  * Immutable class that represents a position on the 2d plane
  */

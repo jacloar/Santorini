@@ -1,6 +1,8 @@
+package Common;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Represents the board in a game of Santorini. Allows the Workers to

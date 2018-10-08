@@ -1,3 +1,4 @@
+package Common;
 
 /**
  * Interface for checking the rules of the game.

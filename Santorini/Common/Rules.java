@@ -1,3 +1,7 @@
+package Common;
+
+import Common.IBoard;
+import Common.Worker;
 import java.util.List;
 
 /**

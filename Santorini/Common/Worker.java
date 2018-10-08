@@ -1,3 +1,4 @@
+package Common;
 
 /**
  * Represents a Worker on the board of a Santorini game.
