@@ -1,3 +1,8 @@
+import Common.Board;
+import Common.Building;
+import Common.IBoard;
+import Common.Posn;
+import Common.Worker;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,31 +35,33 @@ public class xboard {
     while (!parser.isClosed()) {
       JsonNode node = mapper.readTree(parser);
 
-      Worker worker = workerMap.get(node.get(1).asText());
-      JsonNode direction = node.get(2);
-      EastWest ew = EastWest.valueOf(direction.get(0).asText());
-      NorthSouth ns = NorthSouth.valueOf(direction.get(1).asText());
+      if (node != null) {
+        Worker worker = workerMap.get(node.get(1).asText());
+        JsonNode direction = node.get(2);
+        EastWest ew = EastWest.valueOf(direction.get(0).asText());
+        NorthSouth ns = NorthSouth.valueOf(direction.get(1).asText());
 
-      switch(node.get(0).asText()) {
-        case "move":
-          move(board, worker, ew, ns);
-          System.out.println("[]");
-          break;
-        case "build":
-          build(board, worker, ew, ns);
-          System.out.println("[]");
-          break;
-        case "neighbors":
-          yesTrueNoFalse(neighbors(worker, ew, ns));
-          break;
-        case "occupied?":
-          yesTrueNoFalse(isOccupied(board, worker, ew, ns));
-          break;
-        case "height":
-          System.out.println(height(board, worker, ew, ns));
-          break;
-        default:
-          throw new IllegalArgumentException("Invalid request");
+        switch (node.get(0).asText()) {
+          case "move":
+            move(board, worker, ew, ns);
+            System.out.println("[]");
+            break;
+          case "build":
+            build(board, worker, ew, ns);
+            System.out.println("[]");
+            break;
+          case "neighbors":
+            yesTrueNoFalse(neighbors(worker, ew, ns));
+            break;
+          case "occupied?":
+            yesTrueNoFalse(isOccupied(board, worker, ew, ns));
+            break;
+          case "height":
+            System.out.println(height(board, worker, ew, ns));
+            break;
+          default:
+            throw new IllegalArgumentException("Invalid request");
+        }
       }
     }
   }
@@ -139,8 +146,8 @@ public class xboard {
    * @return the height of the specified tile
    */
   private static int height(IBoard board, Worker worker, EastWest ew, NorthSouth ns) {
-    int x = worker.getX() + ns.getDirection();
-    int y = worker.getY() + ew.getDirection();
+    int x = worker.getRow() + ns.getDirection();
+    int y = worker.getCol() + ew.getDirection();
 
     return board.getHeights()[x][y];
   }
@@ -154,8 +161,8 @@ public class xboard {
    * @return true if there is a tile, false otherwise
    */
   private static boolean neighbors(Worker worker, EastWest ew, NorthSouth ns) {
-    int x = worker.getX() + ns.getDirection();
-    int y = worker.getY() + ew.getDirection();
+    int x = worker.getRow() + ns.getDirection();
+    int y = worker.getCol() + ew.getDirection();
 
     return x >= 0 && x <= Board.gridSize && y >= 0 && y <= Board.gridSize;
   }
@@ -172,8 +179,8 @@ public class xboard {
   private static boolean isOccupied(IBoard board, Worker worker, EastWest ew, NorthSouth ns) {
     List<Posn> workers = board.getWorkers();
 
-    int x = worker.getX() + ns.getDirection();
-    int y = worker.getY() + ew.getDirection();
+    int x = worker.getRow() + ns.getDirection();
+    int y = worker.getCol() + ew.getDirection();
 
     for (Posn p : workers) {
       if (p.samePosn(new Posn(x, y))) {
