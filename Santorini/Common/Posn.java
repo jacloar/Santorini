@@ -48,4 +48,24 @@ public class Posn {
   public boolean samePosn(Posn p) {
     return getRow() == p.getRow() && getCol() == p.getCol();
   }
+
+  /**
+   * Is this the same posn as the given posn?
+   *
+   * @param row row to check
+   * @param col col to check
+   * @return true if they refer to the same position, false otherwise
+   */
+  public boolean samePosn(int row, int col) {
+    return this.samePosn(new Posn(row, col));
+  }
+
+  /**
+   * Returns a representation of this object as a string
+   *
+   * @return this object represented as a string
+   */
+  public String toString() {
+    return String.format("(%d, %d)", this.getRow(), this.getCol());
+  }
 }

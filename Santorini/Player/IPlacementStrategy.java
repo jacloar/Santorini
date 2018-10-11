@@ -24,4 +24,21 @@ public interface IPlacementStrategy {
    */
   Posn placeWorker(int size, List<Posn> workersOnBoard, List<Posn> myWorkers);
 
+  /**
+   * checks to see if the given posn is in the list of posns.
+   * @param posn posn to check
+   * @param list list of posns to search
+   * @return true if posn is in the list false otherwise
+   */
+  static boolean isPosnInList(Posn posn, List<Posn> list) {
+
+    for(Posn p: list) {
+      if(p.samePosn(posn)) {
+        return true;
+      }
+    }
+    return false;
+
+  }
+
 }

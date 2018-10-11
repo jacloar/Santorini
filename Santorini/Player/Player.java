@@ -1,6 +1,5 @@
 package Player;
 
-import Common.IBoard;
 import Common.Posn;
 import Common.Worker;
 import java.util.ArrayList;
