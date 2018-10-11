@@ -11,14 +11,14 @@ import java.util.List;
  */
 public class Player implements IPlayer {
 
-  private IBoard board;
+  private String name;
   private IStrategy strategy;
 
   private List<Worker> workers = new ArrayList<>(2);
 
-  public Player(IBoard board, IStrategy strategy) {
-    this.board = board;
+  public Player(IStrategy strategy, String name) {
     this.strategy = strategy;
+    this.name = name;
   }
 
   @Override
@@ -27,13 +27,13 @@ public class Player implements IPlayer {
   }
 
   @Override
-  public Posn placeWorker() {
-    return strategy.placeWorker(board.getHeights(), board.getWorkers(), getWorkerPosns());
+  public Posn placeWorker(int [][] heights, List<Posn> workerPosns) {
+    return strategy.placeWorker(heights, workerPosns, getWorkerPosns());
   }
 
   @Override
-  public Move completeTurn() {
-    return strategy.makeMove(board.getHeights(), board.getWorkers(), getWorkerPosns());
+  public Move completeTurn(int[][] heights, List<Posn> workerPosns) {
+    return strategy.makeMove(heights, workerPosns, getWorkerPosns());
   }
 
   /**
@@ -48,5 +48,10 @@ public class Player implements IPlayer {
       workerPosns.add(w.getPosn());
     }
     return workerPosns;
+  }
+
+  @Override
+  public String getName() {
+    return name;
   }
 }

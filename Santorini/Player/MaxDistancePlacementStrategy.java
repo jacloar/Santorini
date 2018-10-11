@@ -26,7 +26,7 @@ public class MaxDistancePlacementStrategy implements IPlacementStrategy {
 
     double maxDistance = 0;
     Posn placement = new Posn(0,0);
-    
+
     for(int row = 0; row < size; row++) {
       for(int col = 0; col < size; col++) {
         double currentDistance = 0;
