@@ -1,5 +1,7 @@
 package Common;
 
+import java.util.List;
+
 /**
  * Interface for checking the rules of the game.
  */
@@ -20,8 +22,20 @@ public interface IRules {
    *
    * The worker must belong to the Player making the call and it must be that player's turn
    *
-   * @param board IBoard for the game that is currently being played
-   * @param worker Worker to possibly move
+   * @param heights Heights for the game that is currently being played
+   * @param allWorkers List of positions of all the workers on the board
+   * @param workerPosn Position of worker to possibly move
+   * @param dRow change in row
+   * @param dCol change in col
+   * @return true if valid move, false otherwise
+   */
+  boolean isValidWorkerMove(int[][] heights, List<Posn> allWorkers, Posn workerPosn, int dRow, int dCol);
+
+  /**
+   * Calls isValidWorkerMove
+   *
+   * @param board IBoard for game
+   * @param worker Worker to move
    * @param dRow change in row
    * @param dCol change in col
    * @return true if valid move, false otherwise
@@ -45,11 +59,23 @@ public interface IRules {
    *
    * The worker must belong to the Player making the call and it must be that player's turn
    *
-   * @param board IBoard for the game that is currently being played
-   * @param worker Worker to possibly build
+   * @param heights Heights for the game that is currently being played
+   * @param allWorkers List of positions of all the workers on the board
+   * @param workerPosn Position of worker to possibly build
    * @param dRow change in row
    * @param dCol change in col
    * @return true if valid construction, false otherwise
+   */
+  boolean isValidWorkerBuild(int[][] heights, List<Posn> allWorkers, Posn workerPosn, int dRow, int dCol);
+
+  /**
+   * Calls isValidWorkerBuild
+   *
+   * @param board IBoard for game
+   * @param worker Worker to move
+   * @param dRow change in row
+   * @param dCol change in col
+   * @return true if valid move, false otherwise
    */
   boolean isValidWorkerBuild(IBoard board, Worker worker, int dRow, int dCol);
 
@@ -61,9 +87,27 @@ public interface IRules {
    * The specified tile must be empty
    * The building at the specified position must not be greater than 3
    *
+   * @param heights Heights for the game that is currently being set up
+   * @param allWorkers List of positions of all the workers on the board
    * @param row row coordinate of new worker
    * @param col col coordinate of new worker
    * @return true if valid placement, false otherwise
    */
+  boolean isValidPlaceWorker(int[][] heights, List<Posn> allWorkers, int row, int col);
+
+  /**
+   * Calls isValidPlaceWorker
+   *
+   * @param board IBoard for game
+   * @param row row of new worker
+   * @param col col of new worker
+   * @return true if valid placement, false otherwise
+   */
   boolean isValidPlaceWorker(IBoard board, int row, int col);
+
+
+  boolean isGameOver(int[][] heights, List<Posn> allWorkers);
+
+
+  boolean didIWin(int[][] heights, List<Posn> allWorkers, List<Posn> myWorkers);
 }

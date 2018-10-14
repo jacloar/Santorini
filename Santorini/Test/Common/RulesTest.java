@@ -25,7 +25,7 @@ public class RulesTest {
     Worker worker = new Worker(p);
     IRules rules = new Rules();
     boolean isValidMove = rules.isValidWorkerMove(board, worker, 1,1);
-    assertEquals(isValidMove, true);
+    assertTrue(isValidMove);
   }
 
   /**
@@ -38,7 +38,7 @@ public class RulesTest {
     Worker worker = new Worker(p);
     IRules rules = new Rules();
     boolean isValidMove = rules.isValidWorkerMove(board, worker, -1,0);
-    assertEquals(isValidMove, false);
+    assertFalse(isValidMove);
   }
 
   /**
@@ -51,7 +51,7 @@ public class RulesTest {
     Worker worker = new Worker(p);
     IRules rules = new Rules();
     boolean isValidMove = rules.isValidWorkerMove(board, worker, 0,0);
-    assertEquals(isValidMove, false);
+    assertFalse(isValidMove);
   }
 
   /**
@@ -64,7 +64,7 @@ public class RulesTest {
     Worker worker = new Worker(p);
     IRules rules = new Rules();
     boolean isValidMove = rules.isValidWorkerMove(board, worker, 0,2);
-    assertEquals(isValidMove, false);
+    assertFalse(isValidMove);
   }
 
   /**
