@@ -26,7 +26,6 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
     } else {
       List<IGameState> badStates = findGoodStates(currentState, 1);
       return badStates.get(0).getMove();
-
     }
   }
 
@@ -165,7 +164,7 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
             List<Posn> updatedWorkers = updatePosn(progress.getMyWorkers(), p, movedWorker);
             InProgress movedState = new InProgress(progress.getHeights(), progress.getOpponentWorkers(), updatedWorkers);
 
-            possibleStates.addAll(getAllBuilds(movedState, movedWorker));
+            possibleStates.addAll(getAllBuilds(movedState, movedWorker, dMoveRow, dMoveCol));
           }
         }
       }
@@ -174,7 +173,7 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
     return possibleStates;
   }
 
-  private List<IGameState> getAllBuilds(InProgress state, Posn workerPosn) {
+  private List<IGameState> getAllBuilds(InProgress state, Posn workerPosn, int dMoveRow, int dMoveCol) {
     List<IGameState> possibleStates = new ArrayList<>();
 
     for (int dBuildRow = -1; dBuildRow <= 1; dBuildRow += 1) {
@@ -190,6 +189,15 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
             newState = new InProgress(heights, state.getOpponentWorkers(), state.getMyWorkers());
           }
 
+          Move movement = new Move(
+              new Posn(workerPosn.getRow() - dMoveRow, workerPosn.getCol() - dMoveCol),
+              dMoveRow,
+              dMoveCol,
+              dBuildRow,
+              dBuildCol
+          );
+
+          newState.setMove(movement);
           possibleStates.add(newState);
         }
       }

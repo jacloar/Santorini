@@ -10,12 +10,40 @@ import Common.Posn;
  */
 class Move {
 
-  Posn workerPosn;
+  private Posn workerPosn;
 
-  int moveDx;
-  int moveDy;
+  private int moveDx;
+  private int moveDy;
 
-  int buildDx;
-  int buildDy;
+  private int buildDx;
+  private int buildDy;
 
+
+  public Move(Posn workerPosn, int moveDx, int moveDy, int buildDx, int buildDy) {
+    this.workerPosn = workerPosn;
+    this.moveDx = moveDx;
+    this.moveDy = moveDy;
+    this.buildDx = buildDx;
+    this.buildDy = buildDy;
+  }
+
+  public Posn getWorkerPosn() {
+    return workerPosn;
+  }
+
+  public int getMoveDx() {
+    return moveDx;
+  }
+
+  public int getMoveDy() {
+    return moveDy;
+  }
+
+  public int getBuildDx() {
+    return buildDx;
+  }
+
+  public int getBuildDy() {
+    return buildDy;
+  }
 }
