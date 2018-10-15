@@ -30,12 +30,20 @@ public class TestRunner {
     classesToTest.add(MaxDistancePlacementStrategyTest.class);
     classesToTest.add(StayAliveMovementStrategyTest.class);
 
+    int ran = 0;
+    int succeeded = 0;
+
     for(Class c: classesToTest) {
       Result result = JUnitCore.runClasses(c);
       for (Failure failure : result.getFailures()) {
         System.out.println(failure.toString());
       }
+      ran += result.getRunCount();
+      succeeded = ran - result.getFailureCount();
     }
+
+    System.out.println("ran " + ran + " Tests");
+    System.out.println(succeeded + " Tests passed");
 
   }
 }

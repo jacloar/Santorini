@@ -1,3 +1,5 @@
 Run TESTME with ./TESTME from the Santorini directory.
 
 It will print out any failures that are encountered in any of the unit tests.
+
+Prints total ran and total succeeded.
