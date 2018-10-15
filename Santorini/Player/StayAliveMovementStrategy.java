@@ -19,14 +19,14 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
   private int numMoves;
   private IRules rules = new Rules();
 
-  StayAliveMovementStrategy(int numMoves) {
+  public StayAliveMovementStrategy(int numMoves) {
     this.numMoves = numMoves;
   }
 
 
   @Override
   public Move makeMove(int[][] heights, List<Posn> allWorkers, List<Posn> myWorkers) {
-    IGameState currentState = new InProgress(heights, getOpponentWorkers(allWorkers, myWorkers), myWorkers);
+    IGameState currentState = new InProgressState(heights, getOpponentWorkers(allWorkers, myWorkers), myWorkers);
     List<IGameState> goodStates = findGoodStates(currentState, numMoves);
     if(!goodStates.isEmpty()) {
       return goodStates.get(0).getMove();
@@ -98,6 +98,7 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
    * @return True if all states keep the player alive, false otherwise.
    */
   public boolean isEveryStateGood(IGameState state, int depth) {
+    System.out.println("In every state good");
     if (state.isGameOver()) {
       return state.didWin();
     }
@@ -124,7 +125,8 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
    * @return True if there is a move where every responding move doesn't defeat the player,
    * false if otherwise.
    */
-  private boolean isAnyStateGood(IGameState state, int depth) {
+  public boolean isAnyStateGood(IGameState state, int depth) {
+    System.out.println("In any state good");
     if (state.isGameOver()) {
       return state.didWin();
     }
@@ -179,8 +181,8 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
       return Collections.singletonList(state);
     }
 
-    // We know the game is not over, so we have an InProgress state
-    InProgress progress = (InProgress) state;
+    // We know the game is not over, so we have an InProgressState state
+    InProgressState progress = (InProgressState) state;
     List<IGameState> possibleStates = new ArrayList<>();
 
     for (Posn p : progress.getMyWorkers()) {
@@ -190,7 +192,7 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
 
             Posn movedWorker = new Posn(p.getRow() + dMoveRow, p.getCol() + dMoveCol);
             List<Posn> updatedWorkers = updatePosn(progress.getMyWorkers(), p, movedWorker);
-            InProgress movedState = new InProgress(progress.getHeights(), progress.getOpponentWorkers(), updatedWorkers);
+            InProgressState movedState = new InProgressState(progress.getHeights(), progress.getOpponentWorkers(), updatedWorkers);
 
             possibleStates.addAll(getAllBuilds(movedState, movedWorker, dMoveRow, dMoveCol));
           }
@@ -210,7 +212,7 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
    * @param dMoveCol the delta in cols of the worker posn
    * @return All the valid builds from the position specified for the worker
    */
-  private List<IGameState> getAllBuilds(InProgress state, Posn workerPosn, int dMoveRow, int dMoveCol) {
+  private List<IGameState> getAllBuilds(InProgressState state, Posn workerPosn, int dMoveRow, int dMoveCol) {
     List<IGameState> possibleStates = new ArrayList<>();
 
     for (int dBuildRow = -1; dBuildRow <= 1; dBuildRow += 1) {
@@ -221,9 +223,9 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
 
           IGameState newState;
           if (rules.isGameOver(heights, state.getAllWorkers(), state.getMyWorkers())) {
-            newState = new GameOver(rules.didIWin(heights, state.getAllWorkers(), state.getMyWorkers()));
+            newState = new GameOverState(rules.didIWin(heights, state.getAllWorkers(), state.getMyWorkers()));
           } else {
-            newState = new InProgress(heights, state.getOpponentWorkers(), state.getMyWorkers());
+            newState = new InProgressState(heights, state.getOpponentWorkers(), state.getMyWorkers());
           }
 
           Move movement = new Move(
@@ -284,145 +286,6 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
     }
 
     return ret;
-  }
-}
-
-/**
- * This interface represents a game state. A game may be over or in progress.
- */
-interface IGameState {
-  /**
-   * Is the game over?
-   * @return True if the game is over, false otherwise.
-   */
-  boolean isGameOver();
-
-  /**
-   * Given that the game is over, did I win?
-   * @return True if the player whose move it is did win, false otherwise, meaning they lost.
-   */
-  boolean didWin();
-
-  /**
-   * Gets the move that leads to this state
-   * @return The move that gets the game to the 'current' hypothetical state
-   */
-  Move getMove();
-
-  /**
-   * Sets the move.
-   * @param move The move that we want to set as the one that leads to this hypothetical state.
-   */
-  void setMove(Move move);
-
-  /**
-   * Flips the workers so we get permutations for the other players move.
-   * @return The state after the opponents workers and my workers have swapped.
-   */
-  IGameState flipState();
-}
-
-/**
- * If the game is over it is a GameOver state
- */
-class GameOver implements IGameState {
-  private boolean didWin; // Did I win?
-  private Move prevMove; // The move that got the board to this state.
-
-  GameOver(boolean didWin) {
-    this.didWin = didWin;
-  }
-
-  public boolean isGameOver() {
-    return true;
-  }
-
-  public boolean didWin() {
-    return didWin;
-  }
-
-  public void setMove(Move move) {
-    this.prevMove = move;
-  }
-
-  public Move getMove() {
-    return this.prevMove;
-  }
-
-  public IGameState flipState() {
-    return new GameOver(!didWin);
-  }
-}
-
-/**
- * If the game is in progress then it should be represented by InProgress
- */
-class InProgress implements IGameState {
-  private Move prevMove; // The move that lead to this state
-  private int[][] heights; // The current representation of the board
-  private List<Posn> opponentWorkers;
-  private List<Posn> myWorkers;
-
-  public InProgress(int[][] heights, List<Posn> opponentWorkers, List<Posn> myWorkers) {
-    this.heights = heights;
-    this.opponentWorkers = opponentWorkers;
-    this.myWorkers = myWorkers;
-  }
-
-  public void setMove(Move move) {
-    this.prevMove = move;
-  }
-
-  public Move getMove() {
-    return this.prevMove;
-  }
-
-
-  @Override
-  public boolean isGameOver() {
-    return false;
-  }
-
-  @Override
-  public boolean didWin() {
-    return false;
-  }
-
-  /**
-   * Gets all of the current players workers
-   * @return A list of posn representing the current players workers
-   */
-  public List<Posn> getMyWorkers() {
-    return myWorkers;
-  }
-  /**
-   * Gets all of the current players opponents workers
-   * @return A list of posn representing the current players opponents workers
-   */
-  public List<Posn> getOpponentWorkers() {
-    return opponentWorkers;
-  }
-
-  /**
-   * A list of all the workers on the board in the form of posns
-   * @return A list of all the workers posns on the board
-   */
-  public List<Posn> getAllWorkers() {
-    List<Posn> allWorkers = new ArrayList<>(this.getMyWorkers());
-    allWorkers.addAll(this.getOpponentWorkers());
-    return allWorkers;
-  }
-
-  /**
-   * Gets the current heights of the buildings on the board
-   * @return
-   */
-  public int[][] getHeights() {
-    return heights;
-  }
-
-  public IGameState flipState() {
-    return new InProgress(heights, myWorkers, opponentWorkers);
   }
 }
 
