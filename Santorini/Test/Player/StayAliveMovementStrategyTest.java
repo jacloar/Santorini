@@ -30,7 +30,7 @@ public class StayAliveMovementStrategyTest {
     opponentWorkers.add(new Posn(0, 5));
     opponentWorkers.add(new Posn(5, 0));
 
-    List<IGameState> possibleStates = strategy.branch(new InProgress(heights, opponentWorkers, myWorkers));
+    List<IGameState> possibleStates = strategy.branch(new InProgressState(heights, opponentWorkers, myWorkers));
 
     assertEquals(36, possibleStates.size());
   }
@@ -51,7 +51,7 @@ public class StayAliveMovementStrategyTest {
     opponentWorkers.add(new Posn(0, 5));
     opponentWorkers.add(new Posn(5, 0));
 
-    InProgress state = new InProgress(heights, opponentWorkers, myWorkers);
+    InProgressState state = new InProgressState(heights, opponentWorkers, myWorkers);
 
     assertTrue(strategy.isEveryStateGood(state, 1));
   }
@@ -72,7 +72,7 @@ public class StayAliveMovementStrategyTest {
     opponentWorkers.add(new Posn(0, 5));
     opponentWorkers.add(new Posn(5, 0));
 
-    InProgress state = new InProgress(heights, opponentWorkers, myWorkers);
+    InProgressState state = new InProgressState(heights, opponentWorkers, myWorkers);
 
     assertTrue(strategy.isEveryStateGood(state, 2));
   }
@@ -102,7 +102,7 @@ public class StayAliveMovementStrategyTest {
     opponentWorkers.add(new Posn(0, 1));
     opponentWorkers.add(new Posn(0, 2));
 
-    IGameState state = new InProgress(heights, opponentWorkers, myWorkers);
+    IGameState state = new InProgressState(heights, opponentWorkers, myWorkers);
 
     assertFalse(strategy.isEveryStateGood(state, 1));
   }
@@ -131,7 +131,7 @@ public class StayAliveMovementStrategyTest {
     opponentWorkers.add(new Posn(0, 2));
     opponentWorkers.add(new Posn(0, 3));
 
-    IGameState state = new InProgress(heights, opponentWorkers, myWorkers);
+    IGameState state = new InProgressState(heights, opponentWorkers, myWorkers);
 
     assertFalse(strategy.isEveryStateGood(state, 3));
   }
@@ -160,7 +160,7 @@ public class StayAliveMovementStrategyTest {
     opponentWorkers.add(new Posn(0, 2));
     opponentWorkers.add(new Posn(0, 3));
 
-    IGameState state = new InProgress(heights, opponentWorkers, myWorkers);
+    IGameState state = new InProgressState(heights, opponentWorkers, myWorkers);
 
     assertTrue(strategy.isEveryStateGood(state, 2));
   }
@@ -193,7 +193,7 @@ public class StayAliveMovementStrategyTest {
     allWorkers.addAll(myWorkers);
     allWorkers.addAll(opponentWorkers);
 
-    InProgress state = new InProgress(heights, opponentWorkers, myWorkers);
+    InProgressState state = new InProgressState(heights, opponentWorkers, myWorkers);
 
     assertFalse(strategy.isEveryStateGood(state, 2));
   }
