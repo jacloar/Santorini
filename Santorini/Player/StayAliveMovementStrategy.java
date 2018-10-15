@@ -36,6 +36,13 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
     }
   }
 
+  /**
+   * Returns the list of opponent workers (as posn) from all the workers and my workers
+   *
+   * @param allWorkers all the workers on the board
+   * @param myWorkers the workers that belong to this player
+   * @return list of opponent workers
+   */
   private List<Posn> getOpponentWorkers(List<Posn> allWorkers, List<Posn> myWorkers) {
     List<Posn> opponentWorkers = new ArrayList<>();
 
@@ -48,6 +55,13 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
     return opponentWorkers;
   }
 
+  /**
+   * Does this list of posns contain one with the same value as the given posn?
+   *
+   * @param list
+   * @param posn
+   * @return
+   */
   private boolean containsPosn(List<Posn> list, Posn posn) {
     for (Posn p : list) {
       if (p.samePosn(posn)) {
@@ -98,7 +112,6 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
    * @return True if all states keep the player alive, false otherwise.
    */
   public boolean isEveryStateGood(IGameState state, int depth) {
-    System.out.println("In every state good");
     if (state.isGameOver()) {
       return state.didWin();
     }
@@ -126,7 +139,6 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
    * false if otherwise.
    */
   public boolean isAnyStateGood(IGameState state, int depth) {
-    System.out.println("In any state good");
     if (state.isGameOver()) {
       return state.didWin();
     }
