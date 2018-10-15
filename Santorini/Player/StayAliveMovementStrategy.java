@@ -1,8 +1,5 @@
 package Player;
 
-
-import com.sun.javaws.exceptions.InvalidArgumentException;
-
 import Common.IRules;
 import Common.Posn;
 import Common.Rules;
@@ -21,8 +18,8 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
 
 
   @Override
-  public Move makeMove(int[][] heights, List<Posn> opponentWorkers, List<Posn> myWorkers) {
-    IGameState currentState = new InProgress(heights, opponentWorkers, myWorkers);
+  public Move makeMove(int[][] heights, List<Posn> allWorkers, List<Posn> myWorkers) {
+    IGameState currentState = new InProgress(heights, getOpponentWorkers(allWorkers, myWorkers), myWorkers);
     List<IGameState> goodStates = findGoodStates(currentState, numMoves);
     if(!goodStates.isEmpty()) {
       return goodStates.get(0).getMove();
@@ -31,6 +28,28 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
       return badStates.get(0).getMove();
 
     }
+  }
+
+  private List<Posn> getOpponentWorkers(List<Posn> allWorkers, List<Posn> myWorkers) {
+    List<Posn> opponentWorkers = new ArrayList<>();
+
+    for (Posn p : allWorkers) {
+      if (!containsPosn(myWorkers, p)) {
+        opponentWorkers.add(p);
+      }
+    }
+
+    return opponentWorkers;
+  }
+
+  private boolean containsPosn(List<Posn> list, Posn posn) {
+    for (Posn p : list) {
+      if (p.samePosn(posn)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -104,45 +123,6 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
     return false;
   }
 
-  /**
-   *
-   * This method returns a move that will keep the player alive for at least numMoves
-   * turns.
-   *
-   * @return A move that keeps the player alive and also leads possible decisions that
-   * guarantee the player doesnt loose within numMoves turns
-   * @throws InvalidArgumentException The player has no guarantee that they can survive
-   * numMoves turns
-   */
-  Move findValidMove(IGameState state) throws InvalidArgumentException {
-
-    boolean myTurn = true;
-
-
-
-
-    return null;
-  }
-
-
-
-  /**
-   * This method checks to make sure that all the states in the list are not
-   * game over states
-   *
-   * @param states A list of states that need to be checked
-   * @return True if the player is alive in all the states, false otherwise
-   */
-  boolean allAliveStates(List<IGameState> states) {
-
-    for(IGameState state : states) {
-      if(state.isGameOver() && !state.didWin()) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   private List<IGameState> branchOpponentMove(IGameState state) {
 
     IGameState flipped = state.flipState();
@@ -156,13 +136,6 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
     return unflippedStates;
   }
 
-  IGameState flipState(InProgress state) {
-    return new InProgress(state.getHeights(), state.getMyWorkers(), state.getOpponentWorkers());
-  }
-
-  IGameState flipState(GameOver state) {
-    return new GameOver(!state.didWin());
-  }
 
   /**
    * Takes in a game state and returns all the possible game states resulting from
@@ -211,7 +184,7 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
           heights[workerPosn.getRow() + dBuildRow][workerPosn.getCol() + dBuildCol] += 1;
 
           IGameState newState;
-          if (rules.isGameOver(heights, state.getAllWorkers())) {
+          if (rules.isGameOver(heights, state.getAllWorkers(), state.getMyWorkers())) {
             newState = new GameOver(rules.didIWin(heights, state.getAllWorkers(), state.getMyWorkers()));
           } else {
             newState = new InProgress(heights, state.getOpponentWorkers(), state.getMyWorkers());
@@ -223,12 +196,6 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
     }
 
     return possibleStates;
-  }
-
-  public List<Posn> getAllWorkers(List<Posn> myWorkers, List<Posn> opponentWorkers) {
-    List<Posn> allWorkers = new ArrayList<>(myWorkers);
-    allWorkers.addAll(opponentWorkers);
-    return allWorkers;
   }
 
   /**

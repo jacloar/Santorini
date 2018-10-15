@@ -8,15 +8,15 @@ import java.util.List;
 public class Rules implements IRules {
 
   /**
-   * Constructor for rules class.
-   * Doesnt do anything.
+   * Constructor for rules class. Doesnt do anything.
    */
   public Rules() {
 
   }
 
   @Override
-  public boolean isValidWorkerMove(int[][] heights, List<Posn> allWorkers, Posn workerPosn, int dRow, int dCol) {
+  public boolean isValidWorkerMove(int[][] heights, List<Posn> allWorkers, Posn workerPosn,
+      int dRow, int dCol) {
 
     if (!isValidModification(heights, allWorkers, workerPosn, dRow, dCol)) {
       return false;
@@ -38,7 +38,8 @@ public class Rules implements IRules {
   }
 
   @Override
-  public boolean isValidWorkerBuild(int[][] heights, List<Posn> allWorkers, Posn workerPosn, int dRow, int dCol) {
+  public boolean isValidWorkerBuild(int[][] heights, List<Posn> allWorkers, Posn workerPosn,
+      int dRow, int dCol) {
 
     return isValidModification(heights, allWorkers, workerPosn, dRow, dCol);
 
@@ -59,7 +60,8 @@ public class Rules implements IRules {
    * @param dCol change in col
    * @return true if proposal passes checks, false otherwise
    */
-  private boolean isValidModification(int[][] heights, List<Posn> allWorkers, Posn workerPosn, int dRow, int dCol) {
+  private boolean isValidModification(int[][] heights, List<Posn> allWorkers, Posn workerPosn,
+      int dRow, int dCol) {
 
     // Verify dRow in range [-1, 1]
     if (!(-1 <= dRow && dRow <= 1)) {
@@ -79,7 +81,7 @@ public class Rules implements IRules {
     int toRow = workerPosn.getRow() + dRow;
     int toCol = workerPosn.getCol() + dCol;
 
-    if(!isEmptySpace(heights, allWorkers, toRow, toCol)) {
+    if (!isEmptySpace(heights, allWorkers, toRow, toCol)) {
       return false;
     }
 
@@ -122,12 +124,71 @@ public class Rules implements IRules {
   }
 
   @Override
-  public boolean isGameOver(int[][] heights, List<Posn> allWorkers) {
+  public boolean isGameOver(int[][] heights, List<Posn> allWorkers, List<Posn> myWorkers) {
+    if (isWorkerAtWinHeight(heights, allWorkers)) {
+      return true;
+    }
+
+    if (!canAnyWorkersMove(heights, myWorkers, allWorkers)) {
+      return true;
+    }
+
     return false;
   }
 
+  private boolean canAnyWorkersMove(int[][] heights, List<Posn> workersToCheck, List<Posn> workersOnBoard) {
+    for (Posn p : workersToCheck) {
+      if (canWorkerMove(heights, workersOnBoard, p)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private boolean isWorkerAtWinHeight(int[][] heights, List<Posn> workers) {
+    for (Posn p : workers) {
+      if (heights[p.getRow()][p.getCol()] == Board.maxHeight - 1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
   @Override
   public boolean didIWin(int[][] heights, List<Posn> allWorkers, List<Posn> myWorkers) {
+    // If the game is not over, player did not win
+    if (!isGameOver(heights, allWorkers, myWorkers)) {
+      return false;
+    }
+
+    // Check if any of the player's workers are at height 3
+    if (isWorkerAtWinHeight(heights, myWorkers)) {
+      return true;
+    }
+
+    // We know the game is over and none of the player's workers are at height 3, so player must have lost
+    return false;
+  }
+
+  /**
+   * Can the given worker make a valid move?
+   *
+   * @param heights heights of the buildings on the board
+   * @param allWorkers all the workers on the board
+   * @param workerPosn the posn of the worker to check
+   * @return true if worker can move, false otherwise
+   */
+  private boolean canWorkerMove(int[][] heights, List<Posn> allWorkers, Posn workerPosn) {
+    for (int dRow = -1; dRow <= 1; dRow += 1) {
+      for (int dCol = -1; dCol <= 1; dCol += 1) {
+        if (isValidWorkerMove(heights, allWorkers, workerPosn, dRow, dCol)) {
+          return true;
+        }
+      }
+    }
+
     return false;
   }
 }

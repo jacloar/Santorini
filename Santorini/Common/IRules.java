@@ -106,7 +106,7 @@ public interface IRules {
   boolean isValidPlaceWorker(IBoard board, int row, int col);
 
 
-  boolean isGameOver(int[][] heights, List<Posn> allWorkers);
+  boolean isGameOver(int[][] heights, List<Posn> allWorkers, List<Posn> myWorkers);
 
 
   boolean didIWin(int[][] heights, List<Posn> allWorkers, List<Posn> myWorkers);

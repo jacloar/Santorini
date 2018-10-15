@@ -301,4 +301,28 @@ public class RulesTest {
     assertFalse(isValidPlacement);
   }
 
+  @Test
+  public void testIsGameOverLose() {
+    IRules rules = new Rules();
+    int[][] heights = {
+        {3, 2, 1, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 4, 4},
+        {0, 0, 0, 0, 4, 0},
+        {0, 0, 0, 0, 4, 0}
+    };
+
+    List<Posn> myWorkers = new ArrayList<>();
+    myWorkers.add(new Posn(4, 5));
+    myWorkers.add(new Posn(5, 5));
+
+    List<Posn> allWorkers = new ArrayList<>(myWorkers);
+    allWorkers.add(new Posn(5, 0));
+    allWorkers.add(new Posn(0, 5));
+
+    assertTrue(rules.isGameOver(heights, allWorkers, myWorkers));
+    assertFalse(rules.didIWin(heights, allWorkers, myWorkers));
+  }
+
 }
