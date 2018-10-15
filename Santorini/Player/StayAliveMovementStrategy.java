@@ -1,5 +1,8 @@
 package Player;
 
+
+import com.sun.javaws.exceptions.InvalidArgumentException;
+
 import Common.IRules;
 import Common.Posn;
 import Common.Rules;
@@ -18,8 +21,147 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
 
 
   @Override
-  public Move makeMove(int[][] heights, List<Posn> workersOnBoard, List<Posn> myWorkers) {
+  public Move makeMove(int[][] heights, List<Posn> opponentWorkers, List<Posn> myWorkers) {
+    IGameState currentState = new InProgress(heights, opponentWorkers, myWorkers);
+    List<IGameState> goodStates = findGoodStates(currentState, numMoves);
+    if(!goodStates.isEmpty()) {
+      return goodStates.get(0).getMove();
+    } else {
+      List<IGameState> badStates = findGoodStates(currentState, 1);
+      return badStates.get(0).getMove();
+
+    }
+  }
+
+  /**
+   *
+   * This method returns a list of gamestates that lead to the player not being defeated at a depth
+   * of 'depth'
+   *
+   * If the returned list is empty it means that there is no combination of moves that lead to
+   * the player automatically being alive after 'depth' turns.
+   *
+   * @param state The current state of the game
+   * @param depth The desired number of turns to survive
+   * @return A list of states that lead to the player surviving
+   */
+  private List<IGameState> findGoodStates(IGameState state, int depth) {
+
+    List<IGameState> states = branch(state);
+
+    if(depth <= 0) {
+      return states;
+    }
+
+    List<IGameState> goodStates = new ArrayList<>();
+
+    for(IGameState gs: states) {
+      if(isEveryStateGood(gs, depth - 1)) {
+        goodStates.add(gs);
+      }
+    }
+
+    return goodStates;
+  }
+
+  public boolean isEveryStateGood(IGameState state, int depth) {
+    if (state.isGameOver()) {
+      return state.didWin();
+    }
+
+    if (depth <= 0) {
+      return true;
+    }
+
+    List<IGameState> expanded = branchOpponentMove(state);
+
+    for (IGameState gs : expanded) {
+      if (!isAnyStateGood(gs, depth - 1)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private boolean isAnyStateGood(IGameState state, int depth) {
+    if (state.isGameOver()) {
+      return state.didWin();
+    }
+
+    if (depth <= 0) {
+      return true;
+    }
+
+    List<IGameState> expanded = branch(state);
+
+    for (IGameState gs : expanded) {
+      if (isEveryStateGood(gs, depth - 1)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   *
+   * This method returns a move that will keep the player alive for at least numMoves
+   * turns.
+   *
+   * @return A move that keeps the player alive and also leads possible decisions that
+   * guarantee the player doesnt loose within numMoves turns
+   * @throws InvalidArgumentException The player has no guarantee that they can survive
+   * numMoves turns
+   */
+  Move findValidMove(IGameState state) throws InvalidArgumentException {
+
+    boolean myTurn = true;
+
+
+
+
     return null;
+  }
+
+
+
+  /**
+   * This method checks to make sure that all the states in the list are not
+   * game over states
+   *
+   * @param states A list of states that need to be checked
+   * @return True if the player is alive in all the states, false otherwise
+   */
+  boolean allAliveStates(List<IGameState> states) {
+
+    for(IGameState state : states) {
+      if(state.isGameOver() && !state.didWin()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private List<IGameState> branchOpponentMove(IGameState state) {
+
+    IGameState flipped = state.flipState();
+    List<IGameState> flippedStates = branch(flipped);
+
+    List<IGameState> unflippedStates = new ArrayList<>();
+    for (IGameState gs : flippedStates) {
+      unflippedStates.add(gs.flipState());
+    }
+
+    return unflippedStates;
+  }
+
+  IGameState flipState(InProgress state) {
+    return new InProgress(state.getHeights(), state.getMyWorkers(), state.getOpponentWorkers());
+  }
+
+  IGameState flipState(GameOver state) {
+    return new GameOver(!state.didWin());
   }
 
   /**
@@ -83,6 +225,12 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
     return possibleStates;
   }
 
+  public List<Posn> getAllWorkers(List<Posn> myWorkers, List<Posn> opponentWorkers) {
+    List<Posn> allWorkers = new ArrayList<>(myWorkers);
+    allWorkers.addAll(opponentWorkers);
+    return allWorkers;
+  }
+
   /**
    * Creates a new updated list of posns where the old posn is replaced with the new posn
    *
@@ -133,10 +281,16 @@ interface IGameState {
 
   boolean didWin();
 
+  Move getMove();
+
+  void setMove(Move move);
+
+  IGameState flipState();
 }
 
 class GameOver implements IGameState {
   private boolean didWin;
+  private Move prevMove;
 
   GameOver(boolean didWin) {
     this.didWin = didWin;
@@ -149,9 +303,22 @@ class GameOver implements IGameState {
   public boolean didWin() {
     return didWin;
   }
+
+  public void setMove(Move move) {
+    this.prevMove = move;
+  }
+
+  public Move getMove() {
+    return this.prevMove;
+  }
+
+  public IGameState flipState() {
+    return new GameOver(!didWin);
+  }
 }
 
 class InProgress implements IGameState {
+  private Move prevMove;
   private int[][] heights;
   private List<Posn> opponentWorkers;
   private List<Posn> myWorkers;
@@ -161,6 +328,15 @@ class InProgress implements IGameState {
     this.opponentWorkers = opponentWorkers;
     this.myWorkers = myWorkers;
   }
+
+  public void setMove(Move move) {
+    this.prevMove = move;
+  }
+
+  public Move getMove() {
+    return this.prevMove;
+  }
+
 
   @Override
   public boolean isGameOver() {
@@ -188,6 +364,10 @@ class InProgress implements IGameState {
 
   public int[][] getHeights() {
     return heights;
+  }
+
+  public IGameState flipState() {
+    return new InProgress(heights, myWorkers, opponentWorkers);
   }
 }
 
