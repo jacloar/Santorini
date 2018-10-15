@@ -136,6 +136,14 @@ public class Rules implements IRules {
     return false;
   }
 
+  /**
+   * Can any of my workers move?
+   *
+   * @param heights The heights of the current board
+   * @param workersToCheck my workers
+   * @param workersOnBoard all the workers on the board
+   * @return True if my workers have a valid move, false otherwise
+   */
   private boolean canAnyWorkersMove(int[][] heights, List<Posn> workersToCheck, List<Posn> workersOnBoard) {
     for (Posn p : workersToCheck) {
       if (canWorkerMove(heights, workersOnBoard, p)) {
@@ -146,6 +154,14 @@ public class Rules implements IRules {
     return false;
   }
 
+  /**
+   *
+   * Is the given worker at the specified height to win the game?
+   *
+   * @param heights The heights of the buildings on the board
+   * @param workers The list of all the workers on the board
+   * @return True if any worker is the set winning height
+   */
   private boolean isWorkerAtWinHeight(int[][] heights, List<Posn> workers) {
     for (Posn p : workers) {
       if (heights[p.getRow()][p.getCol()] == Board.maxHeight - 1) {

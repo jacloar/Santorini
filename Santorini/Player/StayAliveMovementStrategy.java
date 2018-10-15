@@ -7,6 +7,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This class attempts to return a move that will guarantee to keep the player alive for at most
+ * numMoves turns.
+ *
+ * If a player cannot stay alive for certain numMoves turns it will just give the first valid move
+ * it can.
+ */
 public class StayAliveMovementStrategy implements IMovementStrategy {
 
   private int numMoves;
@@ -82,6 +89,14 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
     return goodStates;
   }
 
+  /**
+   *
+   * At the given depth are all of the players options ones that wont lead to a defeat.
+   *
+   * @param state The current state of the game
+   * @param depth The number of turns we need to check
+   * @return True if all states keep the player alive, false otherwise.
+   */
   public boolean isEveryStateGood(IGameState state, int depth) {
     if (state.isGameOver()) {
       return state.didWin();
@@ -102,6 +117,13 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
     return true;
   }
 
+  /**
+   * Are any of the possible states leading to a defeat given a state of the game
+   * @param state the current state of the game
+   * @param depth The depth we are checking from the actual current state of the game
+   * @return True if there is a move where every responding move doesn't defeat the player,
+   * false if otherwise.
+   */
   private boolean isAnyStateGood(IGameState state, int depth) {
     if (state.isGameOver()) {
       return state.didWin();
@@ -122,6 +144,12 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
     return false;
   }
 
+  /**
+   * Iterates through all the permutations for an opponents move given a state representing a move
+   * we might make.
+   * @param state The state of the board after one of the players possible moves
+   * @return The list of states possible after an opponent moves
+   */
   private List<IGameState> branchOpponentMove(IGameState state) {
 
     IGameState flipped = state.flipState();
@@ -173,6 +201,15 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
     return possibleStates;
   }
 
+  /**
+   * Gets all the possible states of the game from a starting state given that a worker just moved
+   * and that worker must build on an adjacent building.
+   * @param state The current state of the game
+   * @param workerPosn The original posn of the worker before they moved
+   * @param dMoveRow the delta in rows of the worker posn
+   * @param dMoveCol the delta in cols of the worker posn
+   * @return All the valid builds from the position specified for the worker
+   */
   private List<IGameState> getAllBuilds(InProgress state, Posn workerPosn, int dMoveRow, int dMoveCol) {
     List<IGameState> possibleStates = new ArrayList<>();
 
@@ -250,22 +287,47 @@ public class StayAliveMovementStrategy implements IMovementStrategy {
   }
 }
 
+/**
+ * This interface represents a game state. A game may be over or in progress.
+ */
 interface IGameState {
-
+  /**
+   * Is the game over?
+   * @return True if the game is over, false otherwise.
+   */
   boolean isGameOver();
 
+  /**
+   * Given that the game is over, did I win?
+   * @return True if the player whose move it is did win, false otherwise, meaning they lost.
+   */
   boolean didWin();
 
+  /**
+   * Gets the move that leads to this state
+   * @return The move that gets the game to the 'current' hypothetical state
+   */
   Move getMove();
 
+  /**
+   * Sets the move.
+   * @param move The move that we want to set as the one that leads to this hypothetical state.
+   */
   void setMove(Move move);
 
+  /**
+   * Flips the workers so we get permutations for the other players move.
+   * @return The state after the opponents workers and my workers have swapped.
+   */
   IGameState flipState();
 }
 
+/**
+ * If the game is over it is a GameOver state
+ */
 class GameOver implements IGameState {
-  private boolean didWin;
-  private Move prevMove;
+  private boolean didWin; // Did I win?
+  private Move prevMove; // The move that got the board to this state.
 
   GameOver(boolean didWin) {
     this.didWin = didWin;
@@ -292,9 +354,12 @@ class GameOver implements IGameState {
   }
 }
 
+/**
+ * If the game is in progress then it should be represented by InProgress
+ */
 class InProgress implements IGameState {
-  private Move prevMove;
-  private int[][] heights;
+  private Move prevMove; // The move that lead to this state
+  private int[][] heights; // The current representation of the board
   private List<Posn> opponentWorkers;
   private List<Posn> myWorkers;
 
@@ -323,20 +388,35 @@ class InProgress implements IGameState {
     return false;
   }
 
+  /**
+   * Gets all of the current players workers
+   * @return A list of posn representing the current players workers
+   */
   public List<Posn> getMyWorkers() {
     return myWorkers;
   }
-
+  /**
+   * Gets all of the current players opponents workers
+   * @return A list of posn representing the current players opponents workers
+   */
   public List<Posn> getOpponentWorkers() {
     return opponentWorkers;
   }
 
+  /**
+   * A list of all the workers on the board in the form of posns
+   * @return A list of all the workers posns on the board
+   */
   public List<Posn> getAllWorkers() {
     List<Posn> allWorkers = new ArrayList<>(this.getMyWorkers());
     allWorkers.addAll(this.getOpponentWorkers());
     return allWorkers;
   }
 
+  /**
+   * Gets the current heights of the buildings on the board
+   * @return
+   */
   public int[][] getHeights() {
     return heights;
   }

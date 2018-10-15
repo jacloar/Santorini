@@ -1,31 +1,3 @@
 #!/bin/bash
 
-numPassed=0
-numFailed=0
-
-cd ../6/
-
-for i in `seq 1 5`;
-do
-	if ["$(./xboard < board-tests/$i-in.json | diff - board-tests/$i-out.json)" == ""]; then
-		numPassed=$((numPassed + 1))
-	else
-		numFailed=$((numFailed + 1))
-	fi
-done
-
-cd ../7/
-
-for i in `seq 1 5`;
-do
-        if ["$(./xrules < rules-tests/$i-in.json | diff - rules-tests/$i-out.json)" == ""]; then
-                numPassed=$((numPassed + 1))
-        else
-                numFailed=$((numFailed + 1))
-        fi
-done
-
-numTests=$((numPassed + numFailed))
-
-echo Ran $numTests tests, $numPassed passed, $numFailed failed.
-
+java -jar SantoriniTests.jar

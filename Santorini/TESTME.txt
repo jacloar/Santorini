@@ -1,4 +1,3 @@
 Run TESTME with ./TESTME from the Santorini directory.
 
-It will print the number of tests ran, number of tests passed, and number of tests failed.
-If any tests fail, it will print the diff between actual and expected.
+It will print out any failures that are encountered in any of the unit tests.

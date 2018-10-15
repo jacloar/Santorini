@@ -60,4 +60,15 @@ public class PosnTest {
 
     assertFalse(p.samePosn(new Posn(4, 6)));
   }
+
+  /**
+   * tests the tostring method for a posn
+   */
+  @Test
+  public void testPosnToString() {
+
+    Posn p = new Posn(4, 7);
+    assertEquals(p.toString(),"(4, 7)");
+
+  }
 }

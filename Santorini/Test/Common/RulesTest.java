@@ -301,6 +301,9 @@ public class RulesTest {
     assertFalse(isValidPlacement);
   }
 
+  /**
+   * Test to see if a player cannot move does the game end
+   */
   @Test
   public void testIsGameOverLose() {
     IRules rules = new Rules();
@@ -320,6 +323,115 @@ public class RulesTest {
     List<Posn> allWorkers = new ArrayList<>(myWorkers);
     allWorkers.add(new Posn(5, 0));
     allWorkers.add(new Posn(0, 5));
+
+    assertTrue(rules.isGameOver(heights, allWorkers, myWorkers));
+    assertFalse(rules.didIWin(heights, allWorkers, myWorkers));
+  }
+
+  /**
+   * If the given player has a worker who is at height 3 they should win the game
+   */
+  @Test
+  public void testIsGameOverWin() {
+    IRules rules = new Rules();
+    int[][] heights = {
+            {3, 2, 1, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 4, 4},
+            {0, 0, 0, 0, 4, 0},
+            {0, 0, 0, 0, 4, 0}
+    };
+
+    List<Posn> myWorkers = new ArrayList<>();
+    myWorkers.add(new Posn(0, 0));
+    myWorkers.add(new Posn(5, 5));
+
+    List<Posn> allWorkers = new ArrayList<>(myWorkers);
+    allWorkers.add(new Posn(4, 3));
+    allWorkers.add(new Posn(3, 4));
+
+    assertTrue(rules.isGameOver(heights, allWorkers, myWorkers));
+    assertTrue(rules.didIWin(heights, allWorkers, myWorkers));
+  }
+
+  /**
+   * If only one worker is trapped then the other should still be able to move
+   */
+  @Test
+  public void testCanWorkerMoveOneSurrounded() {
+    IRules rules = new Rules();
+    int[][] heights = {
+            {2, 2, 1, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 4, 4},
+            {0, 0, 0, 0, 4, 0},
+            {0, 0, 0, 0, 4, 0}
+    };
+
+    List<Posn> myWorkers = new ArrayList<>();
+    myWorkers.add(new Posn(0, 0));
+    myWorkers.add(new Posn(1, 0));
+
+    List<Posn> allWorkers = new ArrayList<>(myWorkers);
+    allWorkers.add(new Posn(1, 1));
+    allWorkers.add(new Posn(0, 1));
+
+    assertFalse(rules.isGameOver(heights, allWorkers, myWorkers));
+  }
+
+  /**
+   * If a worker is already at height 3 then the game should be over.
+   * If it is my worker then I win.
+   */
+  @Test
+  public void testWinAtWinHeight() {
+    IRules rules = new Rules();
+    int[][] heights = {
+            {3, 2, 1, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 4, 4},
+            {0, 0, 0, 0, 4, 0},
+            {0, 0, 0, 0, 4, 0}
+    };
+
+    List<Posn> myWorkers = new ArrayList<>();
+    myWorkers.add(new Posn(0, 0));
+    myWorkers.add(new Posn(1, 0));
+
+    List<Posn> allWorkers = new ArrayList<>(myWorkers);
+    allWorkers.add(new Posn(1, 1));
+    allWorkers.add(new Posn(0, 1));
+
+    assertTrue(rules.isGameOver(heights, allWorkers, myWorkers));
+    assertTrue(rules.didIWin(heights, allWorkers, myWorkers));
+  }
+
+  /**
+   * If a worker is already at height 3 then the game should be over.
+   * If it is an opponents worker I lose
+   */
+  @Test
+  public void testLoseAtWinHeight() {
+    IRules rules = new Rules();
+    int[][] heights = {
+            {3, 2, 1, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 4, 4},
+            {0, 0, 0, 0, 4, 0},
+            {0, 0, 0, 0, 4, 0}
+    };
+
+    List<Posn> myWorkers = new ArrayList<>();
+    myWorkers.add(new Posn(1, 1));
+    myWorkers.add(new Posn(0, 1));
+
+    List<Posn> allWorkers = new ArrayList<>(myWorkers);
+    allWorkers.add(new Posn(1, 0));
+    allWorkers.add(new Posn(0, 0));
 
     assertTrue(rules.isGameOver(heights, allWorkers, myWorkers));
     assertFalse(rules.didIWin(heights, allWorkers, myWorkers));
