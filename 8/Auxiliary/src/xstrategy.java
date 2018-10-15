@@ -181,10 +181,13 @@ public class xstrategy {
           workers.add(worker);
 
           if (workerMap.containsKey(name)) {
-            workerMap.get(name).add(workerIdx, worker);
+            workerMap.get(name).set(workerIdx, worker);
           } else {
-            List<Worker> playerWorkers = new ArrayList<>();
-            playerWorkers.add(workerIdx, worker);
+            ArrayList<Worker> playerWorkers = new ArrayList<>();
+            playerWorkers.add(null);
+            playerWorkers.add(null);
+
+            playerWorkers.set(workerIdx, worker);
             workerMap.put(name, playerWorkers);
           }
         }
