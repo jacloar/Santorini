@@ -108,6 +108,10 @@ public interface IRules {
 
   boolean isGameOver(int[][] heights, List<Posn> allWorkers, List<Posn> myWorkers);
 
+  boolean isGameOver(IBoard board, List<Worker> myWorkers);
+
 
   boolean didIWin(int[][] heights, List<Posn> allWorkers, List<Posn> myWorkers);
+
+  boolean didIWin(IBoard board, List<Worker> myWorkers);
 }

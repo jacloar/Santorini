@@ -1,5 +1,6 @@
 package Common;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -136,6 +137,17 @@ public class Rules implements IRules {
     return false;
   }
 
+  @Override
+  public boolean isGameOver(IBoard board, List<Worker> myWorkers) {
+    List<Posn> workerPosns = new ArrayList<>();
+
+    for (Worker w : myWorkers) {
+      workerPosns.add(w.getPosn());
+    }
+
+    return isGameOver(board.getHeights(), board.getWorkers(), workerPosns);
+  }
+
   /**
    * Can any of my workers move?
    *
@@ -186,6 +198,17 @@ public class Rules implements IRules {
 
     // We know the game is over and none of the player's workers are at height 3, so player must have lost
     return false;
+  }
+
+  @Override
+  public boolean didIWin(IBoard board, List<Worker> myWorkers) {
+    List<Posn> workerPosns = new ArrayList<>();
+
+    for (Worker w : myWorkers) {
+      workerPosns.add(w.getPosn());
+    }
+
+    return didIWin(board.getHeights(), board.getWorkers(), workerPosns);
   }
 
   /**
