@@ -105,13 +105,41 @@ public interface IRules {
    */
   boolean isValidPlaceWorker(IBoard board, int row, int col);
 
-
+  /**
+   * Determines if the game is over
+   *
+   * @param heights heights of the buildings on the grid
+   * @param allWorkers list of posns of all workers
+   * @param myWorkers list of posns of player's workers
+   * @return true if game is over, false otherwise
+   */
   boolean isGameOver(int[][] heights, List<Posn> allWorkers, List<Posn> myWorkers);
 
+  /**
+   * Wrapper for isGameOver
+   *
+   * @param board IBoard of the board
+   * @param myWorkers List of workers of the player
+   * @return true if game is over
+   */
   boolean isGameOver(IBoard board, List<Worker> myWorkers);
 
-
+  /**
+   * Did the player calling this win the game?
+   *
+   * @param heights heights of buildings on the board
+   * @param allWorkers list of posns of all the workers
+   * @param myWorkers list of posns for the player calling this's workers
+   * @return true if the player won the game, false otherwise
+   */
   boolean didIWin(int[][] heights, List<Posn> allWorkers, List<Posn> myWorkers);
 
+  /**
+   * Wrapper for didIWin
+   *
+   * @param board IBoard of the board
+   * @param myWorkers List of workers of the player
+   * @return true if won the game
+   */
   boolean didIWin(IBoard board, List<Worker> myWorkers);
 }
