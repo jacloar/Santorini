@@ -7,7 +7,7 @@ import common.data.Direction;
  * Serves as the interface for any implementation of a common.board
  * in the game Santorini
  */
-public interface IBoard {
+public interface IBoard extends IReadonlyBoard {
     // create a common.board.BuildingWorker at the given coordinates and return it
     BuildingWorker createWorker(String playerName, int row, int column);
 
