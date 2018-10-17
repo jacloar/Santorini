@@ -1,0 +1,6 @@
+[["0a1", "0a2"], [], ["0b1", "0b2"]]
+["occupied?", "a2", ["PUT", "SOUTH"]]
+["height", "a2", ["PUT", "SOUTH"]]
+["move", "a2", ["PUT", "SOUTH"]]
+["build", "a2", ["PUT", "NORTH"]]
+["height", "a2", ["PUT", "NORTH"]]

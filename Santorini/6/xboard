@@ -1,0 +1,2 @@
+#!/bin/bash
+java -jar ../Santorini/Lib/target/Lib-1.0-SNAPSHOT.jar

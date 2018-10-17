@@ -1,0 +1,8 @@
+[["1robin1", "2robin2", 
+	"3batman1", "4batman2"]]["occupied?",
+	 "robin1", ["EAST", "PUT"
+	 ]] ["move", "robin1", ["PUT", 
+	 "SOUTH"]]["height", 
+	 		"batman1", ["EAST", "PUT"]
+	 ] 	 	 	["neighbors", "robin2", ["PUT", "NORTH"
+		 ]]["build", "batman2", ["PUT", "SOUTH"]]

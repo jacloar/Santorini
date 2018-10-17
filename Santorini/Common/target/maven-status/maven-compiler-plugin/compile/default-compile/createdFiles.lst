@@ -1,0 +1,17 @@
+common\data\Action.class
+common\rules\IRulesEngine.class
+common\board\BuildingWorker.class
+common\board\Height.class
+common\data\Worker.class
+common\utils\BoardGenerator$1.class
+common\data\PlaceWorkerAction.class
+common\board\Board.class
+common\board\ICell.class
+common\data\ActionType.class
+common\utils\BoardGenerator.class
+common\board\ViewModelBoard.class
+common\rules\StandardSantoriniRulesEngine.class
+common\board\IReadonlyBoard.class
+common\exceptions\CheatException.class
+common\board\IBoard.class
+common\data\Direction.class

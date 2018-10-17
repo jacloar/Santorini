@@ -1,0 +1,11 @@
+XRules.class
+lib\testdata\Sequence.class
+lib\testdata\StrategySequence.class
+lib\utils\StrategySequenceParser.class
+XStrategy.class
+lib\utils\InputParser.class
+TestHarness.class
+lib\utils\SequenceParser.class
+lib\utils\JsonParser.class
+lib\utils\BoardParser.class
+XBoard.class

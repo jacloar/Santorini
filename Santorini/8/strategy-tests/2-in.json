@@ -1,0 +1,5 @@
+"robin"
+[["2robin1", 3, "0batman1"],
+["0robin2", "0batman2"]]
+2
+["move", "robin1", ["EAST", "PUT"]]

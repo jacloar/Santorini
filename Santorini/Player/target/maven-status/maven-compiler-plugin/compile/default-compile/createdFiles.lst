@@ -1,0 +1,8 @@
+strategy\IPlacementStrategy.class
+player\IPlayer.class
+strategy\DiagonalPlacementStrategy.class
+strategy\ITurnStrategy.class
+strategy\StayAliveStrategy.class
+strategy\CartesianDistancePlacementStrategy.class
+player\AIPlayer.class
+strategy\Strategy.class
