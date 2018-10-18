@@ -1,6 +1,5 @@
 package admin.referee;
 
-import admin.result.GameResult;
 import java.util.Optional;
 import player.IPlayer;
 

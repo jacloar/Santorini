@@ -15,7 +15,7 @@ import player.IPlayer;
  */
 public class Referee implements IReferee {
 
-  private IRulesEngine rules;
+  private final IRulesEngine rules;
 
   public Referee(IRulesEngine rules) {
     this.rules = rules;
@@ -57,7 +57,6 @@ public class Referee implements IReferee {
     if (maybeWinner.isPresent()) {
       return new GameResult(maybeWinner.get(), true);
     }
-
     return runGame(board, first, second);
   }
 

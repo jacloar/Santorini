@@ -9,7 +9,7 @@ import common.data.Direction;
  */
 public interface IBoard extends IReadonlyBoard {
     // create a common.board.BuildingWorker at the given coordinates and return it
-    BuildingWorker createWorker(String playerName, int row, int column);
+    BuildingWorker createWorker(String workerId, int row, int column);
 
     // move the worker designated by the string in the given direction
     void move(String worker, Direction direction);
