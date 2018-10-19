@@ -1,5 +1,6 @@
 package admin.referee;
 
+import common.board.IBoard;
 import java.util.Optional;
 import player.IPlayer;
 
@@ -10,13 +11,23 @@ import player.IPlayer;
 public interface IReferee {
 
   /**
-   * Facilitates a game between two given IPlayers
+   * Facilitates a game between two given IPlayers on a new IBoard
    *
    * @param player1 one IPlayer
    * @param player2 the other IPlayer
    * @return the player who won the game
    */
   IPlayer playGame(IPlayer player1, IPlayer player2);
+
+  /**
+   * Facilitates a game between two given IPlayers on the given IBoard
+   *
+   * @param board IBoard to play the game on
+   * @param player1 one IPlayer
+   * @param player2 another IPlayer
+   * @return the player who won the game
+   */
+  IPlayer playGame(IBoard board, IPlayer player1, IPlayer player2);
 
   /**
    * Facilitates playing {@code games} games between the given players. Returns the IPlayer that

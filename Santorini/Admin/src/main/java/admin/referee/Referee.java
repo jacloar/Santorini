@@ -6,6 +6,7 @@ import common.board.IBoard;
 import common.data.Action;
 import common.data.PlaceWorkerAction;
 import common.rules.IRulesEngine;
+import common.rules.StandardSantoriniRulesEngine;
 import java.util.List;
 import java.util.Optional;
 import player.IPlayer;
@@ -17,6 +18,10 @@ public class Referee implements IReferee {
 
   private final IRulesEngine rules;
 
+  public Referee() {
+    this.rules = new StandardSantoriniRulesEngine();
+  }
+
   public Referee(IRulesEngine rules) {
     this.rules = rules;
   }
@@ -24,20 +29,23 @@ public class Referee implements IReferee {
   @Override
   public IPlayer playGame(IPlayer player1, IPlayer player2) {
     // Interprets the outcome of playGameGetResult
-    return playGameGetResult(player1, player2).getWinner();
+    return playGameGetResult(new Board(), player1, player2).getWinner();
+  }
+
+  @Override
+  public IPlayer playGame(IBoard board, IPlayer player1, IPlayer player2) {
+    return playGameGetResult(board, player1, player2).getWinner();
   }
 
   /**
    * Facilitates running a game between two players
    *
+   * @param board board to play the game on
    * @param player1 One player playing the game
    * @param player2 The other player playing the game
    * @return a GameResult representing the outcome of the game
    */
-  private GameResult playGameGetResult(IPlayer player1, IPlayer player2) {
-    // Construct the board
-    IBoard board = new Board();
-
+  private GameResult playGameGetResult(IBoard board, IPlayer player1, IPlayer player2) {
     // Determine order of play
     int p1Foo = player1.howFooAmI();
     int p2Foo = player2.howFooAmI();
@@ -147,7 +155,7 @@ public class Referee implements IReferee {
     int countTwo = 0;
 
     for (int i = 0; i < games; i += 1) {
-      GameResult result = playGameGetResult(player1, player2);
+      GameResult result = playGameGetResult(new Board(), player1, player2);
       if (result.didOtherPlayerCheat()) {
         return Optional.of(result.getWinner());
       }

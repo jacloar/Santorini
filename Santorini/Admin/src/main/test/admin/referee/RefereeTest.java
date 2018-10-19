@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -12,8 +11,6 @@ import common.data.Action;
 import common.data.PlaceWorkerAction;
 import common.rules.IRulesEngine;
 import java.util.List;
-import javax.imageio.event.IIOReadProgressListener;
-import org.apache.commons.lang3.builder.ToStringExclude;
 import org.junit.Test;
 import player.IPlayer;
 
@@ -77,7 +74,7 @@ public class RefereeTest {
     when(rules.isPlaceWorkerLegal(any(), eq(placeWorkerAction1))).thenReturn(false);
     when(rules.isPlaceWorkerLegal(any(), eq(placeWorkerAction2))).thenReturn(true);
 
-    IReferee referee = new Referee(rules);
+    IReferee referee = new Referee();
     IPlayer winner = referee.playGame(player1, player2);
 
     assertThat(winner).isEqualTo(player2);
