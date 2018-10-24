@@ -44,4 +44,9 @@ public class BuildingWorker implements ICell {
     public boolean isWorker() {
         return true;
     }
+
+    @Override
+    public String toString() {
+        return height + playerName + workerNumber;
+    }
 }

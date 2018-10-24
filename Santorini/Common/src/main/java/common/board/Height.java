@@ -41,4 +41,9 @@ public class Height implements ICell {
     public ICell copy() {
         return new Height(height);
     }
+
+    @Override
+    public String toString() {
+        return "" + height;
+    }
 }
