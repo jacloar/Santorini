@@ -39,4 +39,13 @@ public interface IReadonlyBoard {
     int getMaxColumns();
 
     IBoard toBoard();
+
+    /**
+     * Returns the cell at the specified position.
+     *
+     * @param row row of cell
+     * @param column column of cell
+     * @return cell at (row,col)
+     */
+    ICell getCell(int row, int column);
 }

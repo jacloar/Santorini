@@ -25,7 +25,17 @@ public class Board implements IBoard {
     }
 
     public Board(ICell[][] cells) {
-        this.cells = cells;
+        this.cells = new ICell[6][6];
+
+        for (int i = 0;  i < cells.length; i += 1) {
+            for (int j = 0; j < cells.length; j += 1) {
+                if (cells[i][j] == null) {
+                    this.cells[i][j] = new Height(0);
+                } else {
+                    this.cells[i][j] = cells[i][j];
+                }
+            }
+        }
     }
 
     // Creates a worker at the given row and column
@@ -222,5 +232,10 @@ public class Board implements IBoard {
         }
 
         return new Board(copy);
+    }
+
+    @Override
+    public ICell getCell(int row, int column) {
+        return cells[row][column];
     }
 }
