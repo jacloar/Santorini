@@ -13,10 +13,15 @@ public class AIPlayer implements IPlayer {
 
     private static final String WORKER_ID = "%s%d";
 
-    private final String playerName = UUID.randomUUID().toString();
+    private final String playerName;
     private final Strategy strategy;
 
     public AIPlayer(Strategy strategy) {
+        this(UUID.randomUUID().toString(), strategy);
+    }
+
+    public AIPlayer(String name, Strategy strategy) {
+        this.playerName = name;
         this.strategy = strategy;
     }
 

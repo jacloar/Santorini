@@ -46,6 +46,10 @@ public class Referee implements IReferee {
    * @return a GameResult representing the outcome of the game
    */
   private GameResult playGameGetResult(IBoard board, IPlayer player1, IPlayer player2) {
+    if (player1.getPlayerName().equals(player2.getPlayerName())) {
+      throw new IllegalArgumentException("Player names cannot be equal");
+    }
+
     // Determine order of play
     int p1Foo = player1.howFooAmI();
     int p2Foo = player2.howFooAmI();
