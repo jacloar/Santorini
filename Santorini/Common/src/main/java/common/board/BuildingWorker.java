@@ -1,5 +1,7 @@
 package common.board;
 
+import java.io.IOException;
+
 /**
  * Represents an common.board.ICell in a Santorini game common.board with a worker on it
  */
@@ -48,5 +50,12 @@ public class BuildingWorker implements ICell {
     @Override
     public String toString() {
         return height + playerName + workerNumber;
+    }
+
+    @Override
+    public void appendSelf(Appendable app) throws IOException {
+        app.append("\"");
+        app.append(this.toString());
+        app.append("\"");
     }
 }

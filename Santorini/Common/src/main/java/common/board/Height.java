@@ -1,5 +1,7 @@
 package common.board;
 
+import java.io.IOException;
+
 /**
  * Represents an common.board.ICell in a Santorini game common.board that has no worker
  */
@@ -40,6 +42,11 @@ public class Height implements ICell {
     @Override
     public ICell copy() {
         return new Height(height);
+    }
+
+    @Override
+    public void appendSelf(Appendable app) throws IOException {
+        app.append(this.toString());
     }
 
     @Override

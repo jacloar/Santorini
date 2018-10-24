@@ -1,5 +1,7 @@
 package common.board;
 
+import java.io.IOException;
+
 /**
  * An common.board.ICell represents a cell in a game common.board of Santorini
  */
@@ -18,4 +20,11 @@ public interface ICell {
 
     // generates a copy of the given cell
     ICell copy();
+
+    /**
+     * Adds a String representation of this cell to the given appendable.
+     *
+     * @param app Appendable to add representation to.
+     */
+    void appendSelf(Appendable app) throws IOException;
 }
