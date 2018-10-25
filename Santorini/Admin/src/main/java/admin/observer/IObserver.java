@@ -18,12 +18,11 @@ public interface IObserver {
 
   void update(IReadonlyBoard board);
   /**
-   * Updates the observer with a board and the last turn taken
+   * Updates the observer with the last turn taken
    *
-   * @param board board to give to the observer
    * @param turn last turn taken
    */
-  void update(IReadonlyBoard board, List<Action> turn);
+  void update(List<Action> turn);
 
   /**
    * Updates the observer with a player that is giving up

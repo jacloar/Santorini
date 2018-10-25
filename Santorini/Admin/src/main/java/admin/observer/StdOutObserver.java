@@ -29,23 +29,41 @@ public class StdOutObserver implements IObserver {
   }
 
   @Override
-  public void update(IReadonlyBoard board, List<Action> turn) {
-
+  public void update(List<Action> turn) {
+    try {
+      printTurn(turn);
+    } catch (IOException e) {
+      throw new RuntimeException("Error printing turn", e);
+    }
   }
 
   @Override
   public void updateGiveUp(IPlayer player) {
-
+    try {
+      printPlayer(player);
+    } catch (IOException e) {
+      throw new RuntimeException("Error printing player", e);
+    }
   }
 
   @Override
   public void updateWin(IPlayer player) {
-
+    try {
+      printPlayer(player);
+    } catch (IOException e) {
+      throw new RuntimeException("Error printing player", e);
+    }
   }
 
   @Override
   public void updateError(String error) {
-
+    try {
+      app.append("\"");
+      app.append(error);
+      app.append("\"");
+    } catch (IOException e) {
+      throw new RuntimeException("Error printing error", e);
+    }
   }
 
   /**
@@ -67,6 +85,7 @@ public class StdOutObserver implements IObserver {
 
       appendCommaOrBrace(board, row, IReadonlyBoard::getMaxRows);
     }
+    app.append("\n");
   }
 
   /**
@@ -83,5 +102,56 @@ public class StdOutObserver implements IObserver {
     } else {
       app.append("]");
     }
+  }
+
+  /**
+   * Prints the specified turn to the Appendable
+   *
+   * @param turn turn to print
+   * @throws IOException if something goes wrong printing the turn
+   */
+  private void printTurn(List<Action> turn) throws IOException {
+    app.append("[");
+
+    // We know turn has size at least 1 to be considered a valid turn
+    app.append("\"");
+    app.append(turn.get(0).getWorkerId());
+    app.append("\"");
+
+    for (Action aTurn : turn) {
+      app.append(",");
+      printAction(aTurn);
+    }
+
+    app.append("]");
+    app.append("\n");
+  }
+
+  /**
+   * Prints the specified action to the Appendable
+   *
+   * @param action action to print
+   * @throws IOException if something goes wrong printing the action
+   */
+  private void printAction(Action action) throws IOException {
+    app.append("\"");
+    app.append(action.getDirection().getEastWest());
+    app.append("\"");
+    app.append(",");
+    app.append("\"");
+    app.append(action.getDirection().getNorthSouth());
+    app.append("\"");
+  }
+
+  /**
+   * Prints the specified IPlayer to the appendable
+   *
+   * @param player IPlayer to print
+   * @throws IOException if something goes wrong printing the player
+   */
+  private void printPlayer(IPlayer player) throws IOException {
+    app.append("\"");
+    app.append(player.getPlayerName());
+    app.append("\"");
   }
 }
