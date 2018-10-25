@@ -1,5 +1,6 @@
 package admin.referee;
 
+import admin.observer.IObserver;
 import common.board.IBoard;
 import java.util.Optional;
 import player.IPlayer;
@@ -39,4 +40,11 @@ public interface IReferee {
    * @return IPlayer that won the most games, or empty if tied
    */
   Optional<IPlayer> bestOfN(IPlayer player1, IPlayer player2, int games);
+
+  /**
+   * Adds the given observer to this referee's list of observers.
+   *
+   * @param observer IObserver to add
+   */
+  void addObserver(IObserver observer);
 }

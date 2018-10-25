@@ -1,14 +1,18 @@
 package admin.referee;
 
+import admin.observer.IObserver;
 import admin.result.GameResult;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.IO;
 import common.board.Board;
 import common.board.IBoard;
 import common.data.Action;
 import common.data.PlaceWorkerAction;
 import common.rules.IRulesEngine;
 import common.rules.StandardSantoriniRulesEngine;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import player.IPlayer;
 
 /**
@@ -17,13 +21,28 @@ import player.IPlayer;
 public class Referee implements IReferee {
 
   private final IRulesEngine rules;
+  private final List<IObserver> observers;
 
   public Referee() {
-    this.rules = new StandardSantoriniRulesEngine();
+    this(new StandardSantoriniRulesEngine(), new ArrayList<>());
   }
 
   public Referee(IRulesEngine rules) {
+    this(rules, new ArrayList<>());
+  }
+
+  public Referee(List<IObserver> observers) {
+    this(new StandardSantoriniRulesEngine(), observers);
+  }
+
+  public Referee(IRulesEngine rules, List<IObserver> observers) {
     this.rules = rules;
+    this.observers = observers;
+  }
+
+  @Override
+  public void addObserver(IObserver observer) {
+    this.observers.add(observer);
   }
 
   @Override
@@ -67,7 +86,14 @@ public class Referee implements IReferee {
     // Sets up the game. Returns the winner if the other player tries to cheat.
     Optional<IPlayer> maybeWinner = setupGame(board, first, second);
     if (maybeWinner.isPresent()) {
-      return new GameResult(maybeWinner.get(), true);
+      IPlayer winner = maybeWinner.get();
+
+      // If player 1 is the winner, player 2 cheated.
+      IPlayer cheater = player1 == winner ? player2 : player1;
+
+      updateObservers(observer -> observer.updateError(cheater + " cheated"));
+      updateObservers(observer -> observer.updateWin(winner));
+      return new GameResult(winner, true);
     }
     return runGame(board, first, second);
   }
@@ -106,6 +132,7 @@ public class Referee implements IReferee {
 
     if (rules.isPlaceWorkerLegal(board, placement)) {
       board.createWorker(placement.getWorkerId(), placement.getRow(), placement.getColumn());
+      updateObservers(observer -> observer.update(board));
       return true;
     }
 
@@ -121,19 +148,25 @@ public class Referee implements IReferee {
    * @return GameResult representing the result of the game
    */
   private GameResult runGame(IBoard board, IPlayer active, IPlayer waiting) {
+    updateObservers(observer -> observer.update(board));
     // Return result if active player won
     if (rules.didPlayerWin(board, active.getPlayerName())) {
+      updateObservers(observer -> observer.updateWin(active));
       return new GameResult(active, false);
     }
 
     // Return result if active player lost
     if (rules.didPlayerLose(board, active.getPlayerName())) {
+      updateObservers(observer -> observer.updateGiveUp(active));
+      updateObservers(observer -> observer.updateWin(waiting));
       return new GameResult(waiting, false);
     }
 
     List<Action> turn = active.getTurn(board);
     // Return result if active player cheats
     if (!rules.isTurnLegal(board, turn, active.getPlayerName())) {
+      updateObservers(observer -> observer.updateError(active + " cheated"));
+      updateObservers(observer -> observer.updateWin(waiting));
       return new GameResult(waiting, true);
     }
 
@@ -142,6 +175,8 @@ public class Referee implements IReferee {
     board.move(move.getWorkerId(), move.getDirection());
     // If the player won after moving, return the game's result
     if (rules.didPlayerWin(board, active.getPlayerName())) {
+      updateObservers(observer -> observer.update(turn));
+      updateObservers(observer -> observer.updateWin(active));
       return new GameResult(active, false);
     }
 
@@ -149,6 +184,7 @@ public class Referee implements IReferee {
     Action build = turn.get(1);
     board.build(build.getWorkerId(), build.getDirection());
 
+    updateObservers(observer -> observer.update(turn));
     // Run a turn with waiting and active players swapped
     return runGame(board, waiting, active);
   }
@@ -180,6 +216,17 @@ public class Referee implements IReferee {
       return Optional.of(player2);
     } else {
       return Optional.empty();
+    }
+  }
+
+  /**
+   * Runs the specified function on all the observers
+   *
+   * @param updateFunc function that takes observer and calls an update method on it
+   */
+  private void updateObservers(Consumer<IObserver> updateFunc) {
+    for (IObserver o : observers) {
+      updateFunc.accept(o);
     }
   }
 }
