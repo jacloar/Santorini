@@ -2,7 +2,8 @@ package admin.referee;
 
 import admin.observer.IObserver;
 import admin.result.GameResult;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.IO;
+import com.google.common.util.concurrent.SimpleTimeLimiter;
+import com.google.common.util.concurrent.TimeLimiter;
 import common.board.Board;
 import common.board.IBoard;
 import common.data.Action;
@@ -12,7 +13,13 @@ import common.rules.StandardSantoriniRulesEngine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import player.IPlayer;
 
 /**
@@ -22,6 +29,8 @@ public class Referee implements IReferee {
 
   private final IRulesEngine rules;
   private final List<IObserver> observers;
+
+  private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   public Referee() {
     this(new StandardSantoriniRulesEngine(), new ArrayList<>());
@@ -65,7 +74,19 @@ public class Referee implements IReferee {
    * @return a GameResult representing the outcome of the game
    */
   private GameResult playGameGetResult(IBoard board, IPlayer player1, IPlayer player2) {
-    if (player1.getPlayerName().equals(player2.getPlayerName())) {
+    Optional<String> p1Name = timedCall(IPlayer::getPlayerName, player1);
+    Optional<String> p2Name = timedCall(IPlayer::getPlayerName, player2);
+
+    if (hasName(player1, player2, p1Name)) {
+      return new GameResult(player2, true);
+    }
+
+    if (hasName(player2, player1, p2Name)) {
+      return new GameResult(player1, true);
+    }
+
+    // We know the player names must both be present because got passed the two hasName method calls
+    if (p1Name.get().equals(p2Name.get())) {
       throw new IllegalArgumentException("Player names cannot be equal");
     }
 
@@ -91,11 +112,18 @@ public class Referee implements IReferee {
       // If player 1 is the winner, player 2 cheated.
       IPlayer cheater = player1 == winner ? player2 : player1;
 
-      updateObservers(observer -> observer.updateError(cheater + " cheated"));
-      updateObservers(observer -> observer.updateWin(winner));
-      return new GameResult(winner, true);
+      return activeCheated(cheater, winner);
     }
     return runGame(board, first, second);
+  }
+
+  private boolean hasName(IPlayer player, IPlayer opponent, Optional<String> name) {
+    if (!name.isPresent()) {
+      updateObservers(observer -> observer.updateError(player + " took too long to give name"));
+      updateObservers(observer -> observer.updateWin(opponent));
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -128,7 +156,14 @@ public class Referee implements IReferee {
    * @return true if valid placement, false otherwise
    */
   private boolean placeWorker(IBoard board, IPlayer player) {
-    PlaceWorkerAction placement = player.getPlaceWorker(board);
+    Optional<PlaceWorkerAction> optionalPlacement = timedCall(p -> p.getPlaceWorker(board), player);
+
+    // If the placement is not present, the player took too long and we consider that cheating
+    if (!optionalPlacement.isPresent()) {
+      return false;
+    }
+
+    PlaceWorkerAction placement = optionalPlacement.get();
 
     if (rules.isPlaceWorkerLegal(board, placement)) {
       board.createWorker(placement.getWorkerId(), placement.getRow(), placement.getColumn());
@@ -136,6 +171,7 @@ public class Referee implements IReferee {
       return true;
     }
 
+    // If the placement was not legal, return false as the player cheated
     return false;
   }
 
@@ -162,12 +198,15 @@ public class Referee implements IReferee {
       return new GameResult(waiting, false);
     }
 
-    List<Action> turn = active.getTurn(board);
+    Optional<List<Action>> optionalTurn = timedCall(p -> p.getTurn(board), active);
+    if (!optionalTurn.isPresent()) {
+      return activeCheated(active, waiting);
+    }
+
+    List<Action> turn = optionalTurn.get();
     // Return result if active player cheats
     if (!rules.isTurnLegal(board, turn, active.getPlayerName())) {
-      updateObservers(observer -> observer.updateError(active + " cheated"));
-      updateObservers(observer -> observer.updateWin(waiting));
-      return new GameResult(waiting, true);
+      return activeCheated(active, waiting);
     }
 
     // Complete move component of turn
@@ -187,6 +226,19 @@ public class Referee implements IReferee {
     updateObservers(observer -> observer.update(turn));
     // Run a turn with waiting and active players swapped
     return runGame(board, waiting, active);
+  }
+
+  /**
+   * Returns a game result where the active player cheated. Updates observers accordingly.
+   *
+   * @param active active player
+   * @param waiting waiting player
+   * @return GameResult where waiting won and didOtherPlayerCheat true
+   */
+  private GameResult activeCheated(IPlayer active, IPlayer waiting) {
+    updateObservers(observer -> observer.updateError(active + " cheated"));
+    updateObservers(observer -> observer.updateWin(waiting));
+    return new GameResult(waiting, true);
   }
 
   @Override
@@ -228,5 +280,26 @@ public class Referee implements IReferee {
     for (IObserver o : observers) {
       updateFunc.accept(o);
     }
+  }
+
+  /**
+   * Calls the given function on the given player, but makes sure that the call does not last
+   * longer than 5 seconds.
+   *
+   * @param func function to call on player
+   * @param player player to call function on
+   * @param <T> type the function returns
+   * @return the result of the function, or empty if timeout
+   */
+  private <T> Optional<T> timedCall(Function<IPlayer, T> func, IPlayer player) {
+    TimeLimiter limiter = SimpleTimeLimiter.create(executor);
+    T result;
+    try {
+      result = limiter.callWithTimeout(() -> func.apply(player), 5, TimeUnit.SECONDS);
+    } catch (TimeoutException | InterruptedException | ExecutionException e) {
+      return Optional.empty();
+    }
+
+    return Optional.of(result);
   }
 }
