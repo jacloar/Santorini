@@ -61,6 +61,14 @@ import java.util.*;
        }
    }
 
+   public String getEastWest() {
+     return this.eastWest;
+   }
+
+   public String getNorthSouth() {
+     return this.northSouth;
+   }
+
 
    // return all possible directions from a position
    public static List<Direction> getAllDirections() {
