@@ -6,20 +6,11 @@ import common.data.PlaceWorkerAction;
 public class DiagonalPlacementStrategy implements IPlacementStrategy {
     @Override
     public PlaceWorkerAction getPlaceWorker(String workerId, IReadonlyBoard b) {
-        int x = 0;
-        int y = 0;
+        for (int i = 0; i < b.getMaxRows(); i += 1) {
 
-        while (x < b.getMaxRows() && y < b.getMaxColumns()) {
-
-            if (!b.isOccupied(x, y)) {
-                return new PlaceWorkerAction(workerId, x, y);
+            if (!b.isOccupied(i, i)) {
+                return new PlaceWorkerAction(workerId, i, i);
             }
-
-            x++;
-            y++;
-
-            x++;
-            y++;
         }
 
         // Per the use of this strategy, this should NEVER occur.
