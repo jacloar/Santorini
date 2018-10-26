@@ -30,7 +30,7 @@ public class StandardSantoriniRulesEngine implements IRulesEngine {
         int actionColumn = action.getColumn();
         boolean cellExists = board.cellExists(actionRow, actionColumn);
         if (cellExists) {
-            return board.isOccupied(action.getRow(), action.getColumn());
+            return !board.isOccupied(action.getRow(), action.getColumn());
         } else {
             return false;
         }
