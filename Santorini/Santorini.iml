@@ -10,6 +10,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Player/src/main/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/Admin/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Admin/src/main/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/Common/src/main/test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/Design" />
     </content>
     <orderEntry type="inheritedJdk" />
