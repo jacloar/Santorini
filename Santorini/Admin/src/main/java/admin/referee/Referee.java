@@ -90,22 +90,8 @@ public class Referee implements IReferee {
       throw new IllegalArgumentException("Player names cannot be equal");
     }
 
-    // Determine order of play
-    int p1Foo = player1.howFooAmI();
-    int p2Foo = player2.howFooAmI();
-
-    IPlayer first;
-    IPlayer second;
-    if (p1Foo >= p2Foo) {
-      first = player1;
-      second = player2;
-    } else {
-      first = player2;
-      second = player1;
-    }
-
     // Sets up the game. Returns the winner if the other player tries to cheat.
-    Optional<IPlayer> maybeWinner = setupGame(board, first, second);
+    Optional<IPlayer> maybeWinner = setupGame(board, player1, player2);
     if (maybeWinner.isPresent()) {
       IPlayer winner = maybeWinner.get();
 
@@ -114,7 +100,7 @@ public class Referee implements IReferee {
 
       return activeCheated(cheater, winner);
     }
-    return runGame(board, first, second);
+    return runGame(board, player1, player2);
   }
 
   private boolean hasName(IPlayer player, IPlayer opponent, Optional<String> name) {
