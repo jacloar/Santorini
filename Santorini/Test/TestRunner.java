@@ -1,17 +1,15 @@
-
+import admin.referee.RefereeTest;
 import common.board.BoardTest;
 import common.board.HeightTest;
 import common.board.ViewModelBoardTest;
-
+import common.rules.TestStandardSantoriniRulesEngine;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import admin.referee.RefereeTest;
 import strategy.StayAliveStrategyTests;
+import strategy.TestDiagonalPlacementStrategy;
 
 
 /**
@@ -25,6 +23,8 @@ public class TestRunner {
     classesToTest.add(ViewModelBoardTest.class);
     classesToTest.add(RefereeTest.class);
     classesToTest.add(StayAliveStrategyTests.class);
+    classesToTest.add(TestDiagonalPlacementStrategy.class);
+    classesToTest.add(TestStandardSantoriniRulesEngine.class);
 
     int ran = 0;
     int succeeded = 0;
