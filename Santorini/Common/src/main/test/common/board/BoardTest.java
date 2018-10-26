@@ -297,4 +297,13 @@ public class BoardTest {
     assertThat(worker2.getPlayerName()).isEqualTo("one");
     assertThat(worker2.getWorkerNumber()).isEqualTo(2);
   }
+
+  @Test
+  public void testIsOccupiedEmpty() {
+    IBoard board = new Board();
+
+    boolean isOccupied = board.isOccupied(0, 0);
+
+    assertThat(isOccupied).isFalse();
+  }
 }
