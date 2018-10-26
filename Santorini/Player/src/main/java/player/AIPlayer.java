@@ -4,6 +4,7 @@ import common.board.IReadonlyBoard;
 import common.data.Action;
 import common.data.PlaceWorkerAction;
 import common.data.Worker;
+import common.interfaces.IPlayer;
 import strategy.Strategy;
 
 import java.util.List;

@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import player.IPlayer;
+import common.interfaces.IPlayer;
 
 /**
  * Facilitates running game(s) of Santorini between two players.

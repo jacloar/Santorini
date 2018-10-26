@@ -1,6 +1,6 @@
 package admin.result;
 
-import player.IPlayer;
+import common.interfaces.IPlayer;
 
 /**
  * Represents the result of a game.

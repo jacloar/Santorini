@@ -5,7 +5,7 @@ import common.data.Action;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
-import player.IPlayer;
+import common.interfaces.IPlayer;
 
 public class StdOutObserver implements IObserver {
 

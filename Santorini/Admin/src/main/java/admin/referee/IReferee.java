@@ -3,7 +3,7 @@ package admin.referee;
 import admin.observer.IObserver;
 import common.board.IBoard;
 import java.util.Optional;
-import player.IPlayer;
+import common.interfaces.IPlayer;
 
 /**
  * An IReferee interface represents the knowledge of how to coordinate and organize IPlayers in a

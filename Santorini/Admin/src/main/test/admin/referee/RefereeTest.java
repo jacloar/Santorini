@@ -12,7 +12,7 @@ import common.data.PlaceWorkerAction;
 import common.rules.IRulesEngine;
 import java.util.List;
 import org.junit.Test;
-import player.IPlayer;
+import common.interfaces.IPlayer;
 
 public class RefereeTest {
 

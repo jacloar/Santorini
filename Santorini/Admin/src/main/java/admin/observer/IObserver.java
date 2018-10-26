@@ -3,7 +3,7 @@ package admin.observer;
 import common.board.IReadonlyBoard;
 import common.data.Action;
 import java.util.List;
-import player.IPlayer;
+import common.interfaces.IPlayer;
 
 /**
  * Interface for an observer that the referee will update with state changes.
