@@ -66,9 +66,11 @@ public class RefereeTest {
     IRulesEngine rules = makeRules();
 
     PlaceWorkerAction placeWorkerAction1 = mock(PlaceWorkerAction.class);
+    when(placeWorkerAction1.getWorkerId()).thenReturn("worker1");
     when(player1.getPlaceWorker(any())).thenReturn(placeWorkerAction1);
 
     PlaceWorkerAction placeWorkerAction2 = mock(PlaceWorkerAction.class);
+    when(placeWorkerAction2.getWorkerId()).thenReturn("worker2");
     when(player2.getPlaceWorker(any())).thenReturn(placeWorkerAction2);
 
     when(rules.isPlaceWorkerLegal(any(), eq(placeWorkerAction1))).thenReturn(false);
