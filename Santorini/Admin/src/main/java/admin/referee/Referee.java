@@ -27,6 +27,9 @@ import common.interfaces.IPlayer;
  */
 public class Referee implements IReferee {
 
+  // Length of time to wait for action in seconds
+  private static final int TIMEOUT = 5;
+
   private final IRulesEngine rules;
   private final List<IObserver> observers;
 
@@ -173,6 +176,7 @@ public class Referee implements IReferee {
     updateObservers(observer -> observer.update(board));
     // Return result if active player won
     if (rules.didPlayerWin(board, active.getPlayerName())) {
+      updateObservers(observer -> observer.update(board));
       updateObservers(observer -> observer.updateWin(active));
       return new GameResult(active, false);
     }
@@ -281,7 +285,7 @@ public class Referee implements IReferee {
     TimeLimiter limiter = SimpleTimeLimiter.create(executor);
     T result;
     try {
-      result = limiter.callWithTimeout(() -> func.apply(player), 5, TimeUnit.SECONDS);
+      result = limiter.callWithTimeout(() -> func.apply(player), TIMEOUT, TimeUnit.SECONDS);
     } catch (TimeoutException | InterruptedException | ExecutionException e) {
       return Optional.empty();
     }
