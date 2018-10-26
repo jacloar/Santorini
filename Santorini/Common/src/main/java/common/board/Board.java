@@ -238,4 +238,16 @@ public class Board implements IBoard {
     public ICell getCell(int row, int column) {
         return cells[row][column];
     }
+
+    @Override
+    public int getNumWorkers(String playerId) {
+        List<Worker> playersWorkers = this.getPlayerWorkerMap().get(playerId);
+
+        // playersWorkers is null if nothing has been put in the player worker map
+        if (playersWorkers == null) {
+            return 0;
+        } else {
+            return playersWorkers.size();
+        }
+    }
 }

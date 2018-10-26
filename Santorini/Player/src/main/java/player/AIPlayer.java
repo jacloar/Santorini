@@ -3,12 +3,10 @@ package player;
 import common.board.IReadonlyBoard;
 import common.data.Action;
 import common.data.PlaceWorkerAction;
-import common.data.Worker;
 import common.interfaces.IPlayer;
-import strategy.Strategy;
-
 import java.util.List;
 import java.util.UUID;
+import strategy.Strategy;
 
 public class AIPlayer implements IPlayer {
 
@@ -28,8 +26,7 @@ public class AIPlayer implements IPlayer {
 
     @Override
     public PlaceWorkerAction getPlaceWorker(IReadonlyBoard b) {
-        List<Worker> workersOnBoard = b.getPlayerWorkers(getPlayerName());
-        int nextWorkerNumber = workersOnBoard.size() + 1;
+        int nextWorkerNumber = b.getNumWorkers(playerName) + 1;
         String workerToPlace = String.format(WORKER_ID, playerName, nextWorkerNumber);
 
         return strategy.getPlaceWorker(workerToPlace, b);
@@ -49,5 +46,10 @@ public class AIPlayer implements IPlayer {
     public int howFooAmI() {
         // to be implemented later when we learn what "foo" means
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return playerName;
     }
 }
