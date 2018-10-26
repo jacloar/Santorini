@@ -48,4 +48,12 @@ public interface IReadonlyBoard {
      * @return cell at (row,col)
      */
     ICell getCell(int row, int column);
+
+    /**
+     * Returns the number of workers on the board that belong to the player with the given id.
+     *
+     * @param playerId Id of player to reference
+     * @return number of workers that belong to specified player
+     */
+    int getNumWorkers(String playerId);
 }
