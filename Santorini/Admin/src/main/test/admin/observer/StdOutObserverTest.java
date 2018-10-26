@@ -9,12 +9,12 @@ import common.board.ICell;
 import common.data.Action;
 import common.data.ActionType;
 import common.data.Direction;
+import common.interfaces.IPlayer;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import player.AIPlayer;
-import common.interfaces.IPlayer;
 
 /**
  * Tests the STDOUT observer
@@ -127,7 +127,7 @@ public class StdOutObserverTest {
 
     observer.updateGiveUp(player);
 
-    assertThat(builder).isEqualToIgnoringWhitespace("\"one\"");
+    assertThat(builder).isEqualToIgnoringWhitespace("\"one gave up.\"");
   }
 
   /**
@@ -141,7 +141,7 @@ public class StdOutObserverTest {
 
     observer.updateWin(player);
 
-    assertThat(builder).isEqualToIgnoringWhitespace("\"one\"");
+    assertThat(builder).isEqualToIgnoringWhitespace("\"one won the game!\"");
   }
 
   /**

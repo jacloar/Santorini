@@ -40,7 +40,9 @@ public class StdOutObserver implements IObserver {
   @Override
   public void updateGiveUp(IPlayer player) {
     try {
+      app.append("\"");
       printPlayer(player);
+      app.append(" gave up.\"\n");
     } catch (IOException e) {
       throw new RuntimeException("Error printing player", e);
     }
@@ -49,7 +51,9 @@ public class StdOutObserver implements IObserver {
   @Override
   public void updateWin(IPlayer player) {
     try {
+      app.append("\"");
       printPlayer(player);
+      app.append(" won the game!\"\n");
     } catch (IOException e) {
       throw new RuntimeException("Error printing player", e);
     }
@@ -61,6 +65,7 @@ public class StdOutObserver implements IObserver {
       app.append("\"");
       app.append(error);
       app.append("\"");
+      app.append("\n");
     } catch (IOException e) {
       throw new RuntimeException("Error printing error", e);
     }
@@ -84,8 +89,8 @@ public class StdOutObserver implements IObserver {
       }
 
       appendCommaOrBrace(board, row, IReadonlyBoard::getMaxRows);
+      app.append("\n");
     }
-    app.append("\n");
   }
 
   /**
@@ -150,8 +155,6 @@ public class StdOutObserver implements IObserver {
    * @throws IOException if something goes wrong printing the player
    */
   private void printPlayer(IPlayer player) throws IOException {
-    app.append("\"");
     app.append(player.getPlayerName());
-    app.append("\"");
   }
 }
