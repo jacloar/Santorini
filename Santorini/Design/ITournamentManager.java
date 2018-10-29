@@ -13,6 +13,8 @@
  * If more than two players had the same amount of victories and a winner cannot be determined
  * empty will be returned.
  *
+ * A tournament must have at least 2 players.
+ *
  */
 public interface ITournamentManager {
   /**
