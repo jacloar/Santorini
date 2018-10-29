@@ -7,12 +7,15 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import admin.observer.IObserver;
+import admin.observer.StdOutObserver;
 import common.data.Action;
 import common.data.PlaceWorkerAction;
+import common.interfaces.IPlayer;
 import common.rules.IRulesEngine;
 import java.util.List;
+import java.util.Optional;
 import org.junit.Test;
-import common.interfaces.IPlayer;
 
 public class RefereeTest {
 
@@ -100,5 +103,73 @@ public class RefereeTest {
 
     assertThat(winner).isEqualTo(player2);
     assertThat(winner).isNotEqualTo(player1);
+  }
+
+  @Test
+  public void testBestOfN() {
+    IPlayer player1 = makePlayer("one");
+    IPlayer player2 = makePlayer("two");
+    IRulesEngine rules = makeRules();
+
+    when(rules.didPlayerWin(any(), eq("one"))).thenReturn(true);
+
+    IReferee referee = new Referee(rules);
+    Optional<IPlayer> winner = referee.bestOfN(player1, player2, 3);
+
+    assertThat(winner).isNotEmpty();
+    assertThat(winner.get()).isEqualTo(player1);
+    assertThat(winner.get()).isNotEqualTo(player2);
+  }
+
+  @Test
+  public void testPlayerLoop() {
+    IPlayer player1 = makePlayer("one");
+    IPlayer player2 = makePlayer("two");
+    IRulesEngine rules = makeRules();
+
+    when(player1.getPlaceWorker(any())).then(invocation -> {
+      while (true) {
+
+      }
+    });
+
+    IReferee referee = new Referee(rules);
+    IPlayer winner = referee.playGame(player1, player2);
+
+    assertThat(winner).isEqualTo(player2);
+    assertThat(winner).isNotEqualTo(player1);
+  }
+
+  @Test
+  public void testRefereeCallsObserver() {
+    StringBuilder builder = new StringBuilder();
+    IObserver observer = new StdOutObserver(builder);
+    IRulesEngine rules = makeRules();
+
+    IReferee ref = new Referee(rules);
+    ref.addObserver(observer);
+
+    IPlayer player1 = makePlayer("one");
+    IPlayer player2 = makePlayer("two");
+
+    when(rules.didPlayerWin(any(), eq("one"))).thenReturn(true);
+
+    assertThat(builder).isEmpty();
+
+    ref.playGame(player1, player2);
+
+    assertThat(builder).isEqualToIgnoringWhitespace("[[0,0,0,0,0,0],\n"
+        + "[0,0,0,0,0,0],\n"
+        + "[0,0,0,0,0,0],\n"
+        + "[0,0,0,0,0,0],\n"
+        + "[0,0,0,0,0,0],\n"
+        + "[0,0,0,0,0,0]]\n"
+        + "[[0,0,0,0,0,0],\n"
+        + "[0,0,0,0,0,0],\n"
+        + "[0,0,0,0,0,0],\n"
+        + "[0,0,0,0,0,0],\n"
+        + "[0,0,0,0,0,0],\n"
+        + "[0,0,0,0,0,0]]\n"
+        + "\"one won the game!\"");
   }
 }
