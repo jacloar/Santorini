@@ -80,15 +80,15 @@ public class Referee implements IReferee {
     Optional<String> p1Name = timedCall(IPlayer::getPlayerName, player1);
     Optional<String> p2Name = timedCall(IPlayer::getPlayerName, player2);
 
-    if (hasName(player1, player2, p1Name)) {
+    if (doesNotHaveName(player1, player2, p1Name)) {
       return new GameResult(player2, true);
     }
 
-    if (hasName(player2, player1, p2Name)) {
+    if (doesNotHaveName(player2, player1, p2Name)) {
       return new GameResult(player1, true);
     }
 
-    // We know the player names must both be present because got passed the two hasName method calls
+    // We know the player names must both be present because got passed the two doesNotHaveName method calls
     if (p1Name.get().equals(p2Name.get())) {
       throw new IllegalArgumentException("Player names cannot be equal");
     }
@@ -106,7 +106,7 @@ public class Referee implements IReferee {
     return runGame(board, player1, player2);
   }
 
-  private boolean hasName(IPlayer player, IPlayer opponent, Optional<String> name) {
+  private boolean doesNotHaveName(IPlayer player, IPlayer opponent, Optional<String> name) {
     if (!name.isPresent()) {
       updateObservers(observer -> observer.updateError(player + " took too long to give name"));
       updateObservers(observer -> observer.updateWin(opponent));
