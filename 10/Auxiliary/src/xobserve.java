@@ -1,4 +1,4 @@
-import admin.observer.IObserver;
+import common.interfaces.IObserver;
 import admin.observer.StdOutObserver;
 import admin.referee.IReferee;
 import admin.referee.Referee;

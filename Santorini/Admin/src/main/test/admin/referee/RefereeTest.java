@@ -7,7 +7,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import admin.observer.IObserver;
+import common.interfaces.IObserver;
 import admin.observer.StdOutObserver;
 import common.data.Action;
 import common.data.PlaceWorkerAction;

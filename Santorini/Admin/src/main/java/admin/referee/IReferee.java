@@ -1,6 +1,6 @@
 package admin.referee;
 
-import admin.observer.IObserver;
+import common.interfaces.IObserver;
 import common.board.IBoard;
 import java.util.Optional;
 import common.interfaces.IPlayer;

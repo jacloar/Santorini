@@ -1,6 +1,6 @@
 package admin.referee;
 
-import admin.observer.IObserver;
+import common.interfaces.IObserver;
 import admin.result.GameResult;
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.TimeLimiter;

@@ -2,6 +2,7 @@ package admin.observer;
 
 import common.board.IReadonlyBoard;
 import common.data.Action;
+import common.interfaces.IObserver;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;

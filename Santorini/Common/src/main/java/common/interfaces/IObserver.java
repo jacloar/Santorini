@@ -1,9 +1,8 @@
-package admin.observer;
+package common.interfaces;
 
 import common.board.IReadonlyBoard;
 import common.data.Action;
 import java.util.List;
-import common.interfaces.IPlayer;
 
 /**
  * Interface for an observer that the referee will update with state changes.

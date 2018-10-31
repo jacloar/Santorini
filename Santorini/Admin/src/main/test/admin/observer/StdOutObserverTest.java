@@ -9,6 +9,7 @@ import common.board.ICell;
 import common.data.Action;
 import common.data.ActionType;
 import common.data.Direction;
+import common.interfaces.IObserver;
 import common.interfaces.IPlayer;
 import java.util.ArrayList;
 import java.util.List;
