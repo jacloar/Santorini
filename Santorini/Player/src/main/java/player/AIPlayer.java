@@ -43,12 +43,6 @@ public class AIPlayer implements IPlayer {
     }
 
     @Override
-    public int howFooAmI() {
-        // to be implemented later when we learn what "foo" means
-        return 0;
-    }
-
-    @Override
     public String toString() {
         return playerName;
     }

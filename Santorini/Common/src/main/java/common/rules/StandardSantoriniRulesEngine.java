@@ -23,12 +23,20 @@ public class StandardSantoriniRulesEngine implements IRulesEngine {
 
     /**
      * In "Standard Santorini", a worker can only be placed in a square where there are no
-     * workers already, so this checks that condition
+     * workers already, so this checks that condition.
+     *
+     * Also verifies that the workerId is unique.
      */
     public boolean isPlaceWorkerLegal(IReadonlyBoard board, PlaceWorkerAction action) {
         int actionRow = action.getRow();
         int actionColumn = action.getColumn();
         boolean cellExists = board.cellExists(actionRow, actionColumn);
+
+        String workerId = action.getWorkerId();
+        if (board.hasWorker(workerId)) {
+            return false;
+        }
+
         if (cellExists) {
             return !board.isOccupied(action.getRow(), action.getColumn());
         } else {

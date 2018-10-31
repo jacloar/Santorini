@@ -5,10 +5,10 @@ package common.data;
  */
 public class PlaceWorkerAction {
     // the worker id of the worker being placed
-    String workerId;
+    private String workerId;
     // coordinates of where the worker is being placed
-    int row;
-    int column;
+    private int row;
+    private int column;
 
     public PlaceWorkerAction(String workerId, int row, int column) {
         this.workerId = workerId;

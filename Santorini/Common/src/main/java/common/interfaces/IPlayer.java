@@ -38,9 +38,4 @@ public interface IPlayer {
      * @return Gets the name of this player
      */
     String getPlayerName();
-
-    /**
-     * Return how "foo" this player is
-     */
-    int howFooAmI();
 }
