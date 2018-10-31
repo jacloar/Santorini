@@ -8,18 +8,24 @@ import common.interfaces.IPlayer;
 public class GameResult {
 
   private IPlayer winner;
-  private boolean didOtherPlayerCheat;
+  private IPlayer loser;
+  private boolean didLoserCheat;
 
-  public GameResult(IPlayer winner, boolean didOtherPlayerCheat) {
+  public GameResult(IPlayer winner, IPlayer loser, boolean didLoserCheat) {
     this.winner = winner;
-    this.didOtherPlayerCheat = didOtherPlayerCheat;
+    this.loser = loser;
+    this.didLoserCheat = didLoserCheat;
   }
 
   public IPlayer getWinner() {
     return winner;
   }
 
-  public boolean didOtherPlayerCheat() {
-    return didOtherPlayerCheat;
+  public IPlayer getLoser() {
+    return loser;
+  }
+
+  public boolean didLoserCheat() {
+    return didLoserCheat;
   }
 }

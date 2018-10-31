@@ -1,26 +1,19 @@
 package admin.referee;
 
-import common.interfaces.IObserver;
 import admin.result.GameResult;
-import com.google.common.util.concurrent.SimpleTimeLimiter;
-import com.google.common.util.concurrent.TimeLimiter;
 import common.board.Board;
 import common.board.IBoard;
 import common.data.Action;
 import common.data.PlaceWorkerAction;
+import common.interfaces.IObserver;
+import common.interfaces.IPlayer;
 import common.rules.IRulesEngine;
 import common.rules.StandardSantoriniRulesEngine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import common.interfaces.IPlayer;
+import utils.Utils;
 
 /**
  * Facilitates running game(s) of Santorini between two players.
@@ -32,8 +25,6 @@ public class Referee implements IReferee {
 
   private final IRulesEngine rules;
   private final List<IObserver> observers;
-
-  private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   public Referee() {
     this(new StandardSantoriniRulesEngine(), new ArrayList<>());
@@ -58,14 +49,14 @@ public class Referee implements IReferee {
   }
 
   @Override
-  public IPlayer playGame(IPlayer player1, IPlayer player2) {
+  public GameResult playGame(IPlayer player1, IPlayer player2) {
     // Interprets the outcome of playGameGetResult
-    return playGameGetResult(new Board(), player1, player2).getWinner();
+    return playGameGetResult(new Board(), player1, player2);
   }
 
   @Override
-  public IPlayer playGame(IBoard board, IPlayer player1, IPlayer player2) {
-    return playGameGetResult(board, player1, player2).getWinner();
+  public GameResult playGame(IBoard board, IPlayer player1, IPlayer player2) {
+    return playGameGetResult(board, player1, player2);
   }
 
   /**
@@ -77,15 +68,15 @@ public class Referee implements IReferee {
    * @return a GameResult representing the outcome of the game
    */
   private GameResult playGameGetResult(IBoard board, IPlayer player1, IPlayer player2) {
-    Optional<String> p1Name = timedCall(IPlayer::getPlayerName, player1);
-    Optional<String> p2Name = timedCall(IPlayer::getPlayerName, player2);
+    Optional<String> p1Name = Utils.timedCall(player1, IPlayer::getPlayerName, TIMEOUT);
+    Optional<String> p2Name = Utils.timedCall(player2, IPlayer::getPlayerName, TIMEOUT);
 
     if (doesNotHaveName(player1, player2, p1Name)) {
-      return new GameResult(player2, true);
+      return new GameResult(player2, player1, true);
     }
 
     if (doesNotHaveName(player2, player1, p2Name)) {
-      return new GameResult(player1, true);
+      return new GameResult(player1, player2, true);
     }
 
     // We know the player names must both be present because got passed the two doesNotHaveName method calls
@@ -145,7 +136,10 @@ public class Referee implements IReferee {
    * @return true if valid placement, false otherwise
    */
   private boolean placeWorker(IBoard board, IPlayer player) {
-    Optional<PlaceWorkerAction> optionalPlacement = timedCall(p -> p.getPlaceWorker(board), player);
+    Optional<PlaceWorkerAction> optionalPlacement = Utils.timedCall(
+        player,
+        p -> p.getPlaceWorker(board),
+        TIMEOUT);
 
     // If the placement is not present, the player took too long and we consider that cheating
     if (!optionalPlacement.isPresent()) {
@@ -178,17 +172,17 @@ public class Referee implements IReferee {
     if (rules.didPlayerWin(board, active.getPlayerName())) {
       updateObservers(observer -> observer.update(board));
       updateObservers(observer -> observer.updateWin(active));
-      return new GameResult(active, false);
+      return new GameResult(active, waiting, false);
     }
 
     // Return result if active player lost
     if (rules.didPlayerLose(board, active.getPlayerName())) {
       updateObservers(observer -> observer.updateGiveUp(active));
       updateObservers(observer -> observer.updateWin(waiting));
-      return new GameResult(waiting, false);
+      return new GameResult(waiting, active, false);
     }
 
-    Optional<List<Action>> optionalTurn = timedCall(p -> p.getTurn(board), active);
+    Optional<List<Action>> optionalTurn = Utils.timedCall(active, p -> p.getTurn(board), TIMEOUT);
     if (!optionalTurn.isPresent()) {
       return activeCheated(active, waiting);
     }
@@ -206,7 +200,7 @@ public class Referee implements IReferee {
     if (rules.didPlayerWin(board, active.getPlayerName())) {
       updateObservers(observer -> observer.update(turn));
       updateObservers(observer -> observer.updateWin(active));
-      return new GameResult(active, false);
+      return new GameResult(active, waiting, false);
     }
 
     // Complete build component of turn
@@ -223,42 +217,24 @@ public class Referee implements IReferee {
    *
    * @param active active player
    * @param waiting waiting player
-   * @return GameResult where waiting won and didOtherPlayerCheat true
+   * @return GameResult where waiting won and didLoserCheat true
    */
   private GameResult activeCheated(IPlayer active, IPlayer waiting) {
     updateObservers(observer -> observer.updateError(active + " cheated"));
     updateObservers(observer -> observer.updateWin(waiting));
-    return new GameResult(waiting, true);
+    return new GameResult(waiting, active, true);
   }
 
   @Override
-  public Optional<IPlayer> bestOfN(IPlayer player1, IPlayer player2, int games) {
-    int countOne = 0;
-    int countTwo = 0;
+  public List<GameResult> bestOfN(IPlayer player1, IPlayer player2, int games) {
+    List<GameResult> results = new ArrayList<>();
 
     for (int i = 0; i < games; i += 1) {
       GameResult result = playGameGetResult(new Board(), player1, player2);
-      if (result.didOtherPlayerCheat()) {
-        return Optional.of(result.getWinner());
-      }
-
-      if (result.getWinner() == player1) {
-        countOne += 1;
-      } else if (result.getWinner() == player2) {
-        countTwo += 1;
-      }
+      results.add(result);
     }
 
-    // If player1 won more games, return player1
-    // If player2 won more games, return player2
-    // If the players won equal numbers of games, return empty
-    if (countOne > countTwo) {
-      return Optional.of(player1);
-    } else if (countTwo > countOne) {
-      return Optional.of(player2);
-    } else {
-      return Optional.empty();
-    }
+    return results;
   }
 
   /**
@@ -270,26 +246,5 @@ public class Referee implements IReferee {
     for (IObserver o : observers) {
       updateFunc.accept(o);
     }
-  }
-
-  /**
-   * Calls the given function on the given player, but makes sure that the call does not last
-   * longer than 5 seconds.
-   *
-   * @param func function to call on player
-   * @param player player to call function on
-   * @param <T> type the function returns
-   * @return the result of the function, or empty if timeout
-   */
-  private <T> Optional<T> timedCall(Function<IPlayer, T> func, IPlayer player) {
-    TimeLimiter limiter = SimpleTimeLimiter.create(executor);
-    T result;
-    try {
-      result = limiter.callWithTimeout(() -> func.apply(player), TIMEOUT, TimeUnit.SECONDS);
-    } catch (TimeoutException | InterruptedException | ExecutionException e) {
-      return Optional.empty();
-    }
-
-    return Optional.of(result);
   }
 }

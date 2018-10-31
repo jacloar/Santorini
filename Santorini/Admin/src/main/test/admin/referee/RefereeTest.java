@@ -7,19 +7,19 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import common.interfaces.IObserver;
 import admin.observer.StdOutObserver;
+import admin.result.GameResult;
 import common.data.Action;
 import common.data.PlaceWorkerAction;
+import common.interfaces.IObserver;
 import common.interfaces.IPlayer;
 import common.rules.IRulesEngine;
 import java.util.List;
-import java.util.Optional;
 import org.junit.Test;
 
 public class RefereeTest {
 
-  public IPlayer makePlayer(String name) {
+  private IPlayer makePlayer(String name) {
     IPlayer player = mock(IPlayer.class);
     when(player.getPlayerName()).thenReturn(name);
 
@@ -31,12 +31,12 @@ public class RefereeTest {
     return player;
   }
 
-  public IRulesEngine makeRules() {
+  private IRulesEngine makeRules() {
     IRulesEngine rules = mock(IRulesEngine.class);
     return rules;
   }
 
-  public Action makeAction() {
+  private Action makeAction() {
     Action action = mock(Action.class);
     return action;
   }
@@ -53,7 +53,7 @@ public class RefereeTest {
     when(rules.didPlayerWin(any(), eq("one"))).thenReturn(true);
 
     IReferee referee = new Referee(rules);
-    IPlayer winner = referee.playGame(player1, player2);
+    IPlayer winner = referee.playGame(player1, player2).getWinner();
 
     assertThat(winner).isEqualTo(player1);
     assertThat(winner).isNotEqualTo(player2);
@@ -80,7 +80,7 @@ public class RefereeTest {
     when(rules.isPlaceWorkerLegal(any(), eq(placeWorkerAction2))).thenReturn(true);
 
     IReferee referee = new Referee();
-    IPlayer winner = referee.playGame(player1, player2);
+    IPlayer winner = referee.playGame(player1, player2).getWinner();
 
     assertThat(winner).isEqualTo(player2);
     assertThat(winner).isNotEqualTo(player1);
@@ -99,7 +99,7 @@ public class RefereeTest {
     when(rules.isTurnLegal(any(), any(), eq("one"))).thenReturn(false);
 
     IReferee referee = new Referee(rules);
-    IPlayer winner = referee.playGame(player1, player2);
+    IPlayer winner = referee.playGame(player1, player2).getWinner();
 
     assertThat(winner).isEqualTo(player2);
     assertThat(winner).isNotEqualTo(player1);
@@ -114,11 +114,15 @@ public class RefereeTest {
     when(rules.didPlayerWin(any(), eq("one"))).thenReturn(true);
 
     IReferee referee = new Referee(rules);
-    Optional<IPlayer> winner = referee.bestOfN(player1, player2, 3);
+    List<GameResult> results = referee.bestOfN(player1, player2, 3);
 
-    assertThat(winner).isNotEmpty();
-    assertThat(winner.get()).isEqualTo(player1);
-    assertThat(winner.get()).isNotEqualTo(player2);
+    assertThat(results).hasSize(3);
+
+    for (GameResult result : results) {
+      assertThat(result.getWinner()).isEqualTo(player1);
+      assertThat(result.getLoser()).isEqualTo(player2);
+      assertThat(result.didLoserCheat()).isFalse();
+    }
   }
 
   @Test
@@ -134,7 +138,7 @@ public class RefereeTest {
     });
 
     IReferee referee = new Referee(rules);
-    IPlayer winner = referee.playGame(player1, player2);
+    IPlayer winner = referee.playGame(player1, player2).getWinner();
 
     assertThat(winner).isEqualTo(player2);
     assertThat(winner).isNotEqualTo(player1);
