@@ -40,7 +40,7 @@ public class Board implements IBoard {
 
     // Creates a worker at the given row and column
     @Override
-    public BuildingWorker createWorker(String workerId, int row, int column) {
+    public BuildingWorker createWorker(int row, int column) {
         int len = workerId.length();
         int workerNumber = Integer.parseInt(workerId.substring(len - 1));
         String playerName = workerId.substring(0, len - 1);

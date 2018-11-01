@@ -21,4 +21,11 @@ public class TestStandardSantoriniRulesEngine {
     assertThat(isValid).isTrue();
   }
 
+  @Test
+  public void testWorkerNameEndsInNum() {
+    IRulesEngine rules = new StandardSantoriniRulesEngine();
+
+
+  }
+
 }
