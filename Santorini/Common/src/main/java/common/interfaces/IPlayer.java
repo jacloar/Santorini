@@ -38,4 +38,11 @@ public interface IPlayer {
      * @return Gets the name of this player
      */
     String getPlayerName();
+
+    /**
+     * Updates the player name of this player with the given new name.
+     *
+     * @param newName new name for this player
+     */
+    void setPlayerName(String newName);
 }

@@ -232,6 +232,9 @@ public class Referee implements IReferee {
     for (int i = 0; i < games; i += 1) {
       GameResult result = playGameGetResult(new Board(), player1, player2);
       results.add(result);
+      if (result.didLoserCheat()) {
+        return results;
+      }
     }
 
     return results;

@@ -12,7 +12,7 @@ public class AIPlayer implements IPlayer {
 
     private static final String WORKER_ID = "%s%d";
 
-    private final String playerName;
+    private String playerName;
     private final Strategy strategy;
 
     public AIPlayer(Strategy strategy) {
@@ -40,6 +40,11 @@ public class AIPlayer implements IPlayer {
     @Override
     public String getPlayerName() {
         return playerName;
+    }
+
+    @Override
+    public void setPlayerName(String newName) {
+        this.playerName = newName;
     }
 
     @Override

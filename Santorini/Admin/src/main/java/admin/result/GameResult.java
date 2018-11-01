@@ -28,4 +28,12 @@ public class GameResult {
   public boolean didLoserCheat() {
     return didLoserCheat;
   }
+
+  public void disqualifyWinner() {
+    IPlayer cheater = winner;
+    winner = loser;
+    loser = cheater;
+
+    didLoserCheat = true;
+  }
 }
