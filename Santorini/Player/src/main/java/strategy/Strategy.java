@@ -28,7 +28,7 @@ public class Strategy {
      * @return the formulated placeworker action
      */
     public PlaceWorkerAction getPlaceWorker(String workerdId, IReadonlyBoard b) {
-        return placementStrategy.getPlaceWorker(workerdId, b);
+        return placementStrategy.getPlaceWorker(b);
     }
 
     /**

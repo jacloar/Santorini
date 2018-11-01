@@ -11,6 +11,8 @@ import java.util.List;
 
 public class BreakerPlayer implements IPlayer {
 
+  private String playerName;
+
   @Override
   public PlaceWorkerAction getPlaceWorker(IReadonlyBoard b) {
     return new PlaceWorkerAction("id", -1, 3);
@@ -27,11 +29,11 @@ public class BreakerPlayer implements IPlayer {
 
   @Override
   public String getPlayerName() {
-    return null;
+    return this.playerName;
   }
 
   @Override
   public void setPlayerName(String newName) {
-    // do nothing
+    this.playerName = newName;
   }
 }

@@ -15,7 +15,7 @@ public class InfinitePlayer implements IPlayer {
   @Override
   public PlaceWorkerAction getPlaceWorker(IReadonlyBoard b) {
     loop();
-    return new PlaceWorkerAction("", 0, 0);
+    return new PlaceWorkerAction(0, 0);
   }
 
   @Override

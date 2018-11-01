@@ -5,11 +5,11 @@ import common.data.PlaceWorkerAction;
 
 public class DiagonalPlacementStrategy implements IPlacementStrategy {
     @Override
-    public PlaceWorkerAction getPlaceWorker(String workerId, IReadonlyBoard b) {
+    public PlaceWorkerAction getPlaceWorker(IReadonlyBoard b) {
         for (int i = 0; i < b.getMaxRows(); i += 1) {
 
             if (!b.isOccupied(i, i)) {
-                return new PlaceWorkerAction(workerId, i, i);
+                return new PlaceWorkerAction(i, i);
             }
         }
 
