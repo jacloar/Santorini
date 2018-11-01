@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import utils.Utils;
 
 /**
- * Facilitates a tournament between a list of players. Each player will play every other
+ * Facilitates a tournament for a list of players. Each player will play every other
  * player in a round-robin style way.
  */
 public class TournamentManager implements ITournamentManager {
@@ -241,4 +241,18 @@ public class TournamentManager implements ITournamentManager {
   public List<String> getCheatersNames() {
     return cheaters.stream().map(p -> playerNames.get(p)).collect(Collectors.toList());
   }
+
+  /**
+   * Gets the name of the given player object
+   *
+   * @param player A player object
+   * @return the name of that player as a string. If the player or name doesn't exist return empty
+   */
+  Optional<String> getPlayerName(IPlayer player) {
+    if(playerNames.containsKey(player)) {
+      return Optional.of(playerNames.get(player));
+    }
+    return Optional.empty();
+  }
+
 }

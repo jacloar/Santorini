@@ -10,6 +10,7 @@ import java.util.List;
 
 import admin.result.GameResult;
 import player.AIPlayer;
+import player.BreakerPlayer;
 import strategy.CartesianDistancePlacementStrategy;
 import strategy.DiagonalPlacementStrategy;
 import strategy.IPlacementStrategy;
@@ -89,12 +90,49 @@ public class tournamentTest {
     playerList.add(p1);
     playerList.add(p2);
 
-
     manager.runTournament(playerList);
 
     List<GameResult> results = manager.getResults();
 
-    assertThat(results).isEqualTo("");
+    assertThat(results.size()).isEqualTo(3);
+    for(GameResult r : results) {
+      assertThat(manager.getPlayerName(r.getWinner()).get()).isEqualTo("two");
     }
+
+    assertThat(manager.getCheatersNames()).isEmpty();
+
+  }
+
+
+  @Test
+  public void testThereAreCheaters() {
+    String p1Name = "one";
+    String p2Name = "two";
+    IPlacementStrategy placementP1 = new DiagonalPlacementStrategy();
+    ITurnStrategy moveP1 = new StayAliveStrategy(p1Name, p2Name);
+
+    Strategy p1Strategy = new Strategy(placementP1, moveP1, 1);
+
+    IPlayer p1 = new AIPlayer(p1Name, p1Strategy);
+    IPlayer p2 = new BreakerPlayer();
+    p2.setPlayerName(p2Name);
+
+    List<IPlayer> playerList = new ArrayList<>();
+    playerList.add(p1);
+    playerList.add(p2);
+
+    manager.runTournament(playerList);
+//
+//    List<String> cheaterNames = new ArrayList<>();
+//    cheaterNames.add(p2Name);
+//
+//    List<GameResult> results = manager.getResults();
+
+//    assertThat(manager.getCheatersNames()).isNotEmpty();
+//    assertThat(manager.getCheatersNames()).isEqualTo(cheaterNames);
+
+  }
+
+
 
 }

@@ -149,7 +149,7 @@ public class Referee implements IReferee {
     PlaceWorkerAction placement = optionalPlacement.get();
 
     if (rules.isPlaceWorkerLegal(board, placement)) {
-      board.createWorker(placement.getWorkerId(), placement.getRow(), placement.getColumn());
+      board.createWorker(placement.getRow(), placement.getColumn());
       updateObservers(observer -> observer.update(board));
       return true;
     }
