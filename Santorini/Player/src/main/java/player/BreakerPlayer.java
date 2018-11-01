@@ -29,4 +29,9 @@ public class BreakerPlayer implements IPlayer {
   public String getPlayerName() {
     return null;
   }
+
+  @Override
+  public void setPlayerName(String newName) {
+    // do nothing
+  }
 }

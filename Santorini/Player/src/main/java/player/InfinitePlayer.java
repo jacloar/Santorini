@@ -30,6 +30,11 @@ public class InfinitePlayer implements IPlayer {
     return "";
   }
 
+  @Override
+  public void setPlayerName(String newName) {
+    loop();
+  }
+
   private void loop() {
     while (true) {
 
