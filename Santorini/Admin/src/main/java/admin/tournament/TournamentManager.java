@@ -1,5 +1,7 @@
 package admin.tournament;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import admin.referee.IReferee;
 import admin.referee.Referee;
 import admin.result.GameResult;
@@ -92,13 +94,20 @@ public class TournamentManager implements ITournamentManager {
    * This method goes through the GameResults of a tournament and disqualifies cheating players
    * this will call a helper method that will make sure that the results of all games the cheater
    * played before cheating result in a loss for the cheater and a win for the other player.
+   *
+   * If both players cheated at some point in the tournament. Remove their match from the results.
    */
   private void fixCheaters() {
+    List<GameResult> finalResults = new ArrayList<>();
     for (GameResult result : results) {
       if (cheaters.contains(result.getWinner())) {
         result.disqualifyWinner();
       }
+      if (!cheaters.contains(result.getWinner()) || !cheaters.contains(result.getLoser())) {
+        finalResults.add(result);
+      }
     }
+    results = finalResults;
   }
 
   /**
@@ -253,6 +262,65 @@ public class TournamentManager implements ITournamentManager {
       return Optional.of(playerNames.get(player));
     }
     return Optional.empty();
+  }
+
+  /**
+   * Reads in the config file that gives the information about the players and the observers
+   * participating in the tournament.
+   *
+   * @param config a JsonNode containing player and observer info
+   */
+  private void readConfig(JsonNode config) {
+    JsonNode players = config.get("players");
+    JsonNode observers = config.get("observers");
+    String kind;
+    String name;
+    String path;
+
+    for(int ii = 0; ii < players.size(); ii++) {
+      JsonNode player = players.get(ii);
+      kind = player.get(0).asText();
+      name = player.get(1).asText();
+      path = player.get(2).asText();
+
+      addNewPlayer(kind, name, path);
+    }
+
+  }
+
+  /**
+   * Creates a new player to compete in the tournament based on the input from the config file.
+   *
+   *
+   * @param kind the type of player
+   * @param name the player name
+   * @param path the path to the implementation of the player
+   */
+  private void addNewPlayer(String kind, String name, String path) {
+    switch (kind) {
+      case "good":
+        addGoodPlayer(name, path);
+        break;
+      case "breaker":
+        addBreakerPlayer(name, path);
+        break;
+      case "infinite":
+        addInfinitePlayer(name, path);
+        break;
+      default:
+        throw new IllegalArgumentException("invalid kind");
+    }
+  }
+
+  private void addInfinitePlayer(String name, String path) {
+  }
+
+  private void addBreakerPlayer(String name, String path) {
+    return;
+  }
+
+  private void addGoodPlayer(String name, String path) {
+    return;
   }
 
 }
