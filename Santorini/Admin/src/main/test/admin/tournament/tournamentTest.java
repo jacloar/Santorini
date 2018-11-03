@@ -11,7 +11,6 @@ import java.util.List;
 import admin.result.GameResult;
 import player.AIPlayer;
 import player.BreakerPlayer;
-import strategy.CartesianDistancePlacementStrategy;
 import strategy.DiagonalPlacementStrategy;
 import strategy.IPlacementStrategy;
 import strategy.ITurnStrategy;
@@ -122,14 +121,8 @@ public class tournamentTest {
     playerList.add(p2);
 
     manager.runTournament(playerList);
-//
-//    List<String> cheaterNames = new ArrayList<>();
-//    cheaterNames.add(p2Name);
-//
-//    List<GameResult> results = manager.getResults();
 
-//    assertThat(manager.getCheatersNames()).isNotEmpty();
-//    assertThat(manager.getCheatersNames()).isEqualTo(cheaterNames);
+    assertThat(manager.getCheatersNames().get(0)).isEqualTo("two");
 
   }
 
