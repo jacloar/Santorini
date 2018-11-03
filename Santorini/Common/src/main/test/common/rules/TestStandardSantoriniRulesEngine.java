@@ -14,7 +14,7 @@ public class TestStandardSantoriniRulesEngine {
     IRulesEngine rules = new StandardSantoriniRulesEngine();
 
     IBoard board = new Board();
-    PlaceWorkerAction placeWorkerAction = new PlaceWorkerAction("one1", 0, 0);
+    PlaceWorkerAction placeWorkerAction = new PlaceWorkerAction( 0, 0);
 
     boolean isValid = rules.isPlaceWorkerLegal(board, placeWorkerAction);
 

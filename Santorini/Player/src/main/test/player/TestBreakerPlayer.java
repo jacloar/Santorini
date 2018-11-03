@@ -24,7 +24,6 @@ public class TestBreakerPlayer {
   public void testGetPlaceWorker() {
     PlaceWorkerAction placement = breaker.getPlaceWorker(null);
 
-    assertThat(placement.getWorkerId()).isEqualTo("id");
     assertThat(placement.getRow()).isEqualTo(-1);
     assertThat(placement.getColumn()).isEqualTo(3);
   }

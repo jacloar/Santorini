@@ -32,7 +32,7 @@ public class BoardTest {
   public void testCreateWorker() {
     IBoard board = new Board();
 
-    BuildingWorker worker = board.createWorker("one1", 0, 0);
+    BuildingWorker worker = board.createWorker("one", 0, 0);
 
     assertThat(board.getPlayerWorkerMap()).isNotEmpty()
                                           .hasSize(1)
@@ -58,7 +58,7 @@ public class BoardTest {
   public void testCreateWorker2() {
     IBoard board = new Board();
 
-    BuildingWorker worker = board.createWorker("two2", 3, 2);
+    BuildingWorker worker = board.createWorker("two", 3, 2);
 
     assertThat(board.getPlayerWorkerMap()).isNotEmpty()
                                           .hasSize(1)
@@ -68,13 +68,13 @@ public class BoardTest {
                                                      .hasSize(1);
 
     assertThat(board.getPlayerWorkerMap().get("two").get(0).getPlayerName()).isEqualTo("two");
-    assertThat(board.getPlayerWorkerMap().get("two").get(0).getWorkerId()).isEqualTo("two2");
-    assertThat(board.getPlayerWorkerMap().get("two").get(0).getWorkerNumber()).isEqualTo(2);
+    assertThat(board.getPlayerWorkerMap().get("two").get(0).getWorkerId()).isEqualTo("two1");
+    assertThat(board.getPlayerWorkerMap().get("two").get(0).getWorkerNumber()).isEqualTo(1);
     assertThat(board.getPlayerWorkerMap().get("two").get(0).getColumn()).isEqualTo(2);
     assertThat(board.getPlayerWorkerMap().get("two").get(0).getRow()).isEqualTo(3);
 
     assertThat(worker.getPlayerName()).isEqualTo("two");
-    assertThat(worker.getWorkerNumber()).isEqualTo(2);
+    assertThat(worker.getWorkerNumber()).isEqualTo(1);
   }
 
   /**
@@ -84,8 +84,8 @@ public class BoardTest {
   public void testCreateMultipleWorkersDifferentPlayers() {
     IBoard board = new Board();
 
-    BuildingWorker worker1 = board.createWorker("one1", 0, 0);
-    BuildingWorker worker2 = board.createWorker("two2", 3, 2);
+    BuildingWorker worker1 = board.createWorker("one", 0, 0);
+    BuildingWorker worker2 = board.createWorker("two", 3, 2);
 
     assertThat(board.getPlayerWorkerMap()).isNotEmpty()
                                           .hasSize(2)
@@ -103,8 +103,8 @@ public class BoardTest {
     assertThat(board.getPlayerWorkerMap().get("two")).isNotEmpty()
                                                      .hasSize(1);
     assertThat(board.getPlayerWorkerMap().get("two").get(0).getPlayerName()).isEqualTo("two");
-    assertThat(board.getPlayerWorkerMap().get("two").get(0).getWorkerId()).isEqualTo("two2");
-    assertThat(board.getPlayerWorkerMap().get("two").get(0).getWorkerNumber()).isEqualTo(2);
+    assertThat(board.getPlayerWorkerMap().get("two").get(0).getWorkerId()).isEqualTo("two1");
+    assertThat(board.getPlayerWorkerMap().get("two").get(0).getWorkerNumber()).isEqualTo(1);
     assertThat(board.getPlayerWorkerMap().get("two").get(0).getColumn()).isEqualTo(2);
     assertThat(board.getPlayerWorkerMap().get("two").get(0).getRow()).isEqualTo(3);
     
@@ -114,7 +114,7 @@ public class BoardTest {
     assertThat(worker1.getWorkerNumber()).isEqualTo(1);
 
     assertThat(worker2.getPlayerName()).isEqualTo("two");
-    assertThat(worker2.getWorkerNumber()).isEqualTo(2);
+    assertThat(worker2.getWorkerNumber()).isEqualTo(1);
   }
 
   /**
@@ -124,8 +124,8 @@ public class BoardTest {
   public void testCreateMultipleWorkersSamePlayer() {
     IBoard board = new Board();
 
-    BuildingWorker worker1 = board.createWorker("one1", 0, 0);
-    BuildingWorker worker2 = board.createWorker("one2", 3, 2);
+    BuildingWorker worker1 = board.createWorker("one", 0, 0);
+    BuildingWorker worker2 = board.createWorker("one", 3, 2);
 
     assertThat(board.getPlayerWorkerMap()).isNotEmpty()
                                           .hasSize(1)
@@ -162,8 +162,8 @@ public class BoardTest {
   public void testMoveWorker() {
     IBoard board = new Board();
 
-    BuildingWorker worker1 = board.createWorker("one1", 0, 0);
-    BuildingWorker worker2 = board.createWorker("one2", 3, 2);
+    BuildingWorker worker1 = board.createWorker("one", 0, 0);
+    BuildingWorker worker2 = board.createWorker("one", 3, 2);
 
     assertThat(board.getPlayerWorkerMap()).isNotEmpty()
                                           .hasSize(1)
@@ -229,8 +229,8 @@ public class BoardTest {
   public void testBuild() {
     IBoard board = new Board();
 
-    BuildingWorker worker1 = board.createWorker("one1", 0, 0);
-    BuildingWorker worker2 = board.createWorker("one2", 3, 2);
+    BuildingWorker worker1 = board.createWorker("one", 0, 0);
+    BuildingWorker worker2 = board.createWorker("one", 3, 2);
 
     assertThat(board.getPlayerWorkerMap()).isNotEmpty()
                                           .hasSize(1)

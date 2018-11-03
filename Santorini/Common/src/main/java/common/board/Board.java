@@ -40,10 +40,8 @@ public class Board implements IBoard {
 
     // Creates a worker at the given row and column
     @Override
-    public BuildingWorker createWorker(int row, int column) {
-        int len = workerId.length();
-        int workerNumber = Integer.parseInt(workerId.substring(len - 1));
-        String playerName = workerId.substring(0, len - 1);
+    public BuildingWorker createWorker(String playerName, int row, int column) {
+        int workerNumber = this.getNumWorkers(playerName) + 1;
         int buildingHeight = this.cells[row][column].getHeight();
         BuildingWorker newWorker = new BuildingWorker(playerName, workerNumber, buildingHeight);
         this.cells[row][column] = newWorker;

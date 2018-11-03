@@ -17,8 +17,8 @@ public class TestDiagonalPlacementStrategy {
     IBoard board = new Board();
 
     for (int i = 0; i < 4; i += 1) {
-      PlaceWorkerAction action = strategy.getPlaceWorker("player" + i, board);
-      board.createWorker(action.getWorkerId(), action.getRow(), action.getColumn());
+      PlaceWorkerAction action = strategy.getPlaceWorker(board);
+      board.createWorker("playerName", action.getRow(), action.getColumn());
     }
   }
 }

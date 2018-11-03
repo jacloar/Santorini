@@ -15,7 +15,7 @@ public class BreakerPlayer implements IPlayer {
 
   @Override
   public PlaceWorkerAction getPlaceWorker(IReadonlyBoard b) {
-    return new PlaceWorkerAction("id", -1, 3);
+    return new PlaceWorkerAction( -1, 3);
   }
 
   @Override
