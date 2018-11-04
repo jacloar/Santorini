@@ -1,11 +1,15 @@
 package admin.tournament;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import admin.referee.IReferee;
 import admin.referee.Referee;
 import admin.result.GameResult;
+import com.fasterxml.jackson.databind.JsonNode;
 import common.interfaces.IPlayer;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +18,12 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import player.AIPlayer;
+import player.BreakerPlayer;
+import player.InfinitePlayer;
+import strategy.DiagonalPlacementStrategy;
+import strategy.StayAliveStrategy;
+import strategy.Strategy;
 import utils.Utils;
 
 /**
@@ -273,17 +283,14 @@ public class TournamentManager implements ITournamentManager {
   private void readConfig(JsonNode config) {
     JsonNode players = config.get("players");
     JsonNode observers = config.get("observers");
-    String kind;
-    String name;
-    String path;
 
-    for(int ii = 0; ii < players.size(); ii++) {
-      JsonNode player = players.get(ii);
-      kind = player.get(0).asText();
-      name = player.get(1).asText();
-      path = player.get(2).asText();
+    for(int i = 0; i < players.size(); i++) {
+      JsonNode player = players.get(i);
+      String kind = player.get(0).asText();
+      String name = player.get(1).asText();
+      String path = player.get(2).asText();
 
-      addNewPlayer(kind, name, path);
+      makeNewPlayer(kind, name, path);
     }
 
   }
@@ -296,31 +303,57 @@ public class TournamentManager implements ITournamentManager {
    * @param name the player name
    * @param path the path to the implementation of the player
    */
-  private void addNewPlayer(String kind, String name, String path) {
+  private IPlayer makeNewPlayer(String kind, String name, String path) {
     switch (kind) {
       case "good":
-        addGoodPlayer(name, path);
-        break;
+        return makeGoodPlayer(name, path);
       case "breaker":
-        addBreakerPlayer(name, path);
-        break;
+        return makeBreakerPlayer(name, path);
       case "infinite":
-        addInfinitePlayer(name, path);
-        break;
+        return makeInfinitePlayer(name, path);
       default:
         throw new IllegalArgumentException("invalid kind");
     }
   }
 
-  private void addInfinitePlayer(String name, String path) {
+  private InfinitePlayer makeInfinitePlayer(String name, String path) {
+    return null;
   }
 
-  private void addBreakerPlayer(String name, String path) {
-    return;
+  private BreakerPlayer makeBreakerPlayer(String name, String path) {
+    return null;
   }
 
-  private void addGoodPlayer(String name, String path) {
-    return;
+  AIPlayer makeGoodPlayer(String name, String path) {
+    File file = new File(path);
+    URL url;
+    try {
+      url = file.toURI().toURL();
+    } catch (MalformedURLException e) {
+      throw new IllegalArgumentException("Invalid path", e);
+    }
+
+    URL[] urls = new URL[]{url};
+
+    ClassLoader loader = new URLClassLoader(urls);
+
+    Strategy strategy = new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(), 1);
+
+    AIPlayer player;
+    try {
+      player = (AIPlayer) loader
+          .loadClass("player.AIPlayer")
+          .getConstructor(String.class, Strategy.class)
+          .newInstance(name, strategy);
+    } catch (ClassNotFoundException |
+        IllegalAccessException |
+        InstantiationException |
+        NoSuchMethodException |
+        InvocationTargetException e) {
+      throw new RuntimeException(e);
+    }
+
+    return player;
   }
 
 }

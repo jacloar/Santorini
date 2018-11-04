@@ -1,14 +1,14 @@
 package admin.tournament;
 
-import common.interfaces.IPlayer;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 import admin.result.GameResult;
+import common.interfaces.IPlayer;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
 import player.AIPlayer;
 import player.BreakerPlayer;
 import strategy.DiagonalPlacementStrategy;
@@ -17,9 +17,7 @@ import strategy.ITurnStrategy;
 import strategy.StayAliveStrategy;
 import strategy.Strategy;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-public class tournamentTest {
+public class TournamentManagerTest {
 
   private TournamentManager manager;
 
@@ -28,13 +26,16 @@ public class tournamentTest {
     manager = new TournamentManager();
   }
 
+  private Strategy mockStrategy() {
+    return mock(Strategy.class);
+  }
 
 
   @Test
   public void testGenerateUniqueNames() {
-    IPlayer p1 = new AIPlayer("one", null);
-    IPlayer p2 = new AIPlayer("two", null);
-    IPlayer p3 = new AIPlayer("three", null);
+    IPlayer p1 = new AIPlayer("one", mockStrategy());
+    IPlayer p2 = new AIPlayer("two", mockStrategy());
+    IPlayer p3 = new AIPlayer("three", mockStrategy());
 
     List<IPlayer> playerList = new ArrayList<>();
     playerList.add(p1);
@@ -51,9 +52,9 @@ public class tournamentTest {
 
   @Test
   public void testUpdatePlayerName() {
-    IPlayer p1 = new AIPlayer("one", null);
-    IPlayer p2 = new AIPlayer("two", null);
-    IPlayer p3 = new AIPlayer("three", null);
+    IPlayer p1 = new AIPlayer("one", mockStrategy());
+    IPlayer p2 = new AIPlayer("two", mockStrategy());
+    IPlayer p3 = new AIPlayer("three", mockStrategy());
 
     List<IPlayer> playerList = new ArrayList<>();
     playerList.add(p1);
@@ -76,8 +77,8 @@ public class tournamentTest {
     String p2Name = "two";
     IPlacementStrategy placementP1 = new DiagonalPlacementStrategy();
     IPlacementStrategy placementP2 = new DiagonalPlacementStrategy();
-    ITurnStrategy moveP1 = new StayAliveStrategy(p1Name, p2Name);
-    ITurnStrategy moveP2 = new StayAliveStrategy(p2Name, p1Name);
+    ITurnStrategy moveP1 = new StayAliveStrategy();
+    ITurnStrategy moveP2 = new StayAliveStrategy();
 
     Strategy p1Strategy = new Strategy(placementP1, moveP1, 1);
     Strategy p2Strategy = new Strategy(placementP2, moveP2, 1);
@@ -108,7 +109,7 @@ public class tournamentTest {
     String p1Name = "one";
     String p2Name = "two";
     IPlacementStrategy placementP1 = new DiagonalPlacementStrategy();
-    ITurnStrategy moveP1 = new StayAliveStrategy(p1Name, p2Name);
+    ITurnStrategy moveP1 = new StayAliveStrategy();
 
     Strategy p1Strategy = new Strategy(placementP1, moveP1, 1);
 
@@ -127,5 +128,12 @@ public class tournamentTest {
   }
 
 
+  @Test
+  public void testMakeGoodPlayer() {
+    String playerName = "player";
+    AIPlayer player = manager.makeGoodPlayer(playerName, "file://Santorini/Player/src/main/java/player/AIPlayer.java");
+
+    assertThat(player.getPlayerName()).isEqualTo(playerName);
+  }
 
 }
