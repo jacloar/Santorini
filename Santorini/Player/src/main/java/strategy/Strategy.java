@@ -3,11 +3,7 @@ package strategy;
 import common.board.IReadonlyBoard;
 import common.data.Action;
 import common.data.PlaceWorkerAction;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Strategy {
 
@@ -23,11 +19,10 @@ public class Strategy {
 
     /**
      * Gets the placement of the intended worker
-     * @param workerdId The designated worker to try and place
      * @param b the given board to work off of
      * @return the formulated placeworker action
      */
-    public PlaceWorkerAction getPlaceWorker(String workerdId, IReadonlyBoard b) {
+    public PlaceWorkerAction getPlaceWorker(IReadonlyBoard b) {
         return placementStrategy.getPlaceWorker(b);
     }
 
@@ -53,5 +48,13 @@ public class Strategy {
         }
 
         return bestMove;
+    }
+
+    public void setCurrentPlayer(String currentPlayer) {
+        this.turnStrategy.setPlayer(currentPlayer);
+    }
+
+    public void setOpponent(String opponent) {
+        this.turnStrategy.setOpponent(opponent);
     }
 }

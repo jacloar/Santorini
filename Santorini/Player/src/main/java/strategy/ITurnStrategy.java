@@ -22,4 +22,8 @@ public interface ITurnStrategy {
      * @return the integer score of the turn
      */
     int score(List<Action> potentialTurn, IReadonlyBoard board, int depth);
+
+    void setPlayer(String playerName);
+
+    void setOpponent(String opponentName);
 }

@@ -35,6 +35,11 @@ public class InfinitePlayer implements IPlayer {
     loop();
   }
 
+  @Override
+  public void setOpponentName(String opponentName) {
+    loop();
+  }
+
   private void loop() {
     while (true) {
 

@@ -84,6 +84,9 @@ public class Referee implements IReferee {
       throw new IllegalArgumentException("Player names cannot be equal");
     }
 
+    setOpponentName(player1, p2Name.get());
+    setOpponentName(player2, p1Name.get());
+
     // Sets up the game. Returns the winner if the other player tries to cheat.
     Optional<IPlayer> maybeWinner = setupGame(board, player1, player2);
     if (maybeWinner.isPresent()) {
@@ -95,6 +98,13 @@ public class Referee implements IReferee {
       return activeCheated(cheater, winner);
     }
     return runGame(board, player1, player2);
+  }
+
+  private void setOpponentName(IPlayer player, String opponentName) {
+    Utils.timedCall(player, p -> {
+      p.setOpponentName(opponentName);
+      return true;
+    }, TIMEOUT);
   }
 
   private boolean doesNotHaveName(IPlayer player, IPlayer opponent, Optional<String> name) {

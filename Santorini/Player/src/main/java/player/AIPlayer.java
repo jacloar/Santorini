@@ -22,14 +22,12 @@ public class AIPlayer implements IPlayer {
     public AIPlayer(String name, Strategy strategy) {
         this.playerName = name;
         this.strategy = strategy;
+        this.strategy.setCurrentPlayer(name);
     }
 
     @Override
     public PlaceWorkerAction getPlaceWorker(IReadonlyBoard b) {
-        int nextWorkerNumber = b.getNumWorkers(playerName) + 1;
-        String workerToPlace = String.format(WORKER_ID, playerName, nextWorkerNumber);
-
-        return strategy.getPlaceWorker(workerToPlace, b);
+        return strategy.getPlaceWorker(b);
     }
 
     @Override
@@ -45,10 +43,15 @@ public class AIPlayer implements IPlayer {
     @Override
     public void setPlayerName(String newName) {
         this.playerName = newName;
+        strategy.setCurrentPlayer(newName);
     }
 
     @Override
     public String toString() {
         return playerName;
+    }
+
+    public void setOpponentName(String opponentName) {
+        strategy.setOpponent(opponentName);
     }
 }

@@ -17,15 +17,21 @@ import java.util.stream.Collectors;
  */
 public class StayAliveStrategy implements ITurnStrategy {
 
-    private final String currentPlayer;
-    private final String opponent;
+    private String currentPlayer;
+    private String opponent;
     private final IRulesEngine rulesEngine;
     private final List<Direction> DIRECTIONS = Direction.getAllDirections();
 
-    public StayAliveStrategy(String currentPlayer, String opponent) {
-        this.currentPlayer = currentPlayer;
-        this.opponent = opponent;
+    public StayAliveStrategy() {
         this.rulesEngine = new StandardSantoriniRulesEngine();
+    }
+
+    public void setPlayer(String playerName) {
+        this.currentPlayer = playerName;
+    }
+
+    public void setOpponent(String opponentName) {
+        this.opponent = opponentName;
     }
 
     /**

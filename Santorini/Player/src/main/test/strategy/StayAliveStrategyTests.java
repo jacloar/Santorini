@@ -1,15 +1,18 @@
 package strategy;
 
-import common.board.*;
+import static org.junit.Assert.assertEquals;
+
+import common.board.Board;
+import common.board.BuildingWorker;
+import common.board.Height;
+import common.board.IBoard;
+import common.board.ICell;
 import common.data.Action;
 import common.data.ActionType;
 import common.data.Direction;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class StayAliveStrategyTests {
 
@@ -20,7 +23,7 @@ public class StayAliveStrategyTests {
 
         IBoard board = new Board(formulateSimpleBoard());
 
-        ITurnStrategy turnStrategy = new StayAliveStrategy(playerToTest, opponent);
+        ITurnStrategy turnStrategy = new StayAliveStrategy();
         List<Action> turnToTake = new ArrayList<>();
 
         Action move = new Action(ActionType.MOVE, "one2", new Direction("WEST", "SOUTH"));
@@ -60,7 +63,9 @@ public class StayAliveStrategyTests {
 
         IBoard board = new Board(formulateAdvancedBoard());
 
-        ITurnStrategy turnStrategy = new StayAliveStrategy(playerToTest, opponent);
+        ITurnStrategy turnStrategy = new StayAliveStrategy();
+        turnStrategy.setPlayer(playerToTest);
+        turnStrategy.setOpponent(opponent);
         List<Action> turnToTake = new ArrayList<>();
 
         Action move = new Action(ActionType.MOVE, "one1", new Direction("EAST", "SOUTH"));
@@ -101,7 +106,9 @@ public class StayAliveStrategyTests {
 
         IBoard board = new Board(formulateAdvancedBoard());
 
-        ITurnStrategy turnStrategy = new StayAliveStrategy(playerToTest, opponent);
+        ITurnStrategy turnStrategy = new StayAliveStrategy();
+        turnStrategy.setPlayer(playerToTest);
+        turnStrategy.setOpponent(opponent);
         List<Action> turnToTake = new ArrayList<>();
 
         Action move = new Action(ActionType.MOVE, "one1", new Direction("PUT", "SOUTH"));

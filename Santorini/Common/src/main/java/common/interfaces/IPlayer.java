@@ -45,4 +45,11 @@ public interface IPlayer {
      * @param newName new name for this player
      */
     void setPlayerName(String newName);
+
+    /**
+     * Tells the player the name of its current opponent.
+     *
+     * @param opponentName the name of this player's opponent
+     */
+    void setOpponentName(String opponentName);
 }

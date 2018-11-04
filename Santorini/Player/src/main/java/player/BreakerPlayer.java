@@ -36,4 +36,9 @@ public class BreakerPlayer implements IPlayer {
   public void setPlayerName(String newName) {
     this.playerName = newName;
   }
+
+  @Override
+  public void setOpponentName(String opponentName) {
+    // do nothing
+  }
 }

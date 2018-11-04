@@ -22,7 +22,7 @@ public class TestAIPlayer {
       app.append("call to getTurn\n");
       return null;
     });
-    when(strategy.getPlaceWorker(anyString(), any())).then(invocation -> {
+    when(strategy.getPlaceWorker(any())).then(invocation -> {
       app.append("call to getPlaceWorker\n");
       return null;
     });
