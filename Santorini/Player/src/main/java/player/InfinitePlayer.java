@@ -51,4 +51,9 @@ public class InfinitePlayer implements IPlayer {
 
     }
   }
+
+  @Override
+  public String toString() {
+    return playerName;
+  }
 }

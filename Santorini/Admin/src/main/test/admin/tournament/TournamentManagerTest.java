@@ -3,7 +3,9 @@ package admin.tournament;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import admin.observer.StdOutObserver;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import observer.StdOutObserver;
 import admin.result.GameResult;
 import common.interfaces.IObserver;
 import common.interfaces.IPlayer;
@@ -167,7 +169,7 @@ public class TournamentManagerTest {
   @Test
   public void testMakeObserver() {
     String observerName = "observer";
-    IObserver observer = manager.makeObserver(observerName, "file://Santorini/Admin/src/main/java/admin/observer/StdOutObserver.java");
+    IObserver observer = manager.makeObserver(observerName, "file://Santorini/Observer/src/main/java/observer/StdOutObserver.java");
 
     assertThat(observer).isInstanceOf(StdOutObserver.class);
   }
@@ -208,6 +210,36 @@ public class TournamentManagerTest {
     Optional<IPlayer> maybeWinner = manager.readInput();
 
     assertThat(maybeWinner).isEmpty();
+  }
+
+  @Test
+  public void testReadInputWithObserver() {
+    StringReader input = new StringReader("{"
+        + "\"players\" : [[\"good\", \"one\", \"file://Santorini/Player/src/main/java/player/AIPlayer.java\"],"
+        + "[\"breaker\", \"two\", \"file://Santorini/Player/src/main/java/player/BreakerPlayer.java\"]],"
+        + "\"observers\" : [[\"observer\", \"file://Santorini/Observer/src/main/java/observer/StdOutObserver.java\"]]}");
+    manager = new TournamentManager(input);
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(out));
+
+    Optional<IPlayer> maybeWinner = manager.readInput();
+
+    String output = out.toString();
+
+    assertThat(manager.getCheatersNames()).hasSize(1)
+                                          .containsExactly("two");
+
+    assertThat(maybeWinner).isPresent();
+    assertThat(maybeWinner.get().getPlayerName()).isEqualTo("one");
+
+    assertThat(output).isEqualToIgnoringWhitespace("[[\"0one1\",0,0,0,0,0],"
+        + "[0,0,0,0,0,0],"
+        + "[0,0,0,0,0,0],"
+        + "[0,0,0,0,0,0],"
+        + "[0,0,0,0,0,0],"
+        + "[0,0,0,0,0,0]]"
+        + "\"two cheated\""
+        + "\"one won the game!\"");
   }
 
 }

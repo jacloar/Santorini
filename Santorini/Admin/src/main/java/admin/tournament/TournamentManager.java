@@ -321,7 +321,7 @@ public class TournamentManager implements ITournamentManager {
       JsonNode observerNode = observersNode.get(i);
 
       String name = observerNode.get(0).asText();
-      String path = observerNode.get(0).asText();
+      String path = observerNode.get(1).asText();
 
       IObserver observer = makeObserver(name, path);
       observers.add(observer);
@@ -347,7 +347,7 @@ public class TournamentManager implements ITournamentManager {
     ClassLoader loader = getClassLoader(path);
 
     try {
-      return (IObserver) loader.loadClass("admin.observer.StdOutObserver")
+      return (IObserver) loader.loadClass(classNameFromPath(path))
                                .getConstructor()
                                .newInstance();
     } catch (ClassNotFoundException |
@@ -388,9 +388,7 @@ public class TournamentManager implements ITournamentManager {
    * @return IPlayer specified
    */
   IPlayer makeInfinitePlayer(String name, String path) {
-    ClassLoader loader = getClassLoader(path);
-    String className = "player.InfinitePlayer";
-    return makePlayer(loader, className, name);
+    return makePlayer(name, path);
   }
 
   /**
@@ -401,9 +399,7 @@ public class TournamentManager implements ITournamentManager {
    * @return IPlayer specified
    */
   IPlayer makeBreakerPlayer(String name, String path) {
-    ClassLoader loader = getClassLoader(path);
-    String className = "player.BreakerPlayer";
-    return makePlayer(loader, className, name);
+    return makePlayer(name, path);
   }
 
   /**
@@ -421,7 +417,7 @@ public class TournamentManager implements ITournamentManager {
     AIPlayer player;
     try {
       player = (AIPlayer) loader
-          .loadClass("player.AIPlayer")
+          .loadClass(classNameFromPath(path))
           .getConstructor(String.class, Strategy.class)
           .newInstance(name, strategy);
     } catch (ClassNotFoundException |
@@ -456,20 +452,22 @@ public class TournamentManager implements ITournamentManager {
   }
 
   /**
-   * Makes a new player using the given loader, classname, and playerName
+   * Makes a new player using the given name and path.
    *
-   * @param loader ClassLoader to use
-   * @param className name of the class to load
-   * @param playerName name of the player
-   * @return
+   * @param name name of the new player
+   * @param path path to the class
+   * @return player specified by name and path
    */
-  private IPlayer makePlayer(ClassLoader loader, String className, String playerName) {
+  private IPlayer makePlayer(String name, String path) {
+    ClassLoader loader = getClassLoader(path);
+    String className = classNameFromPath(path);
+
     IPlayer player;
     try {
       player = (IPlayer) loader
           .loadClass(className)
           .getConstructor(String.class)
-          .newInstance(playerName);
+          .newInstance(name);
     } catch (ClassNotFoundException |
         IllegalAccessException |
         InstantiationException |
@@ -478,6 +476,13 @@ public class TournamentManager implements ITournamentManager {
       throw new RuntimeException(e);
     }
     return player;
+  }
+
+  private String classNameFromPath(String path) {
+    String[] split = path.split("java");
+    String className = split[split.length - 1].replace("/", ".");
+    className = className.substring(1, className.length() - 1);
+    return className;
   }
 
   public Optional<IPlayer> readInput() {
