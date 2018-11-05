@@ -12,6 +12,12 @@ import java.util.List;
  */
 public class InfinitePlayer implements IPlayer {
 
+  private String playerName;
+
+  public InfinitePlayer(String name) {
+    this.playerName = name;
+  }
+
   @Override
   public PlaceWorkerAction getPlaceWorker(IReadonlyBoard b) {
     loop();
@@ -27,7 +33,7 @@ public class InfinitePlayer implements IPlayer {
   @Override
   public String getPlayerName() {
     loop();
-    return "";
+    return playerName;
   }
 
   @Override

@@ -17,7 +17,7 @@ public class TestInfinitePlayer {
 
   @Before
   public void init() {
-    inf = new InfinitePlayer();
+    inf = new InfinitePlayer("player");
   }
 
   @Test

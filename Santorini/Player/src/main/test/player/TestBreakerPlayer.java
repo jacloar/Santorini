@@ -17,7 +17,7 @@ public class TestBreakerPlayer {
 
   @Before
   public void init() {
-    breaker = new BreakerPlayer();
+    breaker = new BreakerPlayer("player");
   }
 
   @Test

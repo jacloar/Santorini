@@ -114,7 +114,7 @@ public class TournamentManagerTest {
     Strategy p1Strategy = new Strategy(placementP1, moveP1, 1);
 
     IPlayer p1 = new AIPlayer(p1Name, p1Strategy);
-    IPlayer p2 = new BreakerPlayer();
+    IPlayer p2 = new BreakerPlayer(p2Name);
     p2.setPlayerName(p2Name);
 
     List<IPlayer> playerList = new ArrayList<>();
@@ -131,7 +131,7 @@ public class TournamentManagerTest {
   @Test
   public void testMakeGoodPlayer() {
     String playerName = "player";
-    AIPlayer player = manager.makeGoodPlayer(playerName, "file://Santorini/Player/src/main/java/player/AIPlayer.java");
+    IPlayer player = manager.makeGoodPlayer(playerName, "file://Santorini/Player/src/main/java/player/AIPlayer.java");
 
     assertThat(player.getPlayerName()).isEqualTo(playerName);
   }

@@ -19,8 +19,6 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import player.AIPlayer;
-import player.BreakerPlayer;
-import player.InfinitePlayer;
 import strategy.DiagonalPlacementStrategy;
 import strategy.StayAliveStrategy;
 import strategy.Strategy;
@@ -285,12 +283,18 @@ public class TournamentManager implements ITournamentManager {
     JsonNode observers = config.get("observers");
 
     for(int i = 0; i < players.size(); i++) {
-      JsonNode player = players.get(i);
-      String kind = player.get(0).asText();
-      String name = player.get(1).asText();
-      String path = player.get(2).asText();
+      JsonNode playerNode = players.get(i);
+      String kind = playerNode.get(0).asText();
+      String name = playerNode.get(1).asText();
+      String path = playerNode.get(2).asText();
 
       makeNewPlayer(kind, name, path);
+    }
+
+    for (int i = 0; i < observers.size(); i += 1) {
+      JsonNode observerNode = observers.get(i);
+
+
     }
 
   }
@@ -316,26 +320,20 @@ public class TournamentManager implements ITournamentManager {
     }
   }
 
-  private InfinitePlayer makeInfinitePlayer(String name, String path) {
-    return null;
+  private IPlayer makeInfinitePlayer(String name, String path) {
+    ClassLoader loader = getClassLoader(path);
+    String className = "player.InfinitePlayer";
+    return makePlayer(loader, className, name);
   }
 
-  private BreakerPlayer makeBreakerPlayer(String name, String path) {
-    return null;
+  private IPlayer makeBreakerPlayer(String name, String path) {
+    ClassLoader loader = getClassLoader(path);
+    String className = "player.BreakerPlayer";
+    return makePlayer(loader, className, name);
   }
 
-  AIPlayer makeGoodPlayer(String name, String path) {
-    File file = new File(path);
-    URL url;
-    try {
-      url = file.toURI().toURL();
-    } catch (MalformedURLException e) {
-      throw new IllegalArgumentException("Invalid path", e);
-    }
-
-    URL[] urls = new URL[]{url};
-
-    ClassLoader loader = new URLClassLoader(urls);
+  IPlayer makeGoodPlayer(String name, String path) {
+    ClassLoader loader = getClassLoader(path);
 
     Strategy strategy = new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(), 1);
 
@@ -353,6 +351,37 @@ public class TournamentManager implements ITournamentManager {
       throw new RuntimeException(e);
     }
 
+    return player;
+  }
+
+  private ClassLoader getClassLoader(String path) {
+    File file = new File(path);
+    URL url;
+    try {
+      url = file.toURI().toURL();
+    } catch (MalformedURLException e) {
+      throw new IllegalArgumentException("Invalid path", e);
+    }
+
+    URL[] urls = new URL[]{url};
+
+    return new URLClassLoader(urls);
+  }
+
+  private IPlayer makePlayer(ClassLoader loader, String className, String name) {
+    IPlayer player;
+    try {
+      player = (IPlayer) loader
+          .loadClass(className)
+          .getConstructor(String.class)
+          .newInstance(name);
+    } catch (ClassNotFoundException |
+        IllegalAccessException |
+        InstantiationException |
+        NoSuchMethodException |
+        InvocationTargetException e) {
+      throw new RuntimeException(e);
+    }
     return player;
   }
 

@@ -13,6 +13,10 @@ public class BreakerPlayer implements IPlayer {
 
   private String playerName;
 
+  public BreakerPlayer(String name) {
+    this.playerName = name;
+  }
+
   @Override
   public PlaceWorkerAction getPlaceWorker(IReadonlyBoard b) {
     return new PlaceWorkerAction( -1, 3);
