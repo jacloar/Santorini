@@ -3,10 +3,17 @@ package admin.tournament;
 import admin.referee.IReferee;
 import admin.referee.Referee;
 import admin.result.GameResult;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import common.interfaces.IObserver;
 import common.interfaces.IPlayer;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -41,19 +48,33 @@ public class TournamentManager implements ITournamentManager {
 
   private IReferee ref;
 
+  private Reader read;
+  private ObjectMapper mapper = new ObjectMapper();
+
   /**
    * Constructor for a tournamentManager. Takes no parameters and initializes
    * playerNames, results, cheaters and makes a new referee for this tournament.
    */
   public TournamentManager() {
+    this(new BufferedReader(new InputStreamReader(System.in)));
+  }
+
+  public TournamentManager(Reader read) {
     playerNames = new HashMap<>();
     results = new ArrayList<>();
     cheaters = new ArrayList<>();
     ref = new Referee();
+
+    this.read = read;
   }
 
   @Override
   public Optional<IPlayer> runTournament(List<IPlayer> players) {
+    // If tournament has fewer than 2 players, tournament cannot run and there is no winner
+    if (players.size() < 2) {
+      return Optional.empty();
+    }
+
     ensureUniqueNames(players);
 
     for (int i = 0; i < players.size(); i += 1) {
@@ -279,7 +300,7 @@ public class TournamentManager implements ITournamentManager {
    *
    * @param config a JsonNode containing player and observer info
    */
-  private void readConfig(JsonNode config) {
+  private Optional<IPlayer> readConfig(JsonNode config) {
     JsonNode playersNode = config.get("players");
     JsonNode observersNode = config.get("observers");
 
@@ -311,7 +332,7 @@ public class TournamentManager implements ITournamentManager {
       ref.addObserver(o);
     }
 
-    this.runTournament(players);
+    return this.runTournament(players);
 
   }
 
@@ -457,6 +478,19 @@ public class TournamentManager implements ITournamentManager {
       throw new RuntimeException(e);
     }
     return player;
+  }
+
+  public Optional<IPlayer> readInput() {
+    JsonParser parser;
+    JsonNode config;
+    try {
+      parser = new JsonFactory().createParser(read);
+      config = mapper.readTree(parser);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    return readConfig(config);
   }
 
 }

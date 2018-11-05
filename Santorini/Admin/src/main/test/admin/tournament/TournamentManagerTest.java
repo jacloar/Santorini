@@ -7,8 +7,10 @@ import admin.observer.StdOutObserver;
 import admin.result.GameResult;
 import common.interfaces.IObserver;
 import common.interfaces.IPlayer;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import player.AIPlayer;
@@ -168,6 +170,44 @@ public class TournamentManagerTest {
     IObserver observer = manager.makeObserver(observerName, "file://Santorini/Admin/src/main/java/admin/observer/StdOutObserver.java");
 
     assertThat(observer).isInstanceOf(StdOutObserver.class);
+  }
+
+  @Test
+  public void testReadInputNoObserver() {
+    StringReader input = new StringReader("{"
+        + "\"players\" : [[\"good\", \"one\", \"file://Santorini/Player/src/main/java/player/AIPlayer.java\"],"
+        + "[\"breaker\", \"two\", \"file://Santorini/Player/src/main/java/player/BreakerPlayer.java\"]],"
+        + "\"observers\" : []}");
+    manager = new TournamentManager(input);
+    Optional<IPlayer> maybeWinner = manager.readInput();
+
+    assertThat(manager.getCheatersNames()).hasSize(1)
+                                          .containsExactly("two");
+
+    assertThat(maybeWinner).isPresent();
+    assertThat(maybeWinner.get().getPlayerName()).isEqualTo("one");
+  }
+
+  @Test
+  public void testTournamentTooSmall() {
+    IPlayer player = new AIPlayer("player", mockStrategy());
+    List<IPlayer> players = new ArrayList<>();
+    players.add(player);
+
+    Optional<IPlayer> maybeWinner = manager.runTournament(players);
+
+    assertThat(maybeWinner).isEmpty();
+  }
+
+  @Test
+  public void testReadInputTournamentTooSmall() {
+    StringReader input = new StringReader("{"
+        + "\"players\" : [[\"good\", \"one\", \"file://Santorini/Player/src/main/java/player/AIPlayer.java\"]],"
+        + "\"observers\" : []}");
+    manager = new TournamentManager(input);
+    Optional<IPlayer> maybeWinner = manager.readInput();
+
+    assertThat(maybeWinner).isEmpty();
   }
 
 }

@@ -31,25 +31,7 @@ public interface ITournamentManager {
   Optional<IPlayer> runTournament(List<IPlayer> players);
 
 
-
-  // INFORMATION FOR IMPLEMENTATION:
-
-  // Each time runTournament is called it will create a new referee.
-  // the new referee will be used to obtain the results of each individual
-  // matchup.
-
-  // Tournaments will run one game at a time.
-
-  // We will keep track of wins using a map of Player -> Wins
-
-  // A crashing/cheating player, once discovered, will not play any more games in the
-  // tournament and their wins will be given to their opponent
-
-  // Each tournament will have a list of GameResults (with added field for loser). Using
-  // this list a tournament manager can manage retroactively dealing with cheaters.
-
-
-
+  Optional<IPlayer> readInput();
 
 }
 
