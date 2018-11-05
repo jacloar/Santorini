@@ -7,7 +7,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import admin.observer.StdOutObserver;
+import observer.StdOutObserver;
 import admin.result.GameResult;
 import common.data.Action;
 import common.data.PlaceWorkerAction;

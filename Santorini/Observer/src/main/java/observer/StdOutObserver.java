@@ -1,4 +1,4 @@
-package admin.observer;
+package observer;
 
 import common.board.IReadonlyBoard;
 import common.data.Action;

@@ -13,6 +13,8 @@
       <sourceFolder url="file://$MODULE_DIR$/Test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/Auxiliary/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Lib/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Observer/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Observer/src/main/test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/Auxiliary" />
       <excludeFolder url="file://$MODULE_DIR$/Auxiliary/src/main/java" />
       <excludeFolder url="file://$MODULE_DIR$/Design" />

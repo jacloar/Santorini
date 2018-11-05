@@ -1,5 +1,5 @@
 import common.interfaces.IObserver;
-import admin.observer.StdOutObserver;
+import observer.StdOutObserver;
 import admin.referee.IReferee;
 import admin.referee.Referee;
 import common.interfaces.IPlayer;
