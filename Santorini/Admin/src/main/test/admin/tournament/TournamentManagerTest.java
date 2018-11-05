@@ -3,7 +3,9 @@ package admin.tournament;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
+import admin.observer.StdOutObserver;
 import admin.result.GameResult;
+import common.interfaces.IObserver;
 import common.interfaces.IPlayer;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import player.AIPlayer;
 import player.BreakerPlayer;
+import player.InfinitePlayer;
 import strategy.DiagonalPlacementStrategy;
 import strategy.IPlacementStrategy;
 import strategy.ITurnStrategy;
@@ -133,7 +136,38 @@ public class TournamentManagerTest {
     String playerName = "player";
     IPlayer player = manager.makeGoodPlayer(playerName, "file://Santorini/Player/src/main/java/player/AIPlayer.java");
 
+    assertThat(player).isInstanceOf(AIPlayer.class)
+                      .isNotInstanceOf(BreakerPlayer.class)
+                      .isNotInstanceOf(InfinitePlayer.class);
     assertThat(player.getPlayerName()).isEqualTo(playerName);
+  }
+
+  @Test
+  public void testMakeBreakerPlayer() {
+    String playerName = "player";
+    IPlayer player = manager.makeBreakerPlayer(playerName, "file://Santorini/Player/src/main/java/player/BreakerPlayer.java");
+
+    assertThat(player).isInstanceOf(BreakerPlayer.class)
+                      .isNotInstanceOf(AIPlayer.class)
+                      .isNotInstanceOf(InfinitePlayer.class);
+  }
+
+  @Test
+  public void testMakeInfinitePlayer() {
+    String playerName = "player";
+    IPlayer player = manager.makeInfinitePlayer(playerName, "file://Santorini/Player/src/main/java/player/InfinitePlayer.java");
+
+    assertThat(player).isInstanceOf(InfinitePlayer.class)
+                      .isNotInstanceOf(AIPlayer.class)
+                      .isNotInstanceOf(BreakerPlayer.class);
+  }
+
+  @Test
+  public void testMakeObserver() {
+    String observerName = "observer";
+    IObserver observer = manager.makeObserver(observerName, "file://Santorini/Admin/src/main/java/admin/observer/StdOutObserver.java");
+
+    assertThat(observer).isInstanceOf(StdOutObserver.class);
   }
 
 }

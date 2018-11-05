@@ -4,6 +4,7 @@ import admin.referee.IReferee;
 import admin.referee.Referee;
 import admin.result.GameResult;
 import com.fasterxml.jackson.databind.JsonNode;
+import common.interfaces.IObserver;
 import common.interfaces.IPlayer;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -279,24 +280,62 @@ public class TournamentManager implements ITournamentManager {
    * @param config a JsonNode containing player and observer info
    */
   private void readConfig(JsonNode config) {
-    JsonNode players = config.get("players");
-    JsonNode observers = config.get("observers");
+    JsonNode playersNode = config.get("players");
+    JsonNode observersNode = config.get("observers");
 
-    for(int i = 0; i < players.size(); i++) {
-      JsonNode playerNode = players.get(i);
+    List<IPlayer> players = new ArrayList<>();
+    List<IObserver> observers = new ArrayList<>();
+
+    for(int i = 0; i < playersNode.size(); i++) {
+      JsonNode playerNode = playersNode.get(i);
       String kind = playerNode.get(0).asText();
       String name = playerNode.get(1).asText();
       String path = playerNode.get(2).asText();
 
-      makeNewPlayer(kind, name, path);
+      IPlayer player = makeNewPlayer(kind, name, path);
+      players.add(player);
     }
 
-    for (int i = 0; i < observers.size(); i += 1) {
-      JsonNode observerNode = observers.get(i);
+    for (int i = 0; i < observersNode.size(); i += 1) {
+      JsonNode observerNode = observersNode.get(i);
 
+      String name = observerNode.get(0).asText();
+      String path = observerNode.get(0).asText();
+
+      IObserver observer = makeObserver(name, path);
+      observers.add(observer);
 
     }
 
+    for (IObserver o : observers) {
+      ref.addObserver(o);
+    }
+
+    this.runTournament(players);
+
+  }
+
+  /**
+   * Constructs a new observer based on the given name and path.
+   *
+   * @param name name of the new observer
+   * @param path path to the class
+   * @return IObservers specified by name and path
+   */
+  IObserver makeObserver(String name, String path) {
+    ClassLoader loader = getClassLoader(path);
+
+    try {
+      return (IObserver) loader.loadClass("admin.observer.StdOutObserver")
+                               .getConstructor()
+                               .newInstance();
+    } catch (ClassNotFoundException |
+        IllegalAccessException |
+        InstantiationException |
+        NoSuchMethodException |
+        InvocationTargetException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**
@@ -320,18 +359,39 @@ public class TournamentManager implements ITournamentManager {
     }
   }
 
-  private IPlayer makeInfinitePlayer(String name, String path) {
+  /**
+   * Creates a new infinite player based on the given name and path.
+   *
+   * @param name name of the player
+   * @param path path to the class
+   * @return IPlayer specified
+   */
+  IPlayer makeInfinitePlayer(String name, String path) {
     ClassLoader loader = getClassLoader(path);
     String className = "player.InfinitePlayer";
     return makePlayer(loader, className, name);
   }
 
-  private IPlayer makeBreakerPlayer(String name, String path) {
+  /**
+   * Creates a new breaker player based on the given name and path.
+   *
+   * @param name name of the player
+   * @param path path to the class
+   * @return IPlayer specified
+   */
+  IPlayer makeBreakerPlayer(String name, String path) {
     ClassLoader loader = getClassLoader(path);
     String className = "player.BreakerPlayer";
     return makePlayer(loader, className, name);
   }
 
+  /**
+   * Creates a new good player based on the given name and path.
+   *
+   * @param name name of the player
+   * @param path path to the class
+   * @return IPlayer specified
+   */
   IPlayer makeGoodPlayer(String name, String path) {
     ClassLoader loader = getClassLoader(path);
 
@@ -354,6 +414,12 @@ public class TournamentManager implements ITournamentManager {
     return player;
   }
 
+  /**
+   * Returns a new ClassLoader that loads the class at the given path
+   *
+   * @param path Path for ClassLoader
+   * @return ClassLoader for specified path
+   */
   private ClassLoader getClassLoader(String path) {
     File file = new File(path);
     URL url;
@@ -368,13 +434,21 @@ public class TournamentManager implements ITournamentManager {
     return new URLClassLoader(urls);
   }
 
-  private IPlayer makePlayer(ClassLoader loader, String className, String name) {
+  /**
+   * Makes a new player using the given loader, classname, and playerName
+   *
+   * @param loader ClassLoader to use
+   * @param className name of the class to load
+   * @param playerName name of the player
+   * @return
+   */
+  private IPlayer makePlayer(ClassLoader loader, String className, String playerName) {
     IPlayer player;
     try {
       player = (IPlayer) loader
           .loadClass(className)
           .getConstructor(String.class)
-          .newInstance(name);
+          .newInstance(playerName);
     } catch (ClassNotFoundException |
         IllegalAccessException |
         InstantiationException |
