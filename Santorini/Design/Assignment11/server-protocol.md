@@ -73,7 +73,7 @@ The message formats are as follows:
 | BuildingWorker             | a string that starts with a single digit (representing a Height) followed by a worker-id |
 | worker-id                  | a string that starts with the internal name of a player followed by a 1 or 2 |
 | check-placement            | ["check-placement", placement-request] |
-| valid move                 | boolean representing if the request is valid |
+| valid-move                 | boolean representing if the request is valid |
 | placement-request          | [number, number]                   |
 |                            | where the first number is the row  |
 |                            | and the second number is the column|
@@ -99,6 +99,9 @@ If a player sends a move that is considered invalid, they will be booted from th
 A request must be made within 5 seconds of receiving a prompt.
 If more than 10 check-placements or check-turns are made within 1 second, the player will be booted
 for attempting to overload the server.
+
+Check requests (ie, check-placement and check-turn) are optional. The player does not need to send one, 
+but it can inform the player if the move they are about to make is illegal
 
 If a player cheats or times out, an observer receives an "Error" where "Error" is a ["error", string] where string 
 contains an error message, followed by a win-player.
