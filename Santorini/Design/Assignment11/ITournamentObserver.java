@@ -10,7 +10,7 @@ public interface ITournamentObserver {
    *
    * @param players names of the players
    */
-  void updatePlayers(IList<String> players);
+  void updatePlayers(List<String> players);
 
   /**
    * Updates the observer with information concerning the result of a game
