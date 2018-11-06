@@ -1,0 +1,4 @@
+{ "players" : [["good", "good", "file://Santorini/Player/src/main/java/player/AIPlayer.java"],
+               ["infinite", "infiniteplace", "file://Santorini/Player/src/main/java/player/InfinitePlayer.java"],
+			   ["infinite", "infiniteturn", "file://Santorini/Player/src/main/java/player/InfiniteTurnPlayer.java"]],
+  "observers" : []}
