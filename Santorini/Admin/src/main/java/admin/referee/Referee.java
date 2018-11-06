@@ -21,7 +21,7 @@ import utils.Utils;
 public class Referee implements IReferee {
 
   // Length of time to wait for action in seconds
-  private static final int TIMEOUT = 5;
+  private static final int TIMEOUT = 2;
 
   private final IRulesEngine rules;
   private final List<IObserver> observers;
@@ -93,7 +93,7 @@ public class Referee implements IReferee {
       IPlayer winner = maybeWinner.get();
 
       // If player 1 is the winner, player 2 cheated.
-      IPlayer cheater = player1 == winner ? player2 : player1;
+      IPlayer cheater = player1.equals(winner) ? player2 : player1;
 
       return activeCheated(cheater, winner);
     }

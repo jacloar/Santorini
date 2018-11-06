@@ -16,6 +16,12 @@ import common.interfaces.IPlayer;
 import common.rules.IRulesEngine;
 import java.util.List;
 import org.junit.Test;
+import player.AIPlayer;
+import player.InfinitePlayer;
+import player.InfiniteTurnPlayer;
+import strategy.DiagonalPlacementStrategy;
+import strategy.StayAliveStrategy;
+import strategy.Strategy;
 
 public class RefereeTest {
 
@@ -173,5 +179,46 @@ public class RefereeTest {
         + "[0,0,0,0,0,0],\n"
         + "[0,0,0,0,0,0]]\n"
         + "\"one won the game!\"");
+  }
+
+  @Test
+  public void testBestOfNWithCheater() {
+    IReferee ref = new Referee();
+
+    IPlayer good = new AIPlayer("good", new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(), 1));
+    IPlayer inf = new InfinitePlayer("inf");
+
+    List<GameResult> results = ref.bestOfN(good, inf, 3);
+
+    assertThat(results).hasSize(1);
+    assertThat(results.get(0).didLoserCheat()).isTrue();
+    assertThat(results.get(0).getWinner()).isEqualTo(good);
+    assertThat(results.get(0).getLoser()).isEqualTo(inf);
+  }
+
+  @Test
+  public void testPlayGameWithCheater() {
+    IReferee ref = new Referee();
+
+    IPlayer good = new AIPlayer("good", new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(), 1));
+    IPlayer inf = new InfinitePlayer("inf");
+
+    GameResult result = ref.playGame(good, inf);
+
+    assertThat(result.didLoserCheat()).isTrue();
+    assertThat(result.getWinner()).isEqualTo(good);
+    assertThat(result.getLoser()).isEqualTo(inf);
+  }
+
+  @Test
+  public void testPlayGameNoCheater() {
+    IReferee ref = new Referee();
+
+    IPlayer one = new AIPlayer("one", new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(), 1));
+    IPlayer two = new AIPlayer("two", new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(), 1));
+
+    GameResult result = ref.playGame(one, two);
+
+    assertThat(result.didLoserCheat()).isFalse();
   }
 }

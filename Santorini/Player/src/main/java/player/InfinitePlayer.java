@@ -32,7 +32,6 @@ public class InfinitePlayer implements IPlayer {
 
   @Override
   public String getPlayerName() {
-    loop();
     return playerName;
   }
 

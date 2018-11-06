@@ -1,5 +1,6 @@
 package admin.tournament;
 
+import admin.result.GameResult;
 import common.interfaces.IPlayer;
 import java.util.List;
 import java.util.Optional;
@@ -24,14 +25,34 @@ public interface ITournamentManager {
    *
    * This method runs a round-robin tournament of Santorini games and determines a winner.
    *
-   * @param players The players participating in the tournament
-   * @return the winning player of the tournament or empty if a winner could not be
-   * determined
+   * @param players The players participating in the tournament. Must have at least 2 players
+   * @return a list of winning players (in the case of a tie) or an empty list if a tournament was not run
    */
-  Optional<IPlayer> runTournament(List<IPlayer> players);
+  List<IPlayer> runTournament(List<IPlayer> players);
+
+  /**
+   * Reads the input configuration for this tournament manager and returns the maybe player who won
+   *
+   * @return the winning players of the tournament, or an empty list of a tournament was not run
+   */
+  List<IPlayer> readInput();
 
 
-  Optional<IPlayer> readInput();
+  /**
+   * Returns the results of the tournament if one has been run.
+   *
+   * @return a list of GameResults representing the results of the tournament,
+   *         or empty if a tournament has not been run.
+   */
+  Optional<List<GameResult>> getResults();
+
+  /**
+   * Returns the list of cheating players if a tournament has been run.
+   *
+   * @return a list of the names of cheating players,
+   *         or empty of a tournament has not been run.
+   */
+  Optional<List<String>> getCheatersNames();
 
 }
 

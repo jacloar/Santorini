@@ -41,7 +41,7 @@ public class TournamentManager implements ITournamentManager {
   private static final int MEET_UP_GAMES = 3;
   private static final int TIMEOUT = 5;
 
-  private Map<IPlayer, String> playerNames;
+  private Map<IPlayer, String> playerNames = new HashMap<>();
 
   private List<GameResult> results;
   private List<IPlayer> cheaters;
@@ -60,20 +60,23 @@ public class TournamentManager implements ITournamentManager {
   }
 
   public TournamentManager(Reader read) {
-    playerNames = new HashMap<>();
-    results = new ArrayList<>();
-    cheaters = new ArrayList<>();
     ref = new Referee();
 
     this.read = read;
   }
 
   @Override
-  public Optional<IPlayer> runTournament(List<IPlayer> players) {
+  public List<IPlayer> runTournament(List<IPlayer> players) {
     // If tournament has fewer than 2 players, tournament cannot run and there is no winner
     if (players.size() < 2) {
-      return Optional.empty();
+      return new ArrayList<>();
     }
+
+    // Reset fields of the manager at the beginning of each tournament
+    playerNames = new HashMap<>();
+    results = new ArrayList<>();
+    cheaters = new ArrayList<>();
+
 
     ensureUniqueNames(players);
 
@@ -84,7 +87,7 @@ public class TournamentManager implements ITournamentManager {
     }
 
     fixCheaters();
-    return determineWinner();
+    return determineWinners();
   }
 
   /**
@@ -95,7 +98,7 @@ public class TournamentManager implements ITournamentManager {
    *
    * @return the player who won the tournament, empty if there is a tie.
    */
-  private Optional<IPlayer> determineWinner() {
+  private List<IPlayer> determineWinners() {
     Map<IPlayer, Integer> wins = new HashMap<>();
 
     for (GameResult result : results) {
@@ -105,19 +108,20 @@ public class TournamentManager implements ITournamentManager {
       wins.put(gameWinner, newWins);
     }
 
-    Optional<IPlayer> tournamentWinner = Optional.empty();
+    List<IPlayer> winners = new ArrayList<>();
     int maxWins = 0;
     for (IPlayer player : wins.keySet()) {
       int playerWins = wins.get(player);
       if (playerWins > maxWins) {
-        tournamentWinner = Optional.of(player);
+        winners = new ArrayList<>();
+        winners.add(player);
         maxWins = playerWins;
       } else if (playerWins == maxWins) {
-        tournamentWinner = Optional.empty();
+        winners.add(player);
       }
     }
 
-    return tournamentWinner;
+    return winners;
   }
 
   /**
@@ -151,7 +155,7 @@ public class TournamentManager implements ITournamentManager {
    *
    * @param players All players participating in the tourney
    */
-  private void ensureUniqueNames(List<IPlayer> players) {
+  void ensureUniqueNames(List<IPlayer> players) {
     List<String> names = new ArrayList<>(players.size());
 
     for (IPlayer player : players) {
@@ -245,7 +249,7 @@ public class TournamentManager implements ITournamentManager {
    * @return unique name
    */
   String generateUniqueName(List<IPlayer> allPlayers) {
-    String name = UUID.randomUUID().toString();
+    String name = Utils.createRandomName();
 
     for (IPlayer player : allPlayers) {
       Optional<String> playerName = Utils.timedCall(player, IPlayer::getPlayerName, TIMEOUT);
@@ -262,23 +266,27 @@ public class TournamentManager implements ITournamentManager {
     return name;
   }
 
-  /**
-   * Returns the results of the tournament.
-   *
-   * @return a list of GameResults representing the results of the tournament
-   */
-  public List<GameResult> getResults() {
-    return results;
+  @Override
+  public Optional<List<GameResult>> getResults() {
+    if (results == null) {
+      return Optional.empty();
+    }
+
+    return Optional.of(results);
   }
 
 
-  /**
-   * Converts the list of cheating players to a list of cheating player names
-   *
-   * @return the list of cheater names
-   */
-  public List<String> getCheatersNames() {
-    return cheaters.stream().map(p -> playerNames.get(p)).collect(Collectors.toList());
+  @Override
+  public Optional<List<String>> getCheatersNames() {
+    if (cheaters == null) {
+      return Optional.empty();
+    }
+
+    return Optional.of(
+        cheaters.stream()
+                .map(p -> playerNames.get(p))
+                .collect(Collectors.toList())
+    );
   }
 
   /**
@@ -299,8 +307,9 @@ public class TournamentManager implements ITournamentManager {
    * participating in the tournament.
    *
    * @param config a JsonNode containing player and observer info
+   * @return the winning player(s)
    */
-  private Optional<IPlayer> readConfig(JsonNode config) {
+  private List<IPlayer> readConfig(JsonNode config) {
     JsonNode playersNode = config.get("players");
     JsonNode observersNode = config.get("observers");
 
@@ -361,7 +370,6 @@ public class TournamentManager implements ITournamentManager {
 
   /**
    * Creates a new player to compete in the tournament based on the input from the config file.
-   *
    *
    * @param kind the type of player
    * @param name the player name
@@ -478,6 +486,12 @@ public class TournamentManager implements ITournamentManager {
     return player;
   }
 
+  /**
+   * Determines the class name from the given path. Path must be to .java file in this project
+   *
+   * @param path path to specified java class
+   * @return class name of the class
+   */
   private String classNameFromPath(String path) {
     String[] split = path.split("java");
     String className = split[split.length - 1].replace("/", ".");
@@ -485,7 +499,8 @@ public class TournamentManager implements ITournamentManager {
     return className;
   }
 
-  public Optional<IPlayer> readInput() {
+  @Override
+  public List<IPlayer> readInput() {
     JsonParser parser;
     JsonNode config;
     try {
