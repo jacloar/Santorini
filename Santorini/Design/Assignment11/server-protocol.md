@@ -15,18 +15,25 @@ tournament manager       ||                 player
         |                ||                   |
         |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>| receive start game
         |                ||                   |
-        |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>| receive place-worker-prompt
-        |<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~| send place-worker-request
+        |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>| receive placement-prompt
+        |<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~| send check-placement
+        |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>| receieve valid-move
+        |                ||                   |
+        |<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~| send placement-request
         |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>| receive worker-id
         |                ||                   |
-        |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>| receive place-worker-prompt
-        |<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~| send place-worker-request
+        |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>| receive placement-prompt
+        |<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~| send placement-request
         |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>| receive worker-id
         |                ||                   |
         |                ||                   |
-        |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>| receive make-turn-prompt
+        |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>| receive turn-prompt
+        |<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~| send check-turn
+        |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>| receieve valid-move
+        |                ||                   |
         |<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~| send turn-request
-        |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>| receive make-turn-prompt
+        |                ||                   |
+        |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>| receive turn-prompt
         |<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~| send turn-request
         |                ||                   | ...
         |                ||                   |
@@ -34,7 +41,7 @@ tournament manager       ||                 player
         |                ||                   |
 ----------------------------------------------------- ending tournament
         |                ||                   |
-        |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>| receive tournament result
+        |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>| receive tournament-result
         |                ||                   |
         
 ```
@@ -46,20 +53,36 @@ The message formats are as follows:
 | -------------------------- | ---------------------------------- |
 | sign-up name               | string of lowercase letters        |
 | internal name              | string of lowercase letters (in case of duplicate) |
-|                            |                                    |
 | start game                 | string of lowercase letters        |
 |                            | where string is the opponent name  |
-|                            |                                    |
-| place-worker-prompt        | ["place", Board]                   |
+| placement-prompt           | ["place", Board]                   |
 | Board                      | [[Cell, ...], ...]                 |
 | Cell                       | one of Height or BuildingWorker    |
 | Height                     | one of 0, 1, 2, 3, 4 (indicating the height of a building) |
 | BuildingWorker             | a string that starts with a single digit (representing a Height) followed by a worker-id |
 | worker-id                  | a string that starts with the internal name of a player followed by a 1 or 2 |
-|                            |                                    |
-| place-worker-request       | [number, number]                   |
+| check-placement            | ["check-placement", placement-request] |
+| valid move                 | boolean representing if the request is valid |
+| placement-request          | [number, number]                   |
 |                            | where the first number is the row  |
 |                            | and the second number is the column|
-|                            |                                    |
-| make-turn-prompt           | ["turn", Board]                    |
-| make-turn-request          | [worker-id, Direction, Direction]  |
+| turn-prompt                | ["turn", Board]                    |
+| check-turn                 | ["check-turn", turn-request]       |
+| turn-request               | [worker-id, Direction] or [worker-id, Direction, Direction] |
+| Direction                  | [EastWest, NorthSouth]             |
+| EastWest                   | One of: "EAST", "PUT", "WEST"      |
+| NorthSouth                 | One of: "NORTH", "PUT", SOUTH"     |
+| game-result                | One of: "WINNER", "LOSER", "CHEATER" |
+| tournament-result          | [Cheaters, [Game, ...]]            |
+| Cheaters                   | [string, ...] where each string is the name of a player that cheated|
+| Game                       | [string, string]                   |
+|                            | where the first string is the name of the winning player |
+|                            | and the second string is the name of the losing player |
+
+All JSON values are well formed and valid. 
+If a player sends an invalid or malformed request, they will be booted from the tournament.
+If a player sends a move that is considered invalid, they will be booted from the tournament.
+
+A request must be made within 5 seconds of receiving a prompt.
+If more than 10 check-placements or check-turns are made within 1 second, the player will be booted
+for attempting to overload the server.
