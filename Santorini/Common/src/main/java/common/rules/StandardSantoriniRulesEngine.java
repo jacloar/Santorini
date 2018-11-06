@@ -17,6 +17,8 @@ public class StandardSantoriniRulesEngine implements IRulesEngine {
     private final int MAX_BUILDING_HEIGHT = 4;
     // each player should have 2 workers when playing by these common.rules
     private final int NUMBER_OF_PLAYER_WORKERS = 2;
+    // the maximum length for actions in a valid turn
+    private final int MAX_ACTIONS_LENGTH = 2;
     // an enumeration of legal Direction vectors to create Directions
     private final List<String> LEGAL_EAST_WEST = Arrays.asList("EAST", "PUT", "WEST");
     private final List<String> LEGAL_NORTH_SOUTH = Arrays.asList("NORTH", "PUT", "SOUTH");
@@ -85,7 +87,7 @@ public class StandardSantoriniRulesEngine implements IRulesEngine {
                         int currentWorkerColumn = worker.getColumn();
                         int movedWorkerRow = currentWorkerRow + moveDirection.getRowModifier();
                         int movedWorkerColumn = currentWorkerColumn + moveDirection.getColumnModifier();
-                        if (actions.size() < 3) {
+                        if (actions.size() <= MAX_ACTIONS_LENGTH) {
                             return this.isBuildLegal(board, movedWorkerRow, movedWorkerColumn, buildDirection, currentWorkerRow, currentWorkerColumn);
                         }
                     }
@@ -195,7 +197,7 @@ public class StandardSantoriniRulesEngine implements IRulesEngine {
         for (Worker worker : workers) {
             int workerRow = worker.getRow();
             int workerColumn = worker.getColumn();
-            if (board.height(workerRow, workerColumn) == 3) {
+            if (board.height(workerRow, workerColumn) == MAX_BUILDING_HEIGHT - 1) {
                 return true;
             }
         }

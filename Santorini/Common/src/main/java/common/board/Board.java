@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.crypto.spec.DESedeKeySpec;
 
 public class Board implements IBoard {
 
@@ -25,8 +26,7 @@ public class Board implements IBoard {
     }
 
     public Board(ICell[][] cells) {
-        this.cells = new ICell[6][6];
-
+        this.cells = new ICell[DEFAULT_ROWS][DEFAULT_COLUMNS];
         for (int i = 0;  i < cells.length; i += 1) {
             for (int j = 0; j < cells.length; j += 1) {
                 if (cells[i][j] == null) {
@@ -124,8 +124,8 @@ public class Board implements IBoard {
         Worker currentWorker = this.findWorker(worker);
         int newRow = currentWorker.getRow() + direction.getRowModifier();
         int newColumn = currentWorker.getColumn() + direction.getColumnModifier();
-        boolean rowBounded = newRow >= 0 && newRow <= 5;
-        boolean columnBounded = newColumn >= 0 && newColumn <= 5;
+        boolean rowBounded = newRow >= 0 && newRow < DEFAULT_ROWS;
+        boolean columnBounded = newColumn >= 0 && newColumn < DEFAULT_COLUMNS;
         return rowBounded && columnBounded;
     }
 
