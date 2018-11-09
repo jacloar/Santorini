@@ -24,6 +24,8 @@ public class StayAliveStrategyTests {
         IBoard board = new Board(formulateSimpleBoard());
 
         ITurnStrategy turnStrategy = new StayAliveStrategy();
+        turnStrategy.setPlayer(playerToTest);
+        turnStrategy.setOpponent(opponent);
         List<Action> turnToTake = new ArrayList<>();
 
         Action move = new Action(ActionType.MOVE, "one2", new Direction("WEST", "SOUTH"));
