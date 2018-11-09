@@ -27,13 +27,17 @@ public class xobserve {
     IPlacementStrategy p1PlaceStrat = new DiagonalPlacementStrategy();
     IPlacementStrategy p2PlaceStrat = new DiagonalPlacementStrategy();
 
-    ITurnStrategy p1TurnStrat = new StayAliveStrategy(p1Name, p2Name);
-    ITurnStrategy p2TurnStrat = new StayAliveStrategy(p2Name, p1Name);
+    ITurnStrategy p1TurnStrat = new StayAliveStrategy(1);
+    p1TurnStrat.setPlayer(p1Name);
+    p1TurnStrat.setOpponent(p2Name);
+    ITurnStrategy p2TurnStrat = new StayAliveStrategy(1);
 
-    IPlayer player1 = new AIPlayer(p1Name, new Strategy(p1PlaceStrat, p1TurnStrat, 1));
-    IPlayer player2 = new AIPlayer(p2Name, new Strategy(p2PlaceStrat, p2TurnStrat, 1));
+    IPlayer player1 = new AIPlayer(p1Name, new Strategy(p1PlaceStrat, p1TurnStrat));
+    IPlayer player2 = new AIPlayer(p2Name, new Strategy(p2PlaceStrat, p2TurnStrat));
 
     ref.playGame(player1, player2);
+
+    System.exit(0);
 
   }
 }
