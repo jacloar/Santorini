@@ -49,7 +49,7 @@ public class StayAliveStrategy implements ITurnStrategy {
         // Foreach worker calculate all the moves, and all the movebuilds it can do
         for (Worker worker : playerWorkers) {
             List<List<Action>> allMoves = this.calculateAllMoves(worker.getWorkerId());
-            List<List<Action>> moves = calculateLegalMoves(allMoves, board, playerName);
+            List<List<Action>> moves = filterToWinMoves(allMoves, board, playerName);
             List<List<Action>> moveBuilds = calculateLegalMoveBuilds(worker.getWorkerId(), board, allMoves, playerName);
 
             results.addAll(moves);
@@ -82,7 +82,7 @@ public class StayAliveStrategy implements ITurnStrategy {
      * @param playerName the name of the player to ensure we're calculating moving the correct pieces
      * @return the list of legal turns this worker has
      */
-    private List<List<Action>> calculateLegalMoves(List<List<Action>> actions, IReadonlyBoard board, String playerName) {
+    private List<List<Action>> filterToWinMoves(List<List<Action>> actions, IReadonlyBoard board, String playerName) {
         return actions.stream().filter(a -> this.rulesEngine.isTurnLegal(board, a, playerName)).collect(Collectors.toList());
     }
 
@@ -96,6 +96,7 @@ public class StayAliveStrategy implements ITurnStrategy {
     private List<List<Action>> calculateLegalMoveBuilds(String workerId, IReadonlyBoard board, List<List<Action>> moves, String playerName) {
         List<List<Action>> results = new ArrayList<>();
         for (List<Action> turn : moves) {
+            if (rulesEngine.)
             for (Direction d : this.DIRECTIONS) {
                 List<Action> newTurn = turn.stream()
                         .map(action -> new Action(action.getType(), action.getWorkerId(), action.getDirection()))

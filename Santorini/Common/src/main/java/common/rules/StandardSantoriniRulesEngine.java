@@ -112,7 +112,7 @@ public class StandardSantoriniRulesEngine implements IRulesEngine {
      *
      * Returns true if all are confirmed, returns false otherwise
      */
-    private boolean isMoveLegal(IReadonlyBoard board, Action action, String activePlayer) {
+    public boolean isMoveLegal(IReadonlyBoard board, Action action, String activePlayer) {
         String workerId = action.getWorkerId();
         Direction moveDirection = action.getDirection();
         // 1)

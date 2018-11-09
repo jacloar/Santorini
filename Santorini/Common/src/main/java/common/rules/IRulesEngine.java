@@ -42,4 +42,6 @@ public interface IRulesEngine {
 
     // Return the number of workers each IPlayer should have according to this rule set
     int getNumberOfWorkers();
+
+    boolean isMoveLegal(IReadonlyBoard board, Action move, String activePlayer);
 }
