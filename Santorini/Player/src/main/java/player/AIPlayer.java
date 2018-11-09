@@ -10,8 +10,6 @@ import strategy.Strategy;
 
 public class AIPlayer implements IPlayer {
 
-    private static final String WORKER_ID = "%s%d";
-
     private String playerName;
     private final Strategy strategy;
 
