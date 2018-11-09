@@ -14,6 +14,7 @@ public class Board implements IBoard {
     private static final int DEFAULT_COLUMNS = 6;
     private static final int INITIAL_HEIGHT = 0;
 
+    // ICell 2d array must be rectangular DEFAULT_ROWS x DEFAULT_COLUMNS
     private final ICell[][] cells;
 
     public Board() {
@@ -196,20 +197,12 @@ public class Board implements IBoard {
 
     @Override
     public int getMaxRows() {
-        return cells.length;
+        return DEFAULT_ROWS;
     }
 
     @Override
     public int getMaxColumns() {
-        int maxColumn = 0;
-
-        for (ICell[] column : cells) {
-            if (maxColumn < column.length) {
-                maxColumn = column.length;
-            }
-        }
-
-        return maxColumn;
+        return DEFAULT_COLUMNS;
     }
 
     /**
