@@ -12,6 +12,7 @@ public class Board implements IBoard {
 
     private static final int DEFAULT_ROWS = 6;
     private static final int DEFAULT_COLUMNS = 6;
+    private static final int INITIAL_HEIGHT = 0;
 
     private final ICell[][] cells;
 
@@ -20,7 +21,7 @@ public class Board implements IBoard {
 
         for (int i = 0; i < DEFAULT_ROWS; i++) {
             for (int j = 0; j < DEFAULT_COLUMNS; j++) {
-                this.cells[i][j] = new Height(0);
+                this.cells[i][j] = new Height(INITIAL_HEIGHT);
             }
         }
     }
@@ -30,7 +31,7 @@ public class Board implements IBoard {
         for (int i = 0;  i < cells.length; i += 1) {
             for (int j = 0; j < cells.length; j += 1) {
                 if (cells[i][j] == null) {
-                    this.cells[i][j] = new Height(0);
+                    this.cells[i][j] = new Height(INITIAL_HEIGHT);
                 } else {
                     this.cells[i][j] = cells[i][j];
                 }
