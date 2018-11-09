@@ -177,7 +177,7 @@ public class TournamentManagerTest {
     assertThat(manager.getCheatersNames().get().get(0)).isEqualTo(p2Name);
 
     assertThat(winners).hasSize(1);
-    assertThat(winners.get(0).getPlayerName()).isNotEqualTo(p1Name);
+    assertThat(winners.get(0).getPlayerName()).isEqualTo(p1Name);
 
   }
 
