@@ -48,11 +48,11 @@ public class StayAliveStrategy implements ITurnStrategy {
         List<List<Action>> results = new ArrayList<>();
         // Foreach worker calculate all the moves, and all the movebuilds it can do
         for (Worker worker : playerWorkers) {
-            List<List<Action>> allMoves = this.calculateAllMoves(worker.getWorkerId());
-            List<List<Action>> moves = filterToWinMoves(allMoves, board, playerName);
-            List<List<Action>> moveBuilds = calculateLegalMoveBuilds(worker.getWorkerId(), board, allMoves, playerName);
+            List<Action> legalMoves = this.calculateLegalMoves(board, worker.getWorkerId(), playerName);
+            List<List<Action>> winningMoves = filterToWinMoves(legalMoves, board, playerName);
+            List<List<Action>> moveBuilds = calculateLegalMoveBuilds(worker.getWorkerId(), board, legalMoves, playerName);
 
-            results.addAll(moves);
+            results.addAll(winningMoves);
             results.addAll(moveBuilds);
         }
         return results;
@@ -63,13 +63,13 @@ public class StayAliveStrategy implements ITurnStrategy {
      * determine legal move-only turns as well as legal full turns that include builds
      * @return a list of Actions objects with the relevant data
      */
-    private List<List<Action>> calculateAllMoves(String workerId) {
-        List<List<Action>> results = new ArrayList<>();
+    private List<Action> calculateLegalMoves(IReadonlyBoard board, String workerId, String playerName) {
+        List<Action> results = new ArrayList<>();
         for (Direction d : this.DIRECTIONS) {
             Action newAction = new Action(ActionType.MOVE, workerId, d);
-            List<Action> newTurn = new ArrayList<>();
-            newTurn.add(newAction);
-            results.add(newTurn);
+            if (rulesEngine.isMoveLegal(board, newAction, playerName)) {
+                results.add(newAction);
+            }
         }
         return results;
     }
@@ -82,8 +82,11 @@ public class StayAliveStrategy implements ITurnStrategy {
      * @param playerName the name of the player to ensure we're calculating moving the correct pieces
      * @return the list of legal turns this worker has
      */
-    private List<List<Action>> filterToWinMoves(List<List<Action>> actions, IReadonlyBoard board, String playerName) {
-        return actions.stream().filter(a -> this.rulesEngine.isTurnLegal(board, a, playerName)).collect(Collectors.toList());
+    private List<List<Action>> filterToWinMoves(List<Action> actions, IReadonlyBoard board, String playerName) {
+        return actions.stream()
+                      .map(Collections::singletonList)
+                      .filter(turn -> this.rulesEngine.isTurnLegal(board, turn, playerName))
+                      .collect(Collectors.toList());
     }
 
     /**
@@ -93,16 +96,14 @@ public class StayAliveStrategy implements ITurnStrategy {
      * @param moves the list of all moves already computed that we now want to build of of
      * @return the list of legal turns that constitute a move + build this worker can do.
      */
-    private List<List<Action>> calculateLegalMoveBuilds(String workerId, IReadonlyBoard board, List<List<Action>> moves, String playerName) {
+    private List<List<Action>> calculateLegalMoveBuilds(String workerId, IReadonlyBoard board, List<Action> moves, String playerName) {
         List<List<Action>> results = new ArrayList<>();
-        for (List<Action> turn : moves) {
-            if (rulesEngine.)
+        for (Action action : moves) {
+            List<Action> turn = Collections.singletonList(action);
             for (Direction d : this.DIRECTIONS) {
-                List<Action> newTurn = turn.stream()
-                        .map(action -> new Action(action.getType(), action.getWorkerId(), action.getDirection()))
-                        .collect(Collectors.toList());
-                Action newAction = new Action(ActionType.BUILD, workerId, d);
-                newTurn.add(newAction);
+                List<Action> newTurn = new ArrayList<>(turn);
+                Action build = new Action(ActionType.BUILD, workerId, d);
+                newTurn.add(build);
                 if (this.rulesEngine.isTurnLegal(board, newTurn, playerName)) {
                     results.add(newTurn);
                 }
