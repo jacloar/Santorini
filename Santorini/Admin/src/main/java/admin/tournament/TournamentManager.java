@@ -420,7 +420,7 @@ public class TournamentManager implements ITournamentManager {
   IPlayer makeGoodPlayer(String name, String path) {
     ClassLoader loader = getClassLoader(path);
 
-    Strategy strategy = new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(1), 1);
+    Strategy strategy = new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(1));
 
     AIPlayer player;
     try {

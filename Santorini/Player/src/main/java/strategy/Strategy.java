@@ -9,12 +9,10 @@ public class Strategy {
 
     private final IPlacementStrategy placementStrategy;
     private final ITurnStrategy turnStrategy;
-    private final int maxTurnDepth;
 
-    public Strategy(IPlacementStrategy placementStrategy, ITurnStrategy turnStrategy, int maxTurnDepth) {
+    public Strategy(IPlacementStrategy placementStrategy, ITurnStrategy turnStrategy) {
         this.placementStrategy = placementStrategy;
         this.turnStrategy = turnStrategy;
-        this.maxTurnDepth = maxTurnDepth;
     }
 
     /**

@@ -19,7 +19,7 @@ public class InfiniteTurnPlayer extends AIPlayer {
    * @param name name of this player
    */
   public InfiniteTurnPlayer(String name) {
-    super(name, new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(1), 1));
+    super(name, new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(1)));
   }
 
   @Override

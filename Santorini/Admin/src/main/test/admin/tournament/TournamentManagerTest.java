@@ -126,11 +126,11 @@ public class TournamentManagerTest {
     String p2Name = "two";
     IPlacementStrategy placementP1 = new DiagonalPlacementStrategy();
     IPlacementStrategy placementP2 = new DiagonalPlacementStrategy();
-    ITurnStrategy moveP1 = new StayAliveStrategy(0);
-    ITurnStrategy moveP2 = new StayAliveStrategy(0);
+    ITurnStrategy moveP1 = new StayAliveStrategy(1);
+    ITurnStrategy moveP2 = new StayAliveStrategy(1);
 
-    Strategy p1Strategy = new Strategy(placementP1, moveP1, 1);
-    Strategy p2Strategy = new Strategy(placementP2, moveP2, 1);
+    Strategy p1Strategy = new Strategy(placementP1, moveP1);
+    Strategy p2Strategy = new Strategy(placementP2, moveP2);
 
     IPlayer p1 = new AIPlayer(p1Name, p1Strategy);
     IPlayer p2 = new AIPlayer(p2Name, p2Strategy);
@@ -160,9 +160,9 @@ public class TournamentManagerTest {
     String p1Name = "one";
     String p2Name = "two";
     IPlacementStrategy placementP1 = new DiagonalPlacementStrategy();
-    ITurnStrategy moveP1 = new StayAliveStrategy(0);
+    ITurnStrategy moveP1 = new StayAliveStrategy(1);
 
-    Strategy p1Strategy = new Strategy(placementP1, moveP1, 1);
+    Strategy p1Strategy = new Strategy(placementP1, moveP1);
 
     IPlayer p1 = new AIPlayer(p1Name, p1Strategy);
     IPlayer p2 = new InfiniteTurnPlayer(p2Name);
