@@ -126,8 +126,8 @@ public class TournamentManagerTest {
     String p2Name = "two";
     IPlacementStrategy placementP1 = new DiagonalPlacementStrategy();
     IPlacementStrategy placementP2 = new DiagonalPlacementStrategy();
-    ITurnStrategy moveP1 = new StayAliveStrategy();
-    ITurnStrategy moveP2 = new StayAliveStrategy();
+    ITurnStrategy moveP1 = new StayAliveStrategy(0);
+    ITurnStrategy moveP2 = new StayAliveStrategy(0);
 
     Strategy p1Strategy = new Strategy(placementP1, moveP1, 1);
     Strategy p2Strategy = new Strategy(placementP2, moveP2, 1);
@@ -160,7 +160,7 @@ public class TournamentManagerTest {
     String p1Name = "one";
     String p2Name = "two";
     IPlacementStrategy placementP1 = new DiagonalPlacementStrategy();
-    ITurnStrategy moveP1 = new StayAliveStrategy();
+    ITurnStrategy moveP1 = new StayAliveStrategy(0);
 
     Strategy p1Strategy = new Strategy(placementP1, moveP1, 1);
 

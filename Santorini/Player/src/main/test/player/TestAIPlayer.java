@@ -18,7 +18,7 @@ public class TestAIPlayer {
 
   private Strategy mockStrategy(Appendable app) {
     Strategy strategy = mock(Strategy.class);
-    when(strategy.getTurn(anyString(), any())).then(invocation -> {
+    when(strategy.getTurn(any())).then(invocation -> {
       app.append("call to getTurn\n");
       return null;
     });

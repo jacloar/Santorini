@@ -185,7 +185,7 @@ public class RefereeTest {
   public void testBestOfNWithCheater() {
     IReferee ref = new Referee();
 
-    IPlayer good = new AIPlayer("good", new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(), 1));
+    IPlayer good = new AIPlayer("good", new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(0), 1));
     IPlayer inf = new InfinitePlayer("inf");
 
     List<GameResult> results = ref.bestOfN(good, inf, 3);
@@ -200,7 +200,7 @@ public class RefereeTest {
   public void testPlayGameWithCheater() {
     IReferee ref = new Referee();
 
-    IPlayer good = new AIPlayer("good", new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(), 1));
+    IPlayer good = new AIPlayer("good", new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(0), 1));
     IPlayer inf = new InfinitePlayer("inf");
 
     GameResult result = ref.playGame(good, inf);
@@ -214,8 +214,8 @@ public class RefereeTest {
   public void testPlayGameNoCheater() {
     IReferee ref = new Referee();
 
-    IPlayer one = new AIPlayer("one", new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(), 1));
-    IPlayer two = new AIPlayer("two", new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(), 1));
+    IPlayer one = new AIPlayer("one", new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(0), 1));
+    IPlayer two = new AIPlayer("two", new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(0), 1));
 
     GameResult result = ref.playGame(one, two);
 

@@ -30,7 +30,7 @@ public class AIPlayer implements IPlayer {
 
     @Override
     public List<Action> getTurn(IReadonlyBoard b) {
-        return strategy.getTurn(playerName, b);
+        return strategy.getTurn(b);
     }
 
     @Override

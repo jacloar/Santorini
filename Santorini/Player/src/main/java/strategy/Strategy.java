@@ -26,28 +26,8 @@ public class Strategy {
         return placementStrategy.getPlaceWorker(b);
     }
 
-    /**
-     * Gets the turn based on the given board.
-     * @param playerName the playername to work with
-     * @param b the given board to work off of
-     * @return the formulated list of actions
-     */
-    public List<Action> getTurn(String playerName, IReadonlyBoard b) {
-
-        List<List<Action>> posTurns = turnStrategy.getLegalMoves(playerName, b);
-
-        List<Action> bestMove = posTurns.get(0);
-        int score = turnStrategy.score(bestMove, b, maxTurnDepth);
-
-        posTurns = posTurns.subList(1, posTurns.size() - 1);
-        for (List<Action> turn : posTurns) {
-
-            if (score > turnStrategy.score(turn, b, maxTurnDepth)) {
-                bestMove = turn;
-            }
-        }
-
-        return bestMove;
+    public List<Action> getTurn(IReadonlyBoard b) {
+        return turnStrategy.getTurn(b);
     }
 
     public void setCurrentPlayer(String currentPlayer) {

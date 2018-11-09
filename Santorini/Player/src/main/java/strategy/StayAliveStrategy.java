@@ -22,8 +22,11 @@ public class StayAliveStrategy implements ITurnStrategy {
     private final IRulesEngine rulesEngine;
     private final List<Direction> DIRECTIONS = Direction.getAllDirections();
 
-    public StayAliveStrategy() {
+    private final int depth;
+
+    public StayAliveStrategy(int depth) {
         this.rulesEngine = new StandardSantoriniRulesEngine();
+        this.depth = depth;
     }
 
     public void setPlayer(String playerName) {
@@ -41,7 +44,6 @@ public class StayAliveStrategy implements ITurnStrategy {
      * @param board the board to look at
      * @return
      */
-    @Override
     public List<List<Action>> getLegalMoves(String playerName, IReadonlyBoard board) {
         List<Worker> playerWorkers = board.getPlayerWorkers(playerName);
 
@@ -163,6 +165,25 @@ public class StayAliveStrategy implements ITurnStrategy {
         }
         int result = Collections.min(turnsToScore.values());
         return result;
+    }
+
+    /**
+     * Gets the turn based on the given board.
+     * @param b the given board to work off of
+     * @return the formulated list of actions
+     */
+    public List<Action> getTurn(IReadonlyBoard b) {
+
+        List<List<Action>> posTurns = this.getLegalMoves(currentPlayer, b);
+
+        List<Action> bestMove = posTurns.get(0);
+        for (List<Action> turn : posTurns) {
+            if (this.score(turn, b, depth) == 1) {
+                return turn;
+            }
+        }
+
+        return bestMove;
     }
 
     private boolean didIActuallyLose(IReadonlyBoard board) {

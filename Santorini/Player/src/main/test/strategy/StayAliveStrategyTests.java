@@ -23,7 +23,7 @@ public class StayAliveStrategyTests {
 
         IBoard board = new Board(formulateSimpleBoard());
 
-        ITurnStrategy turnStrategy = new StayAliveStrategy();
+        StayAliveStrategy turnStrategy = new StayAliveStrategy(2);
         turnStrategy.setPlayer(playerToTest);
         turnStrategy.setOpponent(opponent);
         List<Action> turnToTake = new ArrayList<>();
@@ -65,7 +65,7 @@ public class StayAliveStrategyTests {
 
         IBoard board = new Board(formulateAdvancedBoard());
 
-        ITurnStrategy turnStrategy = new StayAliveStrategy();
+        StayAliveStrategy turnStrategy = new StayAliveStrategy(3);
         turnStrategy.setPlayer(playerToTest);
         turnStrategy.setOpponent(opponent);
         List<Action> turnToTake = new ArrayList<>();
@@ -108,7 +108,7 @@ public class StayAliveStrategyTests {
 
         IBoard board = new Board(formulateAdvancedBoard());
 
-        ITurnStrategy turnStrategy = new StayAliveStrategy();
+        StayAliveStrategy turnStrategy = new StayAliveStrategy(0);
         turnStrategy.setPlayer(playerToTest);
         turnStrategy.setOpponent(opponent);
         List<Action> turnToTake = new ArrayList<>();
