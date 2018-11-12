@@ -35,25 +35,25 @@ public class ViewModelBoardTest {
   public void testMoveChangesBoardCopy() {
     IBoard board = new Board();
     IReadonlyBoard readOnlyBoard = board.toViewModel();
-    board.createWorker("Luke1", 1, 1);
+    board.createWorker("luke", 1, 1);
     Direction ne = new Direction("EAST", "NORTH");
     Direction s = new Direction("PUT", "SOUTH");
-    board.move("Luke1", ne);
-    board.build("Luke1", s);
+    board.move("luke1", ne);
+    board.build("luke1", s);
 
     assertThat(board.getPlayerWorkerMap().size()).isEqualTo(readOnlyBoard.getPlayerWorkerMap().size());
-    assertThat(board.getPlayerWorkers("Luke").size()).isEqualTo(1);
-    assertThat(board.getPlayerWorkers("Luke").size()).isEqualTo(readOnlyBoard.getPlayerWorkers("Luke").size());
+    assertThat(board.getPlayerWorkers("luke").size()).isEqualTo(1);
+    assertThat(board.getPlayerWorkers("luke").size()).isEqualTo(readOnlyBoard.getPlayerWorkers("luke").size());
     assertThat(readOnlyBoard.height(2,2)).isEqualTo(0);
     assertThat(readOnlyBoard.height(1,2)).isEqualTo(1);
 
-    board.createWorker("Luke2", 1, 2);
+    board.createWorker("luke", 1, 2);
     assertTrue(readOnlyBoard.isOccupied(1,2));
     assertTrue(readOnlyBoard.isOccupied(0,2));
     Direction e = new Direction("EAST", "PUT");
-    assertTrue(readOnlyBoard.isNeighbor("Luke1", e));
+    assertTrue(readOnlyBoard.isNeighbor("luke1", e));
 
-    Worker l1 = readOnlyBoard.findWorker("Luke1");
+    Worker l1 = readOnlyBoard.findWorker("luke1");
     assertThat(l1.getRow()).isEqualTo(0);
     assertThat(l1.getColumn()).isEqualTo(2);
   }
