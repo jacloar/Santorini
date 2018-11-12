@@ -379,10 +379,11 @@ public class TestStandardSantoriniRulesEngine {
   }
 
   /**
-   * Tests if the given build is a valid one if the player tries to move to up 2 floors in 1 turn.
+   * Tests if the given build is a valid one if the player tries to build to a floor that is
+   * two floors above it.
    */
   @Test
-  public void testNotValidBuildTooHigh() {
+  public void testValidBuildHigh() {
     board.createWorker(p1Name, 0, 0);
     board.createWorker(p2Name, 1, 1);
     board.createWorker(p1Name, 2, 2);
@@ -394,7 +395,7 @@ public class TestStandardSantoriniRulesEngine {
     Direction p1Build = new Direction("PUT", "SOUTH");
 
     assertThat(rules.isBuildLegal(board, 0, 0 , p1Build,
-            0,0)).isFalse();
+            0,0)).isTrue();
   }
 
 
