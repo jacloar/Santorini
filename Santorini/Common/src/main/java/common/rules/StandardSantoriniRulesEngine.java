@@ -19,6 +19,8 @@ public class StandardSantoriniRulesEngine implements IRulesEngine {
     private final int NUMBER_OF_PLAYER_WORKERS = 2;
     // the maximum length for actions in a valid turn
     private final int MAX_ACTIONS_LENGTH = 2;
+    // the number of players in a game
+    private final int NUM_PLAYERS = 2;
     // an enumeration of legal Direction vectors to create Directions
     private final List<String> LEGAL_EAST_WEST = Arrays.asList("EAST", "PUT", "WEST");
     private final List<String> LEGAL_NORTH_SOUTH = Arrays.asList("NORTH", "PUT", "SOUTH");
@@ -42,9 +44,14 @@ public class StandardSantoriniRulesEngine implements IRulesEngine {
     }
 
     /**
-     * For "Standard Santorini", this verifies that the common.board has to floors in any buildings yet, and
-     * that there are 4 workers, 2 per each player, because this is the correct starting state.
+     * For "Standard Santorini", this verifies that the common.board has no floors in any buildings yet, and
+     * that there are 4 workers, 2 per each player, because this is the correct starting state. Also
+     * checks that there are 2 players.
      * Returns true if the state is valid
+     *
+     * @param board the board we are checking the rules for
+     * @param playerNames the names of the players in the game
+     * @return true if the starting state is legal, false otherwise
      */
     public boolean isStartingStateLegal(IReadonlyBoard board, List<String> playerNames) {
         for (String name : playerNames) {
@@ -60,6 +67,10 @@ public class StandardSantoriniRulesEngine implements IRulesEngine {
                     }
                 }
             }
+        }
+
+        if(playerNames.size() != this.NUM_PLAYERS) {
+            return false;
         }
         return true;
     }
@@ -144,12 +155,17 @@ public class StandardSantoriniRulesEngine implements IRulesEngine {
      * 3) The cell is not at the maximum height already
      *
      * It returns true if all of these are confirmed, and false if not.
+     *
+     * public for testing.
      */
-    private boolean isBuildLegal(IReadonlyBoard board, int movedWorkerRow,
+    boolean isBuildLegal(IReadonlyBoard board, int movedWorkerRow,
                                  int movedWorkerColumn, Direction buildDirection,
                                  int originRow, int originColumn) {
         int buildTargetRow = movedWorkerRow + buildDirection.getRowModifier();
         int buildTargetColumn = movedWorkerColumn + buildDirection.getColumnModifier();
+        if (buildDirection.getRowModifier() == 0 && buildDirection.getColumnModifier() == 0) {
+            return false;
+        }
         // 1)
         if (board.cellExists(buildTargetRow, buildTargetColumn)) {
             // 2)
