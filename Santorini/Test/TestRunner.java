@@ -8,6 +8,10 @@ import java.util.List;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
+
+import player.TestAIPlayer;
+import player.TestBreakerPlayer;
+import player.TestInfinitePlayer;
 import strategy.StayAliveStrategyTests;
 import strategy.TestDiagonalPlacementStrategy;
 
@@ -25,9 +29,14 @@ public class TestRunner {
     classesToTest.add(StayAliveStrategyTests.class);
     classesToTest.add(TestDiagonalPlacementStrategy.class);
     classesToTest.add(TestStandardSantoriniRulesEngine.class);
+    classesToTest.add(TestAIPlayer.class);
+    classesToTest.add(TestBreakerPlayer.class);
+    classesToTest.add(TestInfinitePlayer.class);
+
 
     int ran = 0;
     int succeeded = 0;
+    int failed = 0;
 
     for(Class c: classesToTest) {
       Result result = JUnitCore.runClasses(c);
@@ -36,8 +45,9 @@ public class TestRunner {
         System.out.println(failure.toString());
       }
       ran += result.getRunCount();
-      succeeded = ran - result.getFailureCount();
+      failed += result.getFailureCount();
     }
+    succeeded = ran - failed;
 
     System.out.println("ran " + ran + " Tests");
     System.out.println(succeeded + " Tests passed");
