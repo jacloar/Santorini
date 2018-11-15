@@ -14,6 +14,7 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.List;
 import java.util.Optional;
+import server.request.Message;
 
 public class RemotePlayer implements IPlayer {
 
@@ -63,7 +64,9 @@ public class RemotePlayer implements IPlayer {
 
   @Override
   public void setPlayerName(String newName) {
+    this.name = Optional.of(newName);
 
+    Message.playingAs(clientOut, newName);
   }
 
   @Override

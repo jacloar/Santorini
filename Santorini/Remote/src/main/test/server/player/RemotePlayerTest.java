@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import common.interfaces.IPlayer;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,5 +48,21 @@ public class RemotePlayerTest {
     IPlayer remote = new RemotePlayer(mockClient);
 
     assertThat(remote.getPlayerName()).isEqualTo(playerName);
+  }
+
+  /**
+   * Tests that setPlayerName sends the appropriate message to the player
+   */
+  @Test
+  public void testSetPlayerName() throws IOException {
+    String newName = "newname";
+
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    when(mockClient.getOutputStream()).thenReturn(stream);
+
+    IPlayer remote = new RemotePlayer(mockClient);
+
+    remote.setPlayerName(newName);
+    assertThat(stream.toString()).isEqualToIgnoringWhitespace("[\"playing-as\",\"" + newName + "\"]");
   }
 }
