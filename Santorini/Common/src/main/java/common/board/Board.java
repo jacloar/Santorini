@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.crypto.spec.DESedeKeySpec;
 
 public class Board implements IBoard {
 
@@ -165,7 +164,11 @@ public class Board implements IBoard {
     // return a list of Workers belonging to the IPlayer with the given name
     @Override
     public List<Worker> getPlayerWorkers(String playerName) {
-        return getPlayerWorkerMap().get(playerName);
+        List<Worker> workers = getPlayerWorkerMap().get(playerName);
+        if(workers == null) {
+            return new ArrayList<>();
+        }
+        return workers;
     }
 
     /**
