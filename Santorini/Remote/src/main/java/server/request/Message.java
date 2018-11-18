@@ -1,28 +1,21 @@
 package server.request;
 
+import admin.result.GameResult;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-
-import common.board.IBoard;
 import common.board.IReadonlyBoard;
 import common.data.Action;
 import common.data.ActionType;
 import common.data.Direction;
 import common.data.PlaceWorkerAction;
 import common.data.Worker;
-
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.IllegalFormatCodePointException;
-import java.util.IllegalFormatException;
 import java.util.List;
-import java.util.function.Function;
-
-import admin.result.GameResult;
 
 public class Message {
 
@@ -65,7 +58,7 @@ public class Message {
    * @param p1Name the name of player 1
    * @param p2Name the name of player 2
    */
-  public static PlaceWorkerAction workerPlacement(Reader in, PrintStream out, IBoard board, String p1Name, String p2Name) throws IOException {
+  public static PlaceWorkerAction workerPlacement(Reader in, PrintStream out, IReadonlyBoard board, String p1Name, String p2Name) throws IOException {
     ArrayNode message = mapper.createArrayNode();
     List<Worker> workers = new ArrayList<Worker>();
     workers.addAll(board.getPlayerWorkers(p1Name));
@@ -118,7 +111,7 @@ public class Message {
    * @return a list of actions that the client player has requested
    * @throws IOException if the stream unexpectedly closes
    */
-  public static List<Action> takeTurn(Reader in, PrintStream out, IBoard board) throws IOException {
+  public static List<Action> takeTurn(Reader in, PrintStream out, IReadonlyBoard board) throws IOException {
     ArrayNode message = mapper.createArrayNode();
     for(int row = 0; row < board.getMaxRows(); row++) {
       ArrayNode singleColumn = mapper.createArrayNode();
@@ -141,7 +134,7 @@ public class Message {
    * @return a list of actions representing a move request, can also be a give up request
    * @throws IOException if the stream unexpectedly closes
    */
-  public static List<Action> getTurn(Reader reader) throws IOException {
+  private static List<Action> getTurn(Reader reader) throws IOException {
     JsonParser parser = new JsonFactory().createParser(reader);
     List<Action> turn = new ArrayList<>();
     while(!parser.isClosed()) {

@@ -3,11 +3,9 @@ package utils;
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.TimeLimiter;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
 public class Utils {
@@ -29,7 +27,7 @@ public class Utils {
     T result;
     try {
       result = limiter.callWithTimeout(() -> func.apply(obj), timeout, TimeUnit.SECONDS);
-    } catch (TimeoutException | InterruptedException | ExecutionException e) {
+    } catch (Exception e) {
       executor.shutdown();
       return Optional.empty();
     }

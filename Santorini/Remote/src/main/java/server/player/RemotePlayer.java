@@ -22,6 +22,8 @@ public class RemotePlayer implements IPlayer {
   private InputStreamReader clientIn;
   private PrintStream clientOut;
 
+  private String opponentName;
+
   private static ObjectMapper mapper = new ObjectMapper();
 
   public RemotePlayer(Socket client) throws IOException {
@@ -37,13 +39,13 @@ public class RemotePlayer implements IPlayer {
   }
 
   @Override
-  public PlaceWorkerAction getPlaceWorker(IReadonlyBoard b) {
-    return null;
+  public PlaceWorkerAction getPlaceWorker(IReadonlyBoard b) throws IOException {
+    return Message.workerPlacement(clientIn, clientOut, b, name.get(), opponentName);
   }
 
   @Override
-  public List<Action> getTurn(IReadonlyBoard b) {
-    return null;
+  public List<Action> getTurn(IReadonlyBoard b) throws IOException {
+    return Message.takeTurn(clientIn, clientOut, b);
   }
 
   @Override
@@ -71,6 +73,8 @@ public class RemotePlayer implements IPlayer {
 
   @Override
   public void setOpponentName(String opponentName) {
+    this.opponentName = opponentName;
 
+    Message.other(clientOut, opponentName);
   }
 }

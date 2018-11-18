@@ -4,6 +4,7 @@ import common.board.IReadonlyBoard;
 import common.data.Action;
 import common.data.PlaceWorkerAction;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public interface IPlayer {
      * @param b IReadonlyBoard representation of the common.board to make a decision with
      * @return the specified action for placing a working at the beginning
      */
-    PlaceWorkerAction getPlaceWorker(IReadonlyBoard b);
+    PlaceWorkerAction getPlaceWorker(IReadonlyBoard b) throws IOException;
 
     /**
      * This methods gets a normal turn's worth of actions from the IActor, as defined by what each implementation of
@@ -30,7 +31,7 @@ public interface IPlayer {
      * @return List<Action> which denotes a sequence of atomic actions on the common.board making up a turn
      * of santorini
      */
-    List<Action> getTurn(IReadonlyBoard b);
+    List<Action> getTurn(IReadonlyBoard b) throws IOException;
 
     /**
      * Method to get the name of this player from the source of input, printing a message to humans
