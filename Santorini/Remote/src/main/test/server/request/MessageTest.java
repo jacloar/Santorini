@@ -160,10 +160,6 @@ public class MessageTest {
     results.add(g2);
     results.add(g3);
 
-
-
-    String turnMessage = "[\"one1\", \"PUT\", \"SOUTH\", \"EAST\", \"PUT\"]";
-
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     when(mockClient.getOutputStream()).thenReturn(out);
 
@@ -175,9 +171,8 @@ public class MessageTest {
 
     Message.inform(pStream, results);
 
-    assertThat(out.toString()).isEqualToIgnoringWhitespace("[\"one\",\"two\",\"two\"" +
-            ",\"one\",\"one\"" +
-            ",\"two\",\"irregular\"] ");
+    assertThat(out.toString()).isEqualToIgnoringWhitespace("[[\"one\",\"two\"],[\"two\",\"one\"]," +
+            "[\"one\",\"two\",\"irregular\"]]");
 
   }
 

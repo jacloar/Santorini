@@ -174,11 +174,13 @@ public class Message {
   public static void inform(PrintStream out, List<GameResult> tournamentResults) {
     ArrayNode message = mapper.createArrayNode();
     for(GameResult result : tournamentResults) {
-      message.add(result.getWinner().getPlayerName());
-      message.add(result.getLoser().getPlayerName());
+      ArrayNode message2 = mapper.createArrayNode();
+      message2.add(result.getWinner().getPlayerName());
+      message2.add(result.getLoser().getPlayerName());
       if(result.didLoserCheat()) {
-        message.add("irregular");
+        message2.add("irregular");
       }
+      message.add(message2);
     }
     out.println(message.toString());
   }
