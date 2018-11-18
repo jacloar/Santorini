@@ -45,8 +45,14 @@ public class Message {
    * @JsonProcessingException if there is a problem with the message
 
    */
-  public static void other(PrintStream out, String name) throws JsonProcessingException {
-    String message = mapper.writeValueAsString(name);
+  public static void other(PrintStream out, String name) {
+    String message;
+    try {
+      message = mapper.writeValueAsString(name);
+    } catch (JsonProcessingException e) {
+      // If there is an error processing the Json, do it manually.
+      message = "\"" + name + "\"";
+    }
     out.println(message);
   }
 
