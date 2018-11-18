@@ -9,7 +9,6 @@ import common.interfaces.IObserver;
 import common.interfaces.IPlayer;
 import common.rules.IRulesEngine;
 import common.rules.StandardSantoriniRulesEngine;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -149,16 +148,7 @@ public class Referee implements IReferee {
   private boolean placeWorker(IBoard board, IPlayer player) {
     Optional<PlaceWorkerAction> optionalPlacement = Utils.timedCall(
         player,
-        p -> {
-          try {
-            return p.getPlaceWorker(board);
-          } catch (Exception e) {
-            // loop infinitely, which will be caught by the timedCall method.
-            while (true) {
-
-            }
-          }
-        },
+        p -> p.getPlaceWorker(board),
         TIMEOUT);
 
     // If the placement is not present, the player took too long and we consider that cheating
@@ -202,16 +192,7 @@ public class Referee implements IReferee {
       return new GameResult(waiting, active, false);
     }
 
-    Optional<List<Action>> optionalTurn = Utils.timedCall(active, p -> {
-      try {
-        return p.getTurn(board);
-      } catch (IOException e) {
-        // loop infinitely so the exception will be caught be the timed call.
-        while (true) {
-
-        }
-      }
-    }, TIMEOUT);
+    Optional<List<Action>> optionalTurn = Utils.timedCall(active, p -> p.getTurn(board), TIMEOUT);
     if (!optionalTurn.isPresent()) {
       return activeCheated(active, waiting);
     }

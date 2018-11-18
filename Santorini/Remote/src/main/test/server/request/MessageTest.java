@@ -1,16 +1,16 @@
 package server.request;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import admin.result.GameResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import common.board.Board;
 import common.board.IBoard;
 import common.data.Action;
 import common.data.PlaceWorkerAction;
 import common.interfaces.IPlayer;
-
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,14 +21,8 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-
-import admin.result.GameResult;
-import apple.laf.JRSUIConstants;
+import org.junit.Test;
 import player.BreakerPlayer;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class MessageTest {
 

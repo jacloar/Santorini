@@ -39,13 +39,26 @@ public class RemotePlayer implements IPlayer {
   }
 
   @Override
-  public PlaceWorkerAction getPlaceWorker(IReadonlyBoard b) throws IOException {
-    return Message.workerPlacement(clientIn, clientOut, b, name.get(), opponentName);
+  public PlaceWorkerAction getPlaceWorker(IReadonlyBoard b) {
+    try {
+      return Message.workerPlacement(clientIn, clientOut, b, name.get(), opponentName);
+    } catch (IOException e) {
+      // loop infinitely because worker placement failed.
+      while (true) {
+
+      }
+    }
   }
 
   @Override
-  public List<Action> getTurn(IReadonlyBoard b) throws IOException {
-    return Message.takeTurn(clientIn, clientOut, b);
+  public List<Action> getTurn(IReadonlyBoard b) {
+    try {
+      return Message.takeTurn(clientIn, clientOut, b);
+    } catch (IOException e) {
+      while (true) {
+
+      }
+    }
   }
 
   @Override
