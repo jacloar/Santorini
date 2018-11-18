@@ -2,8 +2,11 @@ package server.request;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import common.board.IBoard;
 import common.board.IReadonlyBoard;
@@ -39,20 +42,19 @@ public class Message {
     message.add("playing-as");
     message.add(name);
 
-    out.println(message.toString());
+    out.println(message);
   }
 
   /**
    * Sends a message to the remote player. It is either a playing as or other message
    * @param out the print stream for sending the message
    * @param name the name of a player
+   * @JsonProcessingException if there is a problem with the message
 
    */
-  public static void other(PrintStream out, String name) {
-    ArrayNode message = mapper.createArrayNode();
-    message.add(name);
-
-    out.println(message.toString());
+  public static void other(PrintStream out, String name) throws JsonProcessingException {
+    String message = mapper.writeValueAsString(name);
+    out.println(message);
   }
 
   /**
@@ -95,13 +97,12 @@ public class Message {
    */
   private static PlaceWorkerAction place(Reader reader) throws IOException {
     JsonParser parser = new JsonFactory().createParser(reader);
-    int row = 0;
-    int col = 0;
-    while(!parser.isClosed()) {
-      ArrayNode node = mapper.readTree(parser);
-      row = node.get(0).asInt();
-      col = node.get(1).asInt();
-    }
+
+
+    ArrayNode node = mapper.readTree(parser);
+    int row = node.get(0).asInt();
+    int col = node.get(1).asInt();
+
     PlaceWorkerAction placement = new PlaceWorkerAction(row, col);
     return placement;
   }
@@ -123,11 +124,11 @@ public class Message {
     for(int row = 0; row < board.getMaxRows(); row++) {
       ArrayNode singleColumn = mapper.createArrayNode();
       for(int col = 0; col < board.getMaxColumns(); col++) {
-        singleColumn.add(board.getCell(row, col).toString());
+        singleColumn.add(board.getCell(row, col).toJson());
       }
       message.add(singleColumn);
     }
-    out.println(message);
+    out.println(message.toString());
     return getTurn(in);
   }
 
@@ -144,24 +145,22 @@ public class Message {
   public static List<Action> getTurn(Reader reader) throws IOException {
     JsonParser parser = new JsonFactory().createParser(reader);
     List<Action> turn = new ArrayList<>();
-    while(!parser.isClosed()) {
-      ArrayNode node = mapper.readTree(parser);
-      if(node.size() == 1) {
-        // TODO: need to figure out what to do for a give up action
-      }
-      String workerName = node.get(0).toString();
-      Direction d1 = new Direction(node.get(1).asText(), node.get(2).asText());
-      Action move = new Action(ActionType.MOVE, workerName, d1);
-      turn.add(move);
-      if(node.size() == 3) {
-       return turn;
-      } else if(node.size() == 5) {
-        Direction d2 = new Direction(node.get(3).asText(), node.get(4).asText());
-        Action build = new Action(ActionType.BUILD, workerName, d2);
-        turn.add(build);
-      } else {
-        throw new IllegalArgumentException("not a valid turn");
-      }
+    JsonNode node = mapper.readTree(parser);
+    if(!node.isArray()) {
+      // TODO: need to figure out what to do for a give up action
+    }
+    String workerName = node.get(0).toString();
+    Direction d1 = new Direction(node.get(1).asText(), node.get(2).asText());
+    Action move = new Action(ActionType.MOVE, workerName, d1);
+    turn.add(move);
+    if(node.size() == 3) {
+     return turn;
+    } else if(node.size() == 5) {
+      Direction d2 = new Direction(node.get(3).asText(), node.get(4).asText());
+      Action build = new Action(ActionType.BUILD, workerName, d2);
+      turn.add(build);
+    } else {
+      throw new IllegalArgumentException("not a valid turn");
     }
     return turn;
   }
@@ -181,7 +180,7 @@ public class Message {
         message.add("irregular");
       }
     }
-    out.println(message);
+    out.println(message.toString());
   }
 
 
