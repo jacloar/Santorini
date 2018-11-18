@@ -1,5 +1,9 @@
 package common.board;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+
 import java.io.IOException;
 
 /**
@@ -57,5 +61,14 @@ public class BuildingWorker implements ICell {
         app.append("\"");
         app.append(this.toString());
         app.append("\"");
+    }
+
+    @Override
+    public JsonNode toJson() {
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode temp = mapper.createArrayNode();
+        String buildingWorker = height + playerName + workerNumber;
+        temp.add(buildingWorker);
+        return temp.get(0);
     }
 }

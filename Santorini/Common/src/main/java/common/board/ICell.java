@@ -1,5 +1,7 @@
 package common.board;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import java.io.IOException;
 
 /**
@@ -27,4 +29,6 @@ public interface ICell {
      * @param app Appendable to add representation to.
      */
     void appendSelf(Appendable app) throws IOException;
+
+    JsonNode toJson();
 }

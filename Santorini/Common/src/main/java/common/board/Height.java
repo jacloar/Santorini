@@ -1,5 +1,9 @@
 package common.board;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+
 import java.io.IOException;
 
 /**
@@ -52,5 +56,13 @@ public class Height implements ICell {
     @Override
     public String toString() {
         return "" + height;
+    }
+
+    @Override
+    public JsonNode toJson() {
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode temp = mapper.createArrayNode();
+        temp.add(height);
+        return temp.get(0);
     }
 }
