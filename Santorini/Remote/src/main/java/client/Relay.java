@@ -5,8 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import common.board.Board;
 import common.board.IBoard;
+import common.data.Action;
+import common.data.ActionType;
+import common.data.Direction;
 import common.data.PlaceWorkerAction;
 import common.interfaces.IPlayer;
+import java.util.List;
 import java.util.Optional;
 
 public class Relay {
@@ -46,7 +50,43 @@ public class Relay {
     }
 
     // take turn message (only message left)
-    return Optional.empty();
+    return Optional.of(action(prompt));
+  }
+
+  /**
+   * Returns the action message in response to the given board
+   * ** boardNode must be a valid Json Board **
+   *
+   * @param boardNode Json node representing the current state of the board
+   * @return Json Action representing next move
+   */
+  private JsonNode action(JsonNode boardNode) {
+    IBoard board = new Board(boardNode);
+
+    List<Action> actions = player.getTurn(board);
+
+    return buildActionResponse(actions);
+  }
+
+  private JsonNode buildActionResponse(List<Action> actions) {
+    ArrayNode action = mapper.createArrayNode();
+
+    if (actions.get(0).getType() == ActionType.MOVE) {
+      Action move = actions.get(0);
+      action.add(move.getWorkerId());
+
+      Direction moveDir = move.getDirection();
+      action.add(moveDir.getEastWest());
+      action.add(moveDir.getNorthSouth());
+    }
+
+    if (actions.size() > 1) {
+      Direction buildDir = actions.get(1).getDirection();
+      action.add(buildDir.getEastWest());
+      action.add(buildDir.getNorthSouth());
+    }
+
+    return action;
   }
 
   /**

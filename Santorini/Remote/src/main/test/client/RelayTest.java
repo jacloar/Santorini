@@ -92,4 +92,9 @@ public class RelayTest {
     assertThat(place.get(1).asInt()).isEqualTo(1);
   }
 
+  @Test
+  public void testTakeTurn() {
+
+  }
+
 }
