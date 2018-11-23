@@ -1,4 +1,4 @@
-package server.request;
+package server;
 
 import admin.result.GameResult;
 import com.fasterxml.jackson.core.JsonFactory;

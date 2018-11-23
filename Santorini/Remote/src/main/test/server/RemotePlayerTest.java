@@ -1,4 +1,4 @@
-package server.player;
+package server;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import org.junit.Test;
+import server.RemotePlayer;
 
 public class RemotePlayerTest {
 

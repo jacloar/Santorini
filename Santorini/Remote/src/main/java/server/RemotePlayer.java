@@ -1,4 +1,4 @@
-package server.player;
+package server;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -14,7 +14,6 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.List;
 import java.util.Optional;
-import server.request.Message;
 
 public class RemotePlayer implements IPlayer {
 

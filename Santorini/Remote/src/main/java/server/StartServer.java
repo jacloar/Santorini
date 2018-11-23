@@ -3,7 +3,6 @@ package server;
 import common.interfaces.IPlayer;
 import java.net.ServerSocket;
 import java.net.Socket;
-import server.player.RemotePlayer;
 
 public class StartServer {
 
