@@ -1,5 +1,8 @@
 package client;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -10,17 +13,56 @@ import common.data.ActionType;
 import common.data.Direction;
 import common.data.PlaceWorkerAction;
 import common.interfaces.IPlayer;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.List;
 import java.util.Optional;
 
-public class Relay {
+public class Relay implements Runnable {
 
   private static ObjectMapper mapper = new ObjectMapper();
 
+  private Socket socket;
   private IPlayer player;
 
   public Relay(IPlayer player) {
     this.player = player;
+  }
+
+  public Relay(Socket socket, IPlayer player) {
+    this.socket = socket;
+    this.player = player;
+  }
+
+  public void run() {
+    try {
+      manageConnection();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void manageConnection() throws IOException {
+    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+    try {
+      out.println(mapper.writeValueAsString(player.getPlayerName()));
+    } catch (JsonProcessingException e) {
+      // Should not be thrown. getPlayerName returns String.
+    }
+
+    JsonParser parser = new JsonFactory().createParser(in);
+    while (!socket.isClosed()) {
+      JsonNode nextNode;
+      if ((nextNode = mapper.readTree(parser)) != null) {
+        Optional<JsonNode> response = this.respond(nextNode);
+        response.ifPresent(out::println);
+      }
+    }
   }
 
   /**
