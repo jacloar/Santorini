@@ -28,7 +28,8 @@ public class Relay implements Runnable {
   private Socket socket;
   private IPlayer player;
 
-  public Relay(IPlayer player) {
+  // constructor for testing purposes
+  Relay(IPlayer player) {
     this.player = player;
   }
 
