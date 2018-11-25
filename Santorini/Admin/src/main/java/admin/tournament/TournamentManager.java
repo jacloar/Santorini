@@ -10,14 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import common.interfaces.IObserver;
 import common.interfaces.IPlayer;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,10 +21,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import player.AIPlayer;
-import strategy.DiagonalPlacementStrategy;
-import strategy.StayAliveStrategy;
-import strategy.Strategy;
 import utils.Utils;
 
 /**
@@ -317,11 +309,10 @@ public class TournamentManager implements ITournamentManager {
 
     for(int i = 0; i < playersNode.size(); i++) {
       JsonNode playerNode = playersNode.get(i);
-      String kind = playerNode.get(0).asText();
       String name = playerNode.get(1).asText();
       String path = playerNode.get(2).asText();
 
-      IPlayer player = makeNewPlayer(kind, name, path);
+      IPlayer player = makePlayer(name, path);
       players.add(player);
     }
 
@@ -352,10 +343,10 @@ public class TournamentManager implements ITournamentManager {
    * @return IObservers specified by name and path
    */
   IObserver makeObserver(String name, String path) {
-    ClassLoader loader = getClassLoader(path);
+    ClassLoader loader = Utils.getClassLoader(path);
 
     try {
-      return (IObserver) loader.loadClass(classNameFromPath(path))
+      return (IObserver) loader.loadClass(Utils.classNameFromPath(path))
                                .getConstructor()
                                .newInstance();
     } catch (ClassNotFoundException |
@@ -368,106 +359,15 @@ public class TournamentManager implements ITournamentManager {
   }
 
   /**
-   * Creates a new player to compete in the tournament based on the input from the config file.
-   *
-   * @param kind the type of player
-   * @param name the player name
-   * @param path the path to the implementation of the player
-   */
-  private IPlayer makeNewPlayer(String kind, String name, String path) {
-    switch (kind) {
-      case "good":
-        return makeGoodPlayer(name, path);
-      case "breaker":
-        return makeBreakerPlayer(name, path);
-      case "infinite":
-        return makeInfinitePlayer(name, path);
-      default:
-        throw new IllegalArgumentException("invalid kind");
-    }
-  }
-
-  /**
-   * Creates a new infinite player based on the given name and path.
-   *
-   * @param name name of the player
-   * @param path path to the class
-   * @return IPlayer specified
-   */
-  IPlayer makeInfinitePlayer(String name, String path) {
-    return makePlayer(name, path);
-  }
-
-  /**
-   * Creates a new breaker player based on the given name and path.
-   *
-   * @param name name of the player
-   * @param path path to the class
-   * @return IPlayer specified
-   */
-  IPlayer makeBreakerPlayer(String name, String path) {
-    return makePlayer(name, path);
-  }
-
-  /**
-   * Creates a new good player based on the given name and path.
-   *
-   * @param name name of the player
-   * @param path path to the class
-   * @return IPlayer specified
-   */
-  IPlayer makeGoodPlayer(String name, String path) {
-    ClassLoader loader = getClassLoader(path);
-
-    Strategy strategy = new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(1));
-
-    AIPlayer player;
-    try {
-      player = (AIPlayer) loader
-          .loadClass(classNameFromPath(path))
-          .getConstructor(String.class, Strategy.class)
-          .newInstance(name, strategy);
-    } catch (ClassNotFoundException |
-        IllegalAccessException |
-        InstantiationException |
-        NoSuchMethodException |
-        InvocationTargetException e) {
-      throw new RuntimeException(e);
-    }
-
-    return player;
-  }
-
-  /**
-   * Returns a new ClassLoader that loads the class at the given path
-   *
-   * @param path Path for ClassLoader
-   * @return ClassLoader for specified path
-   */
-  private ClassLoader getClassLoader(String path) {
-    File file = new File(path);
-    URL url;
-    try {
-      url = file.toURI().toURL();
-    } catch (MalformedURLException e) {
-      throw new IllegalArgumentException("Invalid path", e);
-    }
-
-    URL[] urls = new URL[]{url};
-
-    return new URLClassLoader(urls);
-  }
-
-  /**
    * Makes a new player using the given name and path.
    *
    * @param name name of the new player
    * @param path path to the class
    * @return player specified by name and path
    */
-  private IPlayer makePlayer(String name, String path) {
-    ClassLoader loader = getClassLoader(path);
-    String className = classNameFromPath(path);
+  IPlayer makePlayer(String name, String path) {
+    ClassLoader loader = Utils.getClassLoader(path);
+    String className = Utils.classNameFromPath(path);
 
     IPlayer player;
     try {
@@ -483,19 +383,6 @@ public class TournamentManager implements ITournamentManager {
       throw new RuntimeException(e);
     }
     return player;
-  }
-
-  /**
-   * Determines the class name from the given path. Path must be to .java file in this project
-   *
-   * @param path path to specified java class
-   * @return class name of the class
-   */
-  private String classNameFromPath(String path) {
-    String[] split = path.split("java");
-    String className = split[split.length - 1].replace("/", ".");
-    className = className.substring(1, className.length() - 1);
-    return className;
   }
 
   @Override

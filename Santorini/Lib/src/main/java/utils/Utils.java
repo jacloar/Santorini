@@ -2,6 +2,10 @@ package utils;
 
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.TimeLimiter;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,5 +52,41 @@ public class Utils {
     }
 
     return builder.toString();
+  }
+
+
+
+  /**
+   * Returns a new ClassLoader that loads the class at the given path
+   *
+   * @param path Path for ClassLoader
+   * @return ClassLoader for specified path
+   */
+  public static ClassLoader getClassLoader(String path) {
+    File file = new File(path);
+    URL url;
+    try {
+      url = file.toURI().toURL();
+    } catch (MalformedURLException e) {
+      throw new IllegalArgumentException("Invalid path", e);
+    }
+
+    URL[] urls = new URL[]{url};
+
+    return new URLClassLoader(urls);
+  }
+
+
+  /**
+   * Determines the class name from the given path. Path must be to .java file in this project
+   *
+   * @param path path to specified java class
+   * @return class name of the class
+   */
+  public static String classNameFromPath(String path) {
+    String[] split = path.split("java");
+    String className = split[split.length - 1].replace("/", ".");
+    className = className.substring(1, className.length() - 1);
+    return className;
   }
 }

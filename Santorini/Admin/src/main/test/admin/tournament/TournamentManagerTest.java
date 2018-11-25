@@ -3,18 +3,15 @@ package admin.tournament;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.Collections;
-import java.util.Enumeration;
-import observer.StdOutObserver;
 import admin.result.GameResult;
 import common.interfaces.IObserver;
 import common.interfaces.IPlayer;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import observer.StdOutObserver;
 import org.junit.Before;
 import org.junit.Test;
 import player.AIPlayer;
@@ -187,7 +184,7 @@ public class TournamentManagerTest {
   @Test
   public void testMakeGoodPlayer() {
     String playerName = "player";
-    IPlayer player = manager.makeGoodPlayer(playerName, "file://Santorini/Player/src/main/java/player/AIPlayer.java");
+    IPlayer player = manager.makePlayer(playerName, "file://Santorini/Player/src/main/java/player/AIPlayer.java");
 
     assertThat(player).isInstanceOf(AIPlayer.class)
                       .isNotInstanceOf(BreakerPlayer.class)
@@ -201,7 +198,7 @@ public class TournamentManagerTest {
   @Test
   public void testMakeBreakerPlayer() {
     String playerName = "player";
-    IPlayer player = manager.makeBreakerPlayer(playerName, "file://Santorini/Player/src/main/java/player/BreakerPlayer.java");
+    IPlayer player = manager.makePlayer(playerName, "file://Santorini/Player/src/main/java/player/BreakerPlayer.java");
 
     assertThat(player).isInstanceOf(BreakerPlayer.class)
                       .isNotInstanceOf(AIPlayer.class)
@@ -214,7 +211,7 @@ public class TournamentManagerTest {
   @Test
   public void testMakeInfinitePlayer() {
     String playerName = "player";
-    IPlayer player = manager.makeInfinitePlayer(playerName, "file://Santorini/Player/src/main/java/player/InfinitePlayer.java");
+    IPlayer player = manager.makePlayer(playerName, "file://Santorini/Player/src/main/java/player/InfinitePlayer.java");
 
     assertThat(player).isInstanceOf(InfinitePlayer.class)
                       .isNotInstanceOf(AIPlayer.class)
