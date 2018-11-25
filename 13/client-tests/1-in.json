@@ -1,0 +1,7 @@
+{ "players" : [["good", "one", "file://Santorini/Player/src/main/java/player/AIPlayer.java"],
+               ["good", "two", "file://Santorini/Player/src/main/java/player/AIPlayer.java"],
+			   ["breaker", "three", "file://Santorini/Player/src/main/java/player/BreakerPlayer.java"]],
+  "observers" : [["observer", "file://Santorini/Observer/src/main/java/observer/StdOutObserver.java"]],
+  "ip": "localhost",
+  "port": 8000
+}
