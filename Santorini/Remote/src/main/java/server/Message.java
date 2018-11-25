@@ -149,7 +149,7 @@ public class Message {
       // For a give up action, return an empty list
       return turn;
     }
-    String workerName = node.get(0).toString();
+    String workerName = node.get(0).asText();
     Direction d1 = new Direction(node.get(1).asText(), node.get(2).asText());
     Action move = new Action(ActionType.MOVE, workerName, d1);
     turn.add(move);
