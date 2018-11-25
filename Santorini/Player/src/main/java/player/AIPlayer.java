@@ -6,6 +6,10 @@ import common.data.PlaceWorkerAction;
 import common.interfaces.IPlayer;
 import java.util.List;
 import java.util.UUID;
+import strategy.DiagonalPlacementStrategy;
+import strategy.IPlacementStrategy;
+import strategy.ITurnStrategy;
+import strategy.StayAliveStrategy;
 import strategy.Strategy;
 
 public class AIPlayer implements IPlayer {
@@ -15,6 +19,19 @@ public class AIPlayer implements IPlayer {
 
     public AIPlayer(Strategy strategy) {
         this(UUID.randomUUID().toString(), strategy);
+    }
+
+    /**
+     * AIPlayer constructor with diagonal placement strategy and stay alive strategy by default
+     *
+     * @param name name of this player
+     */
+    public AIPlayer(String name) {
+        IPlacementStrategy placementStrategy = new DiagonalPlacementStrategy();
+        ITurnStrategy turnStrategy = new StayAliveStrategy(1);
+        this.strategy = new Strategy(placementStrategy, turnStrategy);
+        this.playerName = name;
+        this.strategy.setCurrentPlayer(name);
     }
 
     public AIPlayer(String name, Strategy strategy) {
