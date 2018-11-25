@@ -21,6 +21,10 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Relay that accepts Json commands from a remote manager and sends the
+ * appropriate response.
+ */
 public class Relay implements Runnable {
 
   private static ObjectMapper mapper = new ObjectMapper();
@@ -50,6 +54,7 @@ public class Relay implements Runnable {
     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+    // Sends the name
     try {
       out.println(mapper.writeValueAsString(player.getPlayerName()));
     } catch (JsonProcessingException e) {
@@ -92,6 +97,11 @@ public class Relay implements Runnable {
       return Optional.of(this.place(prompt));
     }
 
+    // inform message
+    if (this.isInform(prompt)) {
+      return Optional.empty();
+    }
+
     // take turn message (only message left)
     return Optional.of(action(prompt));
   }
@@ -111,8 +121,20 @@ public class Relay implements Runnable {
     return buildActionResponse(actions);
   }
 
+  /**
+   * Returns the turn given as a JsonNode in the appropriate form.
+   *
+   * @param actions Turn to take
+   * @return JsonNode representing turn
+   */
   private JsonNode buildActionResponse(List<Action> actions) {
     ArrayNode action = mapper.createArrayNode();
+
+    // empty actions means player gives up
+    if (actions.isEmpty()) {
+      action.add(player.getPlayerName());
+      return action.get(0);
+    }
 
     if (actions.get(0).getType() == ActionType.MOVE) {
       Action move = actions.get(0);
@@ -189,6 +211,51 @@ public class Relay implements Runnable {
     return placeBoard;
   }
 
+  /**
+   * Is the given JsonNode an inform messasge?
+   *
+   * @param node JsonNode to check
+   * @return true if inform, false otherwise
+   */
+  private boolean isInform(JsonNode node) {
+    if (!node.isArray()) {
+      return false;
+    }
+
+    for (int i = 0; i < node.size(); i += 1) {
+      if (!this.isEncounterOutcome(node.get(i))) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Is the given JsonNode a valid EncounterOutcome?
+   *
+   * @param node JsonNode to check
+   * @return true if EncounterOutcome, false otherwise
+   */
+  private boolean isEncounterOutcome(JsonNode node) {
+    if (!node.isArray()) {
+      return false;
+    }
+
+    if (node.size() != 2 && node.size() != 3) {
+      return false;
+    }
+
+    if (!node.get(0).isTextual() || !node.get(1).isTextual()) {
+      return false;
+    }
+
+    if (node.size() == 3) {
+      return node.get(2).isTextual() && node.get(2).asText().equals("irregular");
+    }
+
+    return true;
+  }
 
   /**
    * Is this JsonNode a Placement?
