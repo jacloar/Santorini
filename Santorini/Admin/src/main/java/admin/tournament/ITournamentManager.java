@@ -28,7 +28,7 @@ public interface ITournamentManager {
    * @param players The players participating in the tournament. Must have at least 2 players
    * @return a list of winning players (in the case of a tie) or an empty list if a tournament was not run
    */
-  List<IPlayer> runTournament(List<IPlayer> players);
+  List<IPlayer> runTournament(List<? extends IPlayer> players);
 
   /**
    * Reads the input configuration for this tournament manager and returns the maybe player who won

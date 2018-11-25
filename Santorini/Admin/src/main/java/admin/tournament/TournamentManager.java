@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import player.AIPlayer;
@@ -66,7 +65,7 @@ public class TournamentManager implements ITournamentManager {
   }
 
   @Override
-  public List<IPlayer> runTournament(List<IPlayer> players) {
+  public List<IPlayer> runTournament(List<? extends IPlayer> players) {
     // If tournament has fewer than 2 players, tournament cannot run and there is no winner
     if (players.size() < 2) {
       return new ArrayList<>();
@@ -155,7 +154,7 @@ public class TournamentManager implements ITournamentManager {
    *
    * @param players All players participating in the tourney
    */
-  void ensureUniqueNames(List<IPlayer> players) {
+  void ensureUniqueNames(List<? extends IPlayer> players) {
     List<String> names = new ArrayList<>(players.size());
 
     for (IPlayer player : players) {
@@ -226,7 +225,7 @@ public class TournamentManager implements ITournamentManager {
    * @param allPlayers the list of all of our players
    * @return the new name for the player
    */
-  String updatePlayerName(IPlayer player, List<IPlayer> allPlayers) {
+  String updatePlayerName(IPlayer player, List<? extends IPlayer> allPlayers) {
     String name = generateUniqueName(allPlayers);
 
     Function<IPlayer, Boolean> updateName = p -> {
@@ -248,7 +247,7 @@ public class TournamentManager implements ITournamentManager {
    * @param allPlayers all IPlayers playing the game
    * @return unique name
    */
-  String generateUniqueName(List<IPlayer> allPlayers) {
+  String generateUniqueName(List<? extends IPlayer> allPlayers) {
     String name = Utils.createRandomName();
 
     for (IPlayer player : allPlayers) {
