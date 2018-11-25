@@ -146,7 +146,8 @@ public class Message {
     List<Action> turn = new ArrayList<>();
     JsonNode node = mapper.readTree(parser);
     if(!node.isArray()) {
-      // TODO: need to figure out what to do for a give up action
+      // For a give up action, return an empty list
+      return turn;
     }
     String workerName = node.get(0).toString();
     Direction d1 = new Direction(node.get(1).asText(), node.get(2).asText());
@@ -181,12 +182,4 @@ public class Message {
     }
     out.println(message.toString());
   }
-
-
-
-
-
-
-
-
 }
