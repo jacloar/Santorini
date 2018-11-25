@@ -36,9 +36,10 @@ public class Client {
     String ip = "localhost";
     int portNumber = 8000;
 
-    for (IPlayer p : players) {
-      System.out.println(String.format("creating relay for player %s", p.getPlayerName()));
-      new Thread(new Relay(new Socket(ip, portNumber), p)).start();
+    for (IPlayer player : players) {
+      System.out.println(String.format("creating relay for player %s", player.getPlayerName()));
+      Socket socket = new Socket(ip, portNumber);
+      new Thread(new Relay(socket, player)).start();
     }
   }
 
