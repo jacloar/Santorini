@@ -1,8 +1,8 @@
 package common.board;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import common.data.Direction;
 import common.data.Worker;
-
 import java.util.List;
 import java.util.Map;
 
@@ -56,4 +56,10 @@ public interface IReadonlyBoard {
      * @return number of workers that belong to specified player
      */
     int getNumWorkers(String playerId);
+
+    /**
+     * Returns a Json object representing this board
+     * @return Json object representing this board
+     */
+    JsonNode toJson();
 }

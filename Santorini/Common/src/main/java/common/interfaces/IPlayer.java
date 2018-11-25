@@ -3,7 +3,6 @@ package common.interfaces;
 import common.board.IReadonlyBoard;
 import common.data.Action;
 import common.data.PlaceWorkerAction;
-
 import java.util.List;
 
 /**

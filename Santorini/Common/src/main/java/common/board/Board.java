@@ -1,5 +1,8 @@
 package common.board;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import common.data.Direction;
 import common.data.Worker;
 import java.util.ArrayList;
@@ -28,12 +31,38 @@ public class Board implements IBoard {
 
     public Board(ICell[][] cells) {
         this.cells = new ICell[DEFAULT_ROWS][DEFAULT_COLUMNS];
-        for (int i = 0;  i < cells.length; i += 1) {
-            for (int j = 0; j < cells.length; j += 1) {
-                if (cells[i][j] == null) {
-                    this.cells[i][j] = new Height(INITIAL_HEIGHT);
-                } else {
+        for (int i = 0;  i < DEFAULT_ROWS; i += 1) {
+            for (int j = 0; j < DEFAULT_COLUMNS; j += 1) {
+                if (i < cells.length && j < cells[i].length) {
                     this.cells[i][j] = cells[i][j];
+                } else {
+                    this.cells[i][j] = new Height(INITIAL_HEIGHT);
+                }
+            }
+        }
+    }
+
+    public Board(JsonNode board) {
+        this.cells = new ICell[DEFAULT_ROWS][DEFAULT_COLUMNS];
+
+        for (int i = 0; i < DEFAULT_ROWS; i += 1) {
+            for (int j = 0; j < DEFAULT_COLUMNS; j += 1) {
+                if (i < board.size() && j < board.get(i).size()) {
+                    JsonNode cell = board.get(i).get(j);
+                    if (cell.isInt()) {
+                        cells[i][j] = new Height(cell.asInt());
+                    } else {
+                        String buildingWorker = cell.asText();
+                        int length = buildingWorker.length();
+
+                        int height = Integer.parseInt(buildingWorker.substring(0, 1));
+                        int workerNum = Integer.parseInt(buildingWorker.substring(length - 1));
+                        String playerName = buildingWorker.substring(1, length - 1);
+
+                        cells[i][j] = new BuildingWorker(playerName, workerNum, height);
+                    }
+                } else {
+                    cells[i][j] = new Height(INITIAL_HEIGHT);
                 }
             }
         }
@@ -244,5 +273,20 @@ public class Board implements IBoard {
         } else {
             return playersWorkers.size();
         }
+    }
+
+    public JsonNode toJson() {
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode board = mapper.createArrayNode();
+
+        for (int i = 0; i < DEFAULT_ROWS; i += 1) {
+            ArrayNode row = mapper.createArrayNode();
+            for (int j = 0; j < DEFAULT_COLUMNS; j += 1) {
+                row.add(cells[i][j].toJson());
+            }
+            board.add(row);
+        }
+
+        return board;
     }
 }

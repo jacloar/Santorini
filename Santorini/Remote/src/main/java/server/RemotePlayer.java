@@ -1,4 +1,4 @@
-package server.player;
+package server;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -14,13 +14,14 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.List;
 import java.util.Optional;
-import server.request.Message;
 
 public class RemotePlayer implements IPlayer {
 
   private Optional<String> name = Optional.empty();
   private InputStreamReader clientIn;
   private PrintStream clientOut;
+
+  private String opponentName;
 
   private static ObjectMapper mapper = new ObjectMapper();
 
@@ -38,12 +39,25 @@ public class RemotePlayer implements IPlayer {
 
   @Override
   public PlaceWorkerAction getPlaceWorker(IReadonlyBoard b) {
-    return null;
+    try {
+      return Message.workerPlacement(clientIn, clientOut, b, name.get(), opponentName);
+    } catch (IOException e) {
+      // loop infinitely because worker placement failed.
+      while (true) {
+
+      }
+    }
   }
 
   @Override
   public List<Action> getTurn(IReadonlyBoard b) {
-    return null;
+    try {
+      return Message.takeTurn(clientIn, clientOut, b);
+    } catch (IOException e) {
+      while (true) {
+
+      }
+    }
   }
 
   @Override
@@ -71,6 +85,8 @@ public class RemotePlayer implements IPlayer {
 
   @Override
   public void setOpponentName(String opponentName) {
+    this.opponentName = opponentName;
 
+    Message.other(clientOut, opponentName);
   }
 }
