@@ -3,7 +3,11 @@ package server;
 import admin.result.GameResult;
 import admin.tournament.ITournamentManager;
 import admin.tournament.TournamentManager;
-import java.io.BufferedReader;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.ServerSocket;
@@ -17,23 +21,18 @@ public class Server {
   Reader reader;
 
   public Server() {
-    this(new BufferedReader(new InputStreamReader(System.in)));
+    this(new InputStreamReader(System.in));
   }
 
   public Server(Reader reader) {
     this.reader = reader;
   }
 
-  public static void main(String[] args) throws Exception {
-    startServer();
+  public static void main(String[] args) throws IOException {
+    readConfig(new InputStreamReader(System.in));
   }
 
-  public static void startServer() throws Exception {
-    int minPlayers = 3;
-    int portNumber = 8000;
-    int waitingFor = 10;
-    int repeat = 0;
-
+  public static void startServer(int minPlayers, int portNumber, int waitingFor, int repeat) throws IOException {
     do {
       ServerSocket serverSocket = new ServerSocket(portNumber);
       List<Socket> connections = new ArrayList<>();
@@ -72,5 +71,22 @@ public class Server {
         s.close();
       }
     } while (repeat == 1);
+  }
+
+  public void readConfig() throws IOException {
+    readConfig(reader);
+  }
+
+  public static void readConfig(Reader r) throws IOException{
+    JsonParser parser = new JsonFactory().createParser(r);
+    ObjectMapper mapper = new ObjectMapper();
+    JsonNode config = mapper.readTree(parser);
+
+    int minPlayers = config.get("min players").asInt();
+    int port = config.get("port").asInt();
+    int waitingFor = config.get("waiting for").asInt();
+    int repeat = config.get("repeat").size();
+
+    startServer(minPlayers, port, waitingFor, repeat);
   }
 }
