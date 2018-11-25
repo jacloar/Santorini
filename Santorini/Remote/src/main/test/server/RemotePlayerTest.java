@@ -66,4 +66,20 @@ public class RemotePlayerTest {
     remote.setPlayerName(newName);
     assertThat(stream.toString()).isEqualToIgnoringWhitespace("[\"playing-as\",\"" + newName + "\"]");
   }
+
+  /**
+   * Tests that other returns the appropriate name of a player
+   */
+  @Test
+  public void testOther() throws IOException {
+    String playerName = "name";
+    String jsonName = mapper.writeValueAsString(playerName);
+
+    when(mockClient.getInputStream()).thenReturn(new ByteArrayInputStream(jsonName.getBytes()));
+
+    IPlayer remote = new RemotePlayer(mockClient);
+
+    assertThat(remote.getPlayerName()).isEqualTo(playerName);
+  }
+
 }
