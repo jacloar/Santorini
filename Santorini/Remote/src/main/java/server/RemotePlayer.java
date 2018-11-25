@@ -1,5 +1,6 @@
 package server;
 
+import admin.result.GameResult;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -88,5 +89,14 @@ public class RemotePlayer implements IPlayer {
     this.opponentName = opponentName;
 
     Message.other(clientOut, opponentName);
+  }
+
+  /**
+   * Informs the player of the results of the tournament.
+   *
+   * @param results List of game results
+   */
+  public void inform(List<GameResult> results) {
+    Message.inform(clientOut, results);
   }
 }
