@@ -37,10 +37,13 @@ public class Server {
       ServerSocket serverSocket = new ServerSocket(portNumber);
       List<Socket> connections = new ArrayList<>();
       long endTime = System.currentTimeMillis() + (waitingFor * 1000);
+      System.out.println("end time: " + endTime);
 
       System.out.println("accepting connections");
-      while (System.currentTimeMillis() <= endTime) {
-        serverSocket.setSoTimeout((int) (endTime - System.currentTimeMillis()));
+      long currentTime;
+      while ((currentTime = System.currentTimeMillis()) < endTime) {
+        System.out.println(currentTime);
+        serverSocket.setSoTimeout((int) (endTime - currentTime));
         try {
           Socket connection = serverSocket.accept();
           connections.add(connection);
@@ -48,6 +51,7 @@ public class Server {
           // do nothing, want to continue
         }
       }
+      System.out.println("wait time up");
 
       // Run the tournament if enough players connected.
       if (connections.size() >= minPlayers) {
@@ -57,6 +61,7 @@ public class Server {
           players.add(new RemotePlayer(s));
         }
 
+        System.out.println("running tournament");
         ITournamentManager tm = new TournamentManager();
         tm.runTournament(players);
 
@@ -67,6 +72,7 @@ public class Server {
         }
       }
 
+      System.out.println("closing connections");
       for (Socket s : connections) {
         s.close();
       }

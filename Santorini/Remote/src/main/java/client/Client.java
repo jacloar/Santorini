@@ -1,8 +1,5 @@
 package client;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -42,14 +39,8 @@ public class Client {
   ) throws IOException {
     for (IPlayer player : players) {
       Socket socket = new Socket(ip, port);
-      new Thread(new Relay(socket, player)).start();
+      new Thread(new Relay(socket, player, observers)).start();
     }
-  }
-
-  private static IPlayer mockPlayer(String name) {
-    IPlayer player = mock(IPlayer.class);
-    when(player.getPlayerName()).thenReturn(name);
-    return player;
   }
 
   public void readConfig() throws IOException {

@@ -12,14 +12,17 @@ import common.data.Action;
 import common.data.ActionType;
 import common.data.Direction;
 import common.data.PlaceWorkerAction;
+import common.interfaces.IObserver;
 import common.interfaces.IPlayer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * Relay that accepts Json commands from a remote manager and sends the
@@ -31,15 +34,22 @@ public class Relay implements Runnable {
 
   private Socket socket;
   private IPlayer player;
+  private List<IObserver> observers;
 
   // constructor for testing purposes
   Relay(IPlayer player) {
     this.player = player;
+    this.observers = new ArrayList<>();
   }
 
   public Relay(Socket socket, IPlayer player) {
+    this(socket, player, new ArrayList<>());
+  }
+
+  public Relay(Socket socket, IPlayer player, List<IObserver> observers) {
     this.socket = socket;
     this.player = player;
+    this.observers = observers;
   }
 
   public void run() {
@@ -115,8 +125,14 @@ public class Relay implements Runnable {
    */
   private JsonNode action(JsonNode boardNode) {
     IBoard board = new Board(boardNode);
+    this.updateObservers(observer -> observer.update(board));
 
     List<Action> actions = player.getTurn(board);
+    if (!actions.isEmpty()) {
+      this.updateObservers(observer -> observer.update(actions));
+    } else {
+      this.updateObservers(observer -> observer.updateGiveUp(player));
+    }
 
     return buildActionResponse(actions);
   }
@@ -164,6 +180,7 @@ public class Relay implements Runnable {
   private JsonNode place(JsonNode node) {
     // Create a new board with the given placements
     IBoard placeBoard = buildPlaceBoard(node);
+    this.updateObservers(observer -> observer.update(placeBoard));
 
     PlaceWorkerAction place = player.getPlaceWorker(placeBoard);
 
@@ -349,4 +366,14 @@ public class Relay implements Runnable {
     player.setPlayerName(name);
   }
 
+  /**
+   * Runs the specified function on all the observers
+   *
+   * @param updateFunc function that takes observer and calls an update method on it
+   */
+  private void updateObservers(Consumer<IObserver> updateFunc) {
+    for (IObserver o : observers) {
+      updateFunc.accept(o);
+    }
+  }
 }
