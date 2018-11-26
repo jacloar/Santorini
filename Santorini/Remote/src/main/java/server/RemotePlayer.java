@@ -31,6 +31,14 @@ public class RemotePlayer implements IPlayer {
     this.clientOut = new PrintStream(client.getOutputStream());
   }
 
+  /**
+   *
+   * Gets the name of this player
+   *
+   * @param in input stream to receive name
+   * @return the name of this player
+   * @throws IOException if something goes wrong
+   */
   private String findName(InputStreamReader in) throws IOException {
     JsonParser parser = new JsonFactory().createParser(in);
     JsonNode nameNode = mapper.readTree(parser);
