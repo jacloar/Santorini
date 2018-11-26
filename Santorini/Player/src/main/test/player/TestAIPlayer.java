@@ -31,7 +31,7 @@ public class TestAIPlayer {
 
   @Test
   public void testNoNameGivenHasName() {
-    IPlayer player = new AIPlayer(null);
+    IPlayer player = new AIPlayer(new Strategy(null, null));
 
     assertThat(player.getPlayerName()).isNotEmpty();
   }

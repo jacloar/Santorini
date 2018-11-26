@@ -198,6 +198,11 @@ public class Referee implements IReferee {
     }
 
     List<Action> turn = optionalTurn.get();
+    // If active gives up
+    if (turn.isEmpty()) {
+      return new GameResult(waiting, active, false);
+    }
+
     // Return result if active player cheats
     if (!rules.isTurnLegal(board, turn, active.getPlayerName())) {
       return activeCheated(active, waiting);
