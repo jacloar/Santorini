@@ -76,7 +76,7 @@ public class Server {
    *
    * @param connections Socket connections to close
    */
-  private static void closeConnections(List<Socket> connections) {
+  static void closeConnections(List<Socket> connections) {
     for (Socket s : connections) {
       try {
         if (!s.isClosed()) {
@@ -94,7 +94,7 @@ public class Server {
    * @param players List of RemotePlayers to inform
    * @param results List of GameResults of a tournament
    */
-  private static void informResults(List<RemotePlayer> players, List<GameResult> results) {
+  static void informResults(List<RemotePlayer> players, List<GameResult> results) {
     for (RemotePlayer player : players) {
       player.inform(results);
     }
