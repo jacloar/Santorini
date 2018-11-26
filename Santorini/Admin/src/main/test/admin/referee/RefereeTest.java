@@ -13,12 +13,15 @@ import common.data.PlaceWorkerAction;
 import common.interfaces.IObserver;
 import common.interfaces.IPlayer;
 import common.rules.IRulesEngine;
+import java.util.ArrayList;
 import java.util.List;
 import observer.StdOutObserver;
 import org.junit.Test;
 import player.AIPlayer;
 import player.InfinitePlayer;
 import strategy.DiagonalPlacementStrategy;
+import strategy.IPlacementStrategy;
+import strategy.ITurnStrategy;
 import strategy.StayAliveStrategy;
 import strategy.Strategy;
 
@@ -44,6 +47,12 @@ public class RefereeTest {
   private Action makeAction() {
     Action action = mock(Action.class);
     return action;
+  }
+
+  private ITurnStrategy mockTurnStrategy() {
+    ITurnStrategy turnStrategy = mock(ITurnStrategy.class);
+    when(turnStrategy.getTurn(any())).thenReturn(new ArrayList<>());
+    return turnStrategy;
   }
 
   /**
@@ -218,6 +227,20 @@ public class RefereeTest {
 
     GameResult result = ref.playGame(one, two);
 
+    assertThat(result.didLoserCheat()).isFalse();
+  }
+
+  @Test
+  public void testGiveUpAction() {
+    IReferee ref = new Referee();
+
+    IPlayer one = new AIPlayer("one", new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(1)));
+    IPlayer two = new AIPlayer("two", new Strategy(new DiagonalPlacementStrategy(), mockTurnStrategy()));
+
+    GameResult result = ref.playGame(one, two);
+
+    assertThat(result.getWinner()).isEqualTo(one);
+    assertThat(result.getLoser()).isEqualTo(two);
     assertThat(result.didLoserCheat()).isFalse();
   }
 }
