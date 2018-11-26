@@ -1,7 +1,7 @@
 { "players" : [["good", "one", "file://Santorini/Player/src/main/java/player/AIPlayer.java"],
-               ["good", "two", "file://Santorini/Player/src/main/java/player/AIPlayer.java"],
-			   ["breaker", "three", "file://Santorini/Player/src/main/java/player/BreakerPlayer.java"]],
-  "observers" : [["observer", "file://Santorini/Observer/src/main/java/observer/StdOutObserver.java"]],
-  "ip": "localhost",
-  "port": 8000
+               ["infinite", "two", "file://Santorini/Player/src/main/java/player/InfinitePlayer.java"],
+			   ["infinite", "three", "file://Santorini/Player/src/main/java/player/InfiniteTurnPlayer.java"]],
+  "observers" : [],
+  "ip": "127.0.0.1",
+  "port": 55556
 }

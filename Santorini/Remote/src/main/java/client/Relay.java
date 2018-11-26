@@ -36,6 +36,8 @@ public class Relay implements Runnable {
   private IPlayer player;
   private List<IObserver> observers;
 
+  private boolean running = true;
+
   // constructor for testing purposes
   Relay(IPlayer player) {
     this.player = player;
@@ -83,7 +85,7 @@ public class Relay implements Runnable {
     }
 
     JsonParser parser = new JsonFactory().createParser(in);
-    while (!socket.isClosed()) {
+    while (!socket.isClosed() && running) {
       JsonNode nextNode;
       if ((nextNode = mapper.readTree(parser)) != null) {
         Optional<JsonNode> response = this.respond(nextNode);
@@ -120,6 +122,8 @@ public class Relay implements Runnable {
 
     // inform message
     if (this.isInform(prompt)) {
+      // Only happens at end of game. Want to stop thread.
+      this.running = false;
       return Optional.empty();
     }
 

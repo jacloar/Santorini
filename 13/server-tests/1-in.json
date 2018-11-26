@@ -1,6 +1,6 @@
 { 	
 	"min players": 3,
-	"port": 8000,
-	"waiting for": 20,
+	"port": 55556,
+	"waiting for": 15,
 	"repeat": 0
 }

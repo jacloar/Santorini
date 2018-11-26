@@ -67,11 +67,14 @@ public class RemotePlayer implements IPlayer {
       return name.get();
     }
 
-    String playerName = null;
+    String playerName;
     try {
       playerName = findName(clientIn);
     } catch (IOException e) {
-      e.printStackTrace();
+      // error with connection, loop so player "cheated"
+      while (true) {
+
+      }
     }
     this.name = Optional.of(playerName);
     return playerName;

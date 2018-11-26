@@ -1,7 +1,5 @@
 package client;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import common.interfaces.IObserver;
@@ -62,10 +60,34 @@ public class Client {
       String ip,
       int port
   ) throws IOException {
+    List<Thread> threads = new ArrayList<>();
     for (IPlayer player : players) {
       Socket socket = new Socket(ip, port);
-      new Thread(new Relay(socket, player, observers)).start();
+
+      Thread thread = new Thread(new Relay(socket, player, observers));
+      thread.start();
+      threads.add(thread);
+
+      // pause for half a second between connections to ensure
+      // they connect in specified order
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        // do nothing
+      }
     }
+
+
+    while (threads.stream().anyMatch(Thread::isAlive)) {
+      // wait until all threads are dead
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+        // do nothing
+      }
+    }
+
+    System.exit(0);
   }
 
   /**
@@ -84,9 +106,8 @@ public class Client {
    * @throws IOException if the connection fails
    */
   private static void readConfig(Reader r) throws IOException {
-    JsonParser parser = new JsonFactory().createParser(r);
     ObjectMapper mapper = new ObjectMapper();
-    JsonNode config = mapper.readTree(parser);
+    JsonNode config = mapper.readTree(r);
 
     parseConfig(config);
   }
