@@ -42,16 +42,23 @@ public class Relay implements Runnable {
     this.observers = new ArrayList<>();
   }
 
-  public Relay(Socket socket, IPlayer player) {
-    this(socket, player, new ArrayList<>());
-  }
-
+  /**
+   *
+   * Constructor for a relay
+   *
+   * @param socket the socket that players are connecting on
+   * @param player the player that is connecting
+   * @param observers any observers that are connecting
+   */
   public Relay(Socket socket, IPlayer player, List<IObserver> observers) {
     this.socket = socket;
     this.player = player;
     this.observers = observers;
   }
 
+  /**
+   * Starts the relay
+   */
   public void run() {
     try {
       manageConnection();
@@ -60,6 +67,10 @@ public class Relay implements Runnable {
     }
   }
 
+  /**
+   * Sends the name of the player and manages messages to and from the client.
+   * @throws IOException
+   */
   private void manageConnection() throws IOException {
     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
