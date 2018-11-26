@@ -19,18 +19,43 @@ public class Client {
 
   Reader reader;
 
+  /**
+   * Constructor for a client with system.in
+   */
   public Client() {
     this(new InputStreamReader(System.in));
   }
 
+  /**
+   *
+   * Constructor for a client using a given reader
+   *
+   * @param reader
+   */
   public Client(Reader reader) {
     this.reader = reader;
   }
 
+  /**
+   * Starts a new client with System.in as the reader.
+   *
+   * @param args
+   * @throws IOException
+   */
   public static void main(String[] args) throws IOException {
     readConfig(new InputStreamReader(System.in));
   }
 
+  /**
+   *
+   * Starts a client. Connects all players to correct socket given the IP and port number.
+   *
+   * @param players the players in the tournament
+   * @param observers the observers in the tournament
+   * @param ip the ip address they are connecting to
+   * @param port the port number they are connecting to
+   * @throws IOException if the connection fails
+   */
   public static void startClient(
       List<IPlayer> players,
       List<IObserver> observers,
@@ -43,10 +68,21 @@ public class Client {
     }
   }
 
+  /**
+   * Calls read config with the clients reader. This is called by whoever wants to start a client
+   *
+   * @throws IOException
+   */
   public void readConfig() throws IOException {
     readConfig(reader);
   }
 
+  /**
+   * Reads from the config file as JsonNodes
+   *
+   * @param r the reader for the client
+   * @throws IOException if the connection fails
+   */
   private static void readConfig(Reader r) throws IOException {
     JsonParser parser = new JsonFactory().createParser(r);
     ObjectMapper mapper = new ObjectMapper();
