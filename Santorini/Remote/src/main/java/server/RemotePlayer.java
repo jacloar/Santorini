@@ -16,6 +16,10 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Remote player proxy that sends the appropriate message to the socket
+ * upon method calls.
+ */
 public class RemotePlayer implements IPlayer {
 
   private Optional<String> name = Optional.empty();

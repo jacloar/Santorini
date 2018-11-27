@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import utils.Utils;
 
+/**
+ * Client for the players. Allows user to send config from STDIN and sets up
+ * appropriate players to participate in the tournament.
+ */
 public class Client {
 
   Reader reader;
