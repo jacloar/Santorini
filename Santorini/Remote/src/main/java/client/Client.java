@@ -60,13 +60,14 @@ public class Client {
       String ip,
       int port
   ) throws IOException {
-    List<Thread> threads = new ArrayList<>();
+    List<Socket> sockets = new ArrayList<>();
     for (IPlayer player : players) {
       Socket socket = new Socket(ip, port);
 
       Thread thread = new Thread(new Relay(socket, player, observers));
       thread.start();
-      threads.add(thread);
+
+      sockets.add(socket);
 
       // pause for half a second between connections to ensure
       // they connect in specified order
@@ -77,17 +78,10 @@ public class Client {
       }
     }
 
-
-    while (threads.stream().anyMatch(Thread::isAlive)) {
-      // wait until all threads are dead
-      try {
-        Thread.sleep(1000);
-      } catch (InterruptedException e) {
-        // do nothing
-      }
+    // If all the sockets are closed, exit
+    if (sockets.stream().allMatch(Socket::isClosed)) {
+      System.exit(0);
     }
-
-    System.exit(0);
   }
 
   /**

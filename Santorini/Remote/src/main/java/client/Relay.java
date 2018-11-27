@@ -22,6 +22,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
@@ -31,12 +32,11 @@ import java.util.function.Consumer;
 public class Relay implements Runnable {
 
   private static ObjectMapper mapper = new ObjectMapper();
+  private static int TIMEOUT = 10;
 
   private Socket socket;
   private IPlayer player;
   private List<IObserver> observers;
-
-  private boolean running = true;
 
   // constructor for testing purposes
   Relay(IPlayer player) {
@@ -85,7 +85,7 @@ public class Relay implements Runnable {
     }
 
     JsonParser parser = new JsonFactory().createParser(in);
-    while (!socket.isClosed() && running) {
+    while (!socket.isClosed()) {
       JsonNode nextNode;
       if ((nextNode = mapper.readTree(parser)) != null) {
         Optional<JsonNode> response = this.respond(nextNode);
@@ -123,12 +123,20 @@ public class Relay implements Runnable {
     // inform message
     if (this.isInform(prompt)) {
       // Only happens at end of game. Want to stop thread.
-      this.running = false;
+      this.closeSocket();
       return Optional.empty();
     }
 
     // take turn message (only message left)
     return Optional.of(action(prompt));
+  }
+
+  private void closeSocket() {
+    try {
+      this.socket.close();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**
@@ -244,7 +252,7 @@ public class Relay implements Runnable {
   }
 
   /**
-   * Is the given JsonNode an inform messasge?
+   * Is the given JsonNode an inform message?
    *
    * @param node JsonNode to check
    * @return true if inform, false otherwise
