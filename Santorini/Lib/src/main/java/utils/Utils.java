@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -29,14 +30,16 @@ public class Utils {
 
     TimeLimiter limiter = SimpleTimeLimiter.create(executor);
     T result;
+
     try {
       result = limiter.callWithTimeout(() -> func.apply(obj), timeout, TimeUnit.SECONDS);
     } catch (Exception e) {
-      executor.shutdown();
+
+      executor.shutdownNow();
       return Optional.empty();
     }
 
-    executor.shutdown();
+    executor.shutdownNow();
     return Optional.of(result);
   }
 
