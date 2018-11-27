@@ -87,7 +87,7 @@ public class Client {
   /**
    * Calls read config with the clients reader. This is called by whoever wants to start a client
    *
-   * @throws IOException
+   * @throws IOException if I/O error occurs
    */
   public void readConfig() throws IOException {
     readConfig(reader);

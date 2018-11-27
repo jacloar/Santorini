@@ -102,8 +102,12 @@ public class ServerTest {
     verify(s2, atLeastOnce()).close();
   }
 
+  /**
+   * Tests run server with two players where they do not respond
+   * @throws IOException
+   */
   @Test
-  public void testRunServer() throws IOException {
+  public void testRunServerNoResponse() throws IOException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     PrintStream printStream = new PrintStream(out);
     System.setOut(printStream);
@@ -124,4 +128,83 @@ public class ServerTest {
   }
 
 
+  /**
+   * Tests run server with two players where one player gives up after placement
+   * @throws IOException
+   */
+  @Test
+  public void testRunServerGiveUp() throws IOException {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    PrintStream printStream = new PrintStream(out);
+    System.setOut(printStream);
+
+    String p1Json = "\"one\"\n"
+        + "[0,0]\n"
+        + "[2,2]\n"
+        + "\"\"";
+    String p2Json = "\"two\"\n"
+        + "[1,1]\n"
+        + "[3,3]\n"
+        + "\"\"";
+
+    Socket s1 = mockSocket(p1Json);
+    Socket s2 = mockSocket(p2Json);
+    List<Socket> connections = Arrays.asList(s1, s2);
+
+    verify(s1, never()).close();
+    verify(s2, never()).close();
+
+    Server.runServer(2, connections);
+
+    verify(s1, atLeastOnce()).close();
+    verify(s2, atLeastOnce()).close();
+
+    assertThat(out.toString()).isEqualToIgnoringWhitespace("[[\"two\",\"one\"],[\"two\",\"one\"],[\"two\",\"one\"]]");
+  }
+
+  /**
+   * Tests run server with two players where they do not respond
+   * @throws IOException
+   */
+  @Test
+  public void testRunServerIllegalName() throws IOException {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    PrintStream printStream = new PrintStream(out);
+    System.setOut(printStream);
+
+    Socket s1 = mockSocket("1");
+    Socket s2 = mockSocket("[\"two\"]");
+    List<Socket> connections = Arrays.asList(s1, s2);
+
+    verify(s1, never()).close();
+    verify(s2, never()).close();
+
+    Server.runServer(2, connections);
+
+    verify(s1, atLeastOnce()).close();
+    verify(s2, atLeastOnce()).close();
+
+    assertThat(out.toString()).isEqualToIgnoringWhitespace("[]");
+  }
+
+  @Test
+  public void testRunServerInvalidJson() throws IOException {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    PrintStream printStream = new PrintStream(out);
+    System.setOut(printStream);
+
+    Socket s1 = mockSocket("[\"");
+    Socket s2 = mockSocket("two");
+    List<Socket> connections = Arrays.asList(s1, s2);
+
+    verify(s1, never()).close();
+    verify(s2, never()).close();
+
+    Server.runServer(2, connections);
+
+    verify(s1, atLeastOnce()).close();
+    verify(s2, atLeastOnce()).close();
+
+    assertThat(out.toString()).isEqualToIgnoringWhitespace("[]");
+  }
 }

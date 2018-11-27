@@ -43,6 +43,12 @@ public class RemotePlayer implements IPlayer {
     JsonParser parser = new JsonFactory().createParser(in);
     JsonNode nameNode = mapper.readTree(parser);
 
+    if (!nameNode.isTextual()) {
+      while (true) {
+        // loop infinitely
+      }
+    }
+
     return nameNode.asText();
   }
 

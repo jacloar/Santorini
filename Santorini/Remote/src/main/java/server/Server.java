@@ -19,6 +19,14 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implements the server for the tournament manager.
+ *
+ * If not enough players connected before the time is up, the connected
+ * players will be booted and no tournament will take place.
+ *
+ * If players give invalid names, they will be booted from the tournament
+ */
 public class Server {
 
   Reader reader;
@@ -43,7 +51,21 @@ public class Server {
    * @param waitingFor number of seconds to wait for
    * @param repeat 0 for no repeat or 1 to repeat all
    */
-  private static void startServer(int minPlayers, int portNumber, int waitingFor, int repeat) {
+  public static void startServer(int minPlayers, int portNumber, int waitingFor, int repeat) {
+    serverHelper(minPlayers, portNumber, waitingFor, repeat);
+
+    System.exit(0);
+  }
+
+  /**
+   * Helper method for the server
+   *
+   * @param minPlayers minimum players
+   * @param portNumber port number
+   * @param waitingFor wait time in seconds
+   * @param repeat 0 or 1 for repeat
+   */
+  public static void serverHelper(int minPlayers, int portNumber, int waitingFor, int repeat) {
     ServerSocket serverSocket;
     try {
       serverSocket = new ServerSocket(portNumber);
@@ -62,8 +84,6 @@ public class Server {
     } catch (IOException e) {
       throw new RuntimeException("Unable to close server socket", e);
     }
-
-    System.exit(0);
   }
 
   /**
