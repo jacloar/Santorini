@@ -1,19 +1,5 @@
 package server;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-
-import admin.result.GameResult;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeastOnce;
@@ -22,18 +8,33 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import admin.result.GameResult;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.Test;
+
 public class ServerTest {
 
-//
-//  @Test
-//  public void testServer() {
-//    //?
-//    Server.startServer(2, 8000, 1, 0);
-//  }
+  private Socket mockSocket(String in) throws IOException {
+    Socket s = mock(Socket.class);
+
+    ByteArrayInputStream inStream = new ByteArrayInputStream(in.getBytes());
+    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+
+    when(s.getInputStream()).thenReturn(inStream);
+    when(s.getOutputStream()).thenReturn(outStream);
+
+    return s;
+  }
 
   /**
    * Tests that close connections closes all the connections in a list
-   * @throws IOException
    */
   @Test
   public void testCloseConnections() {
@@ -79,6 +80,47 @@ public class ServerTest {
     Server.informResults(plist, rlist);
     verify(player, atLeastOnce()).inform(any());
     verify(player1, atLeastOnce()).inform(any());
+  }
+
+
+  /**
+   * Tests that the server will close connections if the minimum number of players
+   * is not met.
+   */
+  @Test
+  public void testMinPlayersNotMet() throws IOException {
+    Socket s1 = mock(Socket.class);
+    Socket s2 = mock(Socket.class);
+    List<Socket> connections = Arrays.asList(s1, s2);
+
+    verify(s1, never()).close();
+    verify(s2, never()).close();
+
+    Server.runServer(3, connections);
+
+    verify(s1, atLeastOnce()).close();
+    verify(s2, atLeastOnce()).close();
+  }
+
+  @Test
+  public void testRunServer() throws IOException {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    PrintStream printStream = new PrintStream(out);
+    System.setOut(printStream);
+
+    Socket s1 = mockSocket("\"one\"");
+    Socket s2 = mockSocket("\"two\"");
+    List<Socket> connections = Arrays.asList(s1, s2);
+
+    verify(s1, never()).close();
+    verify(s2, never()).close();
+
+    Server.runServer(2, connections);
+
+    verify(s1, atLeastOnce()).close();
+    verify(s2, atLeastOnce()).close();
+
+    assertThat(out.toString()).isEqualToIgnoringWhitespace("[[\"two\",\"one\",\"irregular\"]]");
   }
 
 

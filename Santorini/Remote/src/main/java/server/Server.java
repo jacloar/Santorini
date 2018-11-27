@@ -35,7 +35,15 @@ public class Server {
     readConfig(new InputStreamReader(System.in));
   }
 
-  public static void startServer(int minPlayers, int portNumber, int waitingFor, int repeat) {
+  /**
+   * Starts the server with the specified configuration.
+   *
+   * @param minPlayers minimum number of players
+   * @param portNumber port number
+   * @param waitingFor number of seconds to wait for
+   * @param repeat 0 for no repeat or 1 to repeat all
+   */
+  private static void startServer(int minPlayers, int portNumber, int waitingFor, int repeat) {
     ServerSocket serverSocket;
     try {
       serverSocket = new ServerSocket(portNumber);
@@ -45,21 +53,8 @@ public class Server {
     }
 
     do {
-
       List<Socket> connections = acceptConnections(waitingFor, serverSocket);
-
-      // Run the tournament if enough players connected.
-      if (connections.size() >= minPlayers) {
-        List<RemotePlayer> players = constructRemotePlayers(connections);
-        ITournamentManager tm = runTournament(players);
-
-        // A tournament has been run, so results is not empty
-        List<GameResult> results = tm.getResults().get();
-        informResults(players, results);
-        Message.inform(new PrintStream(System.out), results);
-      }
-
-      closeConnections(connections);
+      runServer(minPlayers, connections);
     } while (repeat == 1);
 
     try {
@@ -72,7 +67,32 @@ public class Server {
   }
 
   /**
+   * Runs the server with the given connections and minimum number of players.
+   *
+   * **package-private for testing**
+   *
+   * @param minPlayers minimum number of connections
+   * @param connections list of connections
+   */
+  static void runServer(int minPlayers, List<Socket> connections) {
+    // Run the tournament if enough players connected.
+    if (connections.size() >= minPlayers) {
+      List<RemotePlayer> players = constructRemotePlayers(connections);
+      ITournamentManager tm = runTournament(players);
+
+      // A tournament has been run, so results is not empty
+      List<GameResult> results = tm.getResults().get();
+      informResults(players, results);
+      Message.inform(new PrintStream(System.out), results);
+    }
+
+    closeConnections(connections);
+  }
+
+  /**
    * Closes the connection to all the sockets given.
+   *
+   * **package-private for testing**
    *
    * @param connections Socket connections to close
    */
@@ -90,6 +110,8 @@ public class Server {
 
   /**
    * Informs the given remote players of the given results of a tournament.
+   *
+   * **package-private for testing**
    *
    * @param players List of RemotePlayers to inform
    * @param results List of GameResults of a tournament
@@ -162,11 +184,19 @@ public class Server {
     return connections;
   }
 
+  /**
+   * Read the config from this server's reader
+   */
   public void readConfig() {
     readConfig(reader);
   }
 
-  public static void readConfig(Reader r) {
+  /**
+   * Read the configuration from the given reader
+   *
+   * @param r Reader to read config from
+   */
+  private static void readConfig(Reader r) {
     ObjectMapper mapper = new ObjectMapper();
     JsonNode config;
     try {
