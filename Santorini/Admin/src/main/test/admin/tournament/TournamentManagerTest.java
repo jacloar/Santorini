@@ -69,6 +69,33 @@ public class TournamentManagerTest {
     assertThat(players.stream().map(IPlayer::getPlayerName)).doesNotHaveDuplicates();
   }
 
+  @Test
+  public void testEnsureUniqueNamesInvalidName() {
+    IPlayer one = new AIPlayer("one", mockStrategy());
+    IPlayer two = new AIPlayer("two", mockStrategy());
+    IPlayer invalid1 = new AIPlayer("1", mockStrategy());
+    IPlayer invalid2 = new AIPlayer("@", mockStrategy());
+    IPlayer invalid3 = new AIPlayer("", mockStrategy());
+
+    List<IPlayer> players = new ArrayList<>();
+    players.add(one);
+    players.add(two);
+    players.add(invalid1);
+    players.add(invalid2);
+    players.add(invalid3);
+
+    manager.ensureUniqueNames(players);
+
+    assertThat(one.getPlayerName()).isEqualTo("one");
+    assertThat(two.getPlayerName()).isEqualTo("two");
+
+    assertThat(invalid1.getPlayerName()).isNotEqualTo("1");
+    assertThat(invalid2.getPlayerName()).isNotEqualTo("@");
+    assertThat(invalid3.getPlayerName()).isNotEqualTo("");
+
+    assertThat(players.stream().map(IPlayer::getPlayerName)).doesNotHaveDuplicates();
+  }
+
   /**
    * Tests that generateUniqueName creates a name that is not in the player list
    */

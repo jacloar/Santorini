@@ -150,14 +150,15 @@ public class TournamentManager implements ITournamentManager {
     List<String> names = new ArrayList<>(players.size());
 
     for (IPlayer player : players) {
-      Optional<String> name = Utils.timedCall(player, IPlayer::getPlayerName, TIMEOUT);
+      Optional<String> optionalName = Utils.timedCall(player, IPlayer::getPlayerName, TIMEOUT);
 
-      if (name.isPresent()) {
-        if (names.contains(name.get())) {
+      if (optionalName.isPresent()) {
+        String name = optionalName.get();
+        if (names.contains(name) || !name.matches("[a-z]+")) {
           String newName = updatePlayerName(player, players);
           storeName(names, player, newName);
         } else {
-          storeName(names, player, name.get());
+          storeName(names, player, optionalName.get());
         }
       } else {
         cheaters.add(player);

@@ -25,7 +25,8 @@ import java.util.List;
  * If not enough players connected before the time is up, the connected
  * players will be booted and no tournament will take place.
  *
- * If players give invalid names, they will be booted from the tournament
+ * Players who do not respond with a name will be booted from the tournament.
+ * Players who respond with an invalid name will be renamed via "playing-as".
  */
 public class Server {
 
