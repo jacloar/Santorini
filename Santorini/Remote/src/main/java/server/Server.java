@@ -4,6 +4,7 @@ import admin.result.GameResult;
 import admin.tournament.ITournamentManager;
 import admin.tournament.TournamentManager;
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +46,7 @@ public class Server {
   }
 
   /**
-   * Starts the server with the specified configuration.
+   * Starts the server with the specified configuration. Validates the given config
    *
    * @param minPlayers minimum number of players
    * @param portNumber port number
@@ -53,20 +54,28 @@ public class Server {
    * @param repeat 0 for no repeat or 1 to repeat all
    */
   public static void startServer(int minPlayers, int portNumber, int waitingFor, int repeat) {
-    serverHelper(minPlayers, portNumber, waitingFor, repeat);
+    if (minPlayers >= 0
+        && portNumber >= 0
+        && waitingFor > 0
+        && (repeat == 0 || repeat == 1)) {
+      serverHelper(minPlayers, portNumber, waitingFor, repeat);
+    } else {
+      throw new IllegalArgumentException("\"min players\" and \"port\" must be greater than or equal to 0, "
+          + "\"waiting for\" must be greater than 0, and \"repeat\" must be equal to 0 or 1");
+    }
 
     System.exit(0);
   }
 
   /**
-   * Helper method for the server
+   * Helper method for the server. Starts the server with the specified configuration after validation
    *
    * @param minPlayers minimum players
    * @param portNumber port number
    * @param waitingFor wait time in seconds
    * @param repeat 0 or 1 for repeat
    */
-  public static void serverHelper(int minPlayers, int portNumber, int waitingFor, int repeat) {
+  private static void serverHelper(int minPlayers, int portNumber, int waitingFor, int repeat) {
     ServerSocket serverSocket;
     try {
       serverSocket = new ServerSocket(portNumber);
@@ -222,14 +231,40 @@ public class Server {
     JsonNode config;
     try {
       config = mapper.readTree(r);
+    } catch (JsonParseException e) {
+      throw new IllegalArgumentException("Must be given valid Json");
     } catch (IOException e) {
       throw new RuntimeException("Error reading config", e);
     }
 
-    int minPlayers = config.get("min players").asInt();
-    int port = config.get("port").asInt();
-    int waitingFor = config.get("waiting for").asInt();
-    int repeat = config.get("repeat").size();
+    int minPlayers;
+    int port;
+    int waitingFor;
+    int repeat;
+
+    String minPlayersString = "min players";
+    String portString = "port";
+    String waitingForString = "waiting for";
+    String repeatString = "repeat";
+
+    if (config.isObject()
+        && config.has(minPlayersString)
+        && config.has(portString)
+        && config.has(waitingForString)
+        && config.has(repeatString)
+        && config.get(minPlayersString).isInt()
+        && config.get(portString).isInt()
+        && config.get(waitingForString).isInt()
+        && config.get(repeatString).isInt()) {
+
+      minPlayers = config.get(minPlayersString).asInt();
+      port = config.get(portString).asInt();
+      waitingFor = config.get(waitingForString).asInt();
+      repeat = config.get(repeatString).asInt();
+    } else {
+      throw new IllegalArgumentException("Must be given Json object with \"min players\", \"port\", "
+          + "\"waiting for\", and \"repeat\". All values must be integers.");
+    }
 
     startServer(minPlayers, port, waitingFor, repeat);
   }

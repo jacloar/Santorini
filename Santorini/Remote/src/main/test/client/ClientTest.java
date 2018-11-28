@@ -41,7 +41,7 @@ public class ClientTest {
 
     assertThat(outputStream.toString()).isEmpty();
 
-    Server.serverHelper(2, 8000, 3, 0);
+    Server.startServer(2, 8000, 3, 0);
     this.startClientWithObserver();
 
     assertThat(outputStream.toString()).isNotEmpty();

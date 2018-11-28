@@ -139,7 +139,8 @@ public class Client {
     String ipString = "ip";
     String portString = "port";
 
-    if (config.has(playersString)
+    if (config.isObject()
+        && config.has(playersString)
         && config.has(observersString)
         && config.has(ipString)
         && config.has(portString)) {
