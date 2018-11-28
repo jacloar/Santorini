@@ -1,5 +1,6 @@
 package client;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import common.interfaces.IObserver;
@@ -65,26 +66,31 @@ public class Client {
       int port
   ) throws IOException {
     List<Socket> sockets = new ArrayList<>();
-    for (IPlayer player : players) {
-      Socket socket = new Socket(ip, port);
 
-      Thread thread = new Thread(new Relay(socket, player, observers));
-      thread.start();
+    if (port >= 50000 && port <= 60000) {
+      for (IPlayer player : players) {
+        Socket socket = new Socket(ip, port);
 
-      sockets.add(socket);
+        Thread thread = new Thread(new Relay(socket, player, observers));
+        thread.start();
 
-      // pause for half a second between connections to ensure
-      // they connect in specified order
-      try {
-        Thread.sleep(500);
-      } catch (InterruptedException e) {
-        // do nothing
+        sockets.add(socket);
+
+        // pause for half a second between connections to ensure
+        // they connect in specified order
+        try {
+          Thread.sleep(500);
+        } catch (InterruptedException e) {
+          // do nothing
+        }
       }
-    }
 
-    // If all the sockets are closed, exit
-    if (sockets.stream().allMatch(Socket::isClosed)) {
-      System.exit(0);
+      // If all the sockets are closed, exit
+      if (sockets.stream().allMatch(Socket::isClosed)) {
+        System.exit(0);
+      }
+    } else {
+      throw new IllegalArgumentException("\"port\" must be between 50000 and 60000");
     }
   }
 
@@ -105,7 +111,13 @@ public class Client {
    */
   private static void readConfig(Reader r) throws IOException {
     ObjectMapper mapper = new ObjectMapper();
-    JsonNode config = mapper.readTree(r);
+
+    JsonNode config;
+    try {
+      config = mapper.readTree(r);
+    } catch (JsonParseException e) {
+      throw new IllegalArgumentException("Must be given valid Json");
+    }
 
     parseConfig(config);
   }
@@ -117,34 +129,100 @@ public class Client {
    * @param config a JsonNode containing player and observer info
    */
   private static void parseConfig(JsonNode config) throws IOException {
-    JsonNode playersNode = config.get("players");
-    JsonNode observersNode = config.get("observers");
-    String ip = config.get("ip").asText();
-    int port = config.get("port").asInt();
+    JsonNode playersNode;
+    JsonNode observersNode;
+    String ip;
+    int port;
 
-    List<IPlayer> players = new ArrayList<>();
-    List<IObserver> observers = new ArrayList<>();
+    String playersString = "players";
+    String observersString = "observers";
+    String ipString = "ip";
+    String portString = "port";
 
-    for(int i = 0; i < playersNode.size(); i++) {
-      JsonNode playerNode = playersNode.get(i);
-      String name = playerNode.get(1).asText();
-      String path = playerNode.get(2).asText();
+    if (config.has(playersString)
+        && config.has(observersString)
+        && config.has(ipString)
+        && config.has(portString)) {
+      playersNode = config.get(playersString);
+      observersNode = config.get(observersString);
 
-      IPlayer player = makePlayer(name, path);
-      players.add(player);
+      if (config.get(ipString).isTextual()) {
+        ip = config.get(ipString).asText();
+      } else {
+        throw new IllegalArgumentException("\"ip\" must be a string");
+      }
+
+      if (config.get(portString).isInt()) {
+        port = config.get(portString).asInt();
+      } else {
+        throw new IllegalArgumentException("\"port\" must be an integer");
+      }
+    } else {
+      throw new IllegalArgumentException("Invalid Json, must be an object with "
+          + "\"players\", \"observers\", \"ip\", and \"port\"");
     }
 
-    for (int i = 0; i < observersNode.size(); i += 1) {
-      JsonNode observerNode = observersNode.get(i);
 
-      String name = observerNode.get(0).asText();
-      String path = observerNode.get(1).asText();
-
-      IObserver observer = makeObserver(name, path);
-      observers.add(observer);
-    }
+    List<IPlayer> players = parsePlayers(playersNode);
+    List<IObserver> observers = parseObservers(observersNode);
 
     startClient(players, observers, ip, port);
+  }
+
+  private static List<IObserver> parseObservers(JsonNode observersNode) {
+    List<IObserver> observers = new ArrayList<>();
+    if (observersNode.isArray()) {
+      for (int i = 0; i < observersNode.size(); i += 1) {
+        JsonNode observerNode = observersNode.get(i);
+
+        if (observerNode.isArray()
+            && observerNode.size() == 2
+            && observerNode.get(0).isTextual()
+            && observerNode.get(1).isTextual()) {
+          String name = observerNode.get(0).asText();
+          String path = observerNode.get(1).asText();
+
+          IObserver observer = makeObserver(name, path);
+          observers.add(observer);
+        } else {
+          throw new IllegalArgumentException("Every element in \"observers\" must be an array of strings of size 2");
+        }
+      }
+    } else {
+      throw new IllegalArgumentException("\"observers\" field must be an array");
+    }
+    return observers;
+  }
+
+  private static List<IPlayer> parsePlayers(JsonNode playersNode) {
+    List<IPlayer> players = new ArrayList<>();
+    if (playersNode.isArray()) {
+      for (int i = 0; i < playersNode.size(); i++) {
+        JsonNode playerNode = playersNode.get(i);
+
+        if (playerNode.isArray()
+            && playerNode.size() == 3
+            && playerNode.get(0).isTextual()
+            && playerNode.get(1).isTextual()
+            && playerNode.get(2).isTextual()) {
+          String name = playerNode.get(1).asText();
+          String path = playerNode.get(2).asText();
+
+          IPlayer player;
+          try {
+            player = makePlayer(name, path);
+          } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid class path");
+          }
+          players.add(player);
+        } else {
+          throw new IllegalArgumentException("Every element in \"players\" must be an array of strings of size 3");
+        }
+      }
+    } else {
+      throw new IllegalArgumentException("\"players\" field must be an array");
+    }
+    return players;
   }
 
   /**
@@ -154,24 +232,14 @@ public class Client {
    * @param path path to the class
    * @return player specified by name and path
    */
-  private static IPlayer makePlayer(String name, String path) {
+  private static IPlayer makePlayer(String name, String path) throws Exception {
     ClassLoader loader = Utils.getClassLoader(path);
     String className = Utils.classNameFromPath(path);
 
-    IPlayer player;
-    try {
-      player = (IPlayer) loader
-          .loadClass(className)
-          .getConstructor(String.class)
-          .newInstance(name);
-    } catch (ClassNotFoundException |
-        IllegalAccessException |
-        InstantiationException |
-        NoSuchMethodException |
-        InvocationTargetException e) {
-      throw new RuntimeException(e);
-    }
-    return player;
+    return (IPlayer) loader
+        .loadClass(className)
+        .getConstructor(String.class)
+        .newInstance(name);
   }
 
   /**
