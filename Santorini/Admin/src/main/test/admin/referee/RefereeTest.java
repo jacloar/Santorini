@@ -126,15 +126,11 @@ public class RefereeTest {
     when(rules.didPlayerWin(any(), eq("one"))).thenReturn(true);
 
     IReferee referee = new Referee(rules);
-    List<GameResult> results = referee.bestOfN(player1, player2, 3);
+    GameResult result = referee.bestOfN(player1, player2, 3);
 
-    assertThat(results).hasSize(3);
-
-    for (GameResult result : results) {
-      assertThat(result.getWinner()).isEqualTo(player1);
-      assertThat(result.getLoser()).isEqualTo(player2);
-      assertThat(result.didLoserCheat()).isFalse();
-    }
+    assertThat(result.getWinner()).isEqualTo(player1);
+    assertThat(result.getLoser()).isEqualTo(player2);
+    assertThat(result.didLoserCheat()).isFalse();
   }
 
   @Test
@@ -196,12 +192,11 @@ public class RefereeTest {
     IPlayer good = new AIPlayer("good", new Strategy(new DiagonalPlacementStrategy(), new StayAliveStrategy(1)));
     IPlayer inf = new InfinitePlayer("inf");
 
-    List<GameResult> results = ref.bestOfN(good, inf, 3);
+    GameResult result = ref.bestOfN(good, inf, 3);
 
-    assertThat(results).hasSize(1);
-    assertThat(results.get(0).didLoserCheat()).isTrue();
-    assertThat(results.get(0).getWinner()).isEqualTo(good);
-    assertThat(results.get(0).getLoser()).isEqualTo(inf);
+    assertThat(result.didLoserCheat()).isTrue();
+    assertThat(result.getWinner()).isEqualTo(good);
+    assertThat(result.getLoser()).isEqualTo(inf);
   }
 
   @Test

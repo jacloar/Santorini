@@ -40,7 +40,7 @@ public interface IReferee {
    * @param games number of games to play
    * @return A list of GameResults with each result corresponding to a played game
    */
-  List<GameResult> bestOfN(IPlayer player1, IPlayer player2, int games);
+  GameResult bestOfN(IPlayer player1, IPlayer player2, int games);
 
   /**
    * Adds the given observer to this referee's list of observers.

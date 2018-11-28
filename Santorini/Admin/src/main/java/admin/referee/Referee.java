@@ -241,18 +241,52 @@ public class Referee implements IReferee {
   }
 
   @Override
-  public List<GameResult> bestOfN(IPlayer player1, IPlayer player2, int games) {
+  public GameResult bestOfN(IPlayer player1, IPlayer player2, int games) {
     List<GameResult> results = new ArrayList<>();
 
     for (int i = 0; i < games; i += 1) {
       GameResult result = playGameGetResult(new Board(), player1, player2);
       results.add(result);
       if (result.didLoserCheat()) {
-        return results;
+        return combineResults(player1, player2, results);
       }
     }
 
-    return results;
+    return combineResults(player1, player2, results);
+  }
+
+  /**
+   * Combines the given list of game results into one game result. All the game results
+   * must be between the two given players.
+   *
+   * If there is a tie, player1 will win.
+   *
+   * @param player1 IPlayer for player1
+   * @param player2 IPlayer for player2
+   * @param results List of game results for games between player1 and player2
+   * @return a combined GameResult representing the series
+   */
+  private GameResult combineResults(IPlayer player1, IPlayer player2, List<GameResult> results) {
+    int oneWin = 0;
+    int twoWin = 0;
+
+    for (GameResult game : results) {
+      if (game.didLoserCheat()) {
+        return game;
+      }
+
+      if (game.getWinner().equals(player1)) {
+        oneWin += 1;
+      } else if (game.getWinner().equals(player2)) {
+        twoWin += 1;
+      }
+    }
+
+    if (twoWin > oneWin) {
+      return new GameResult(player2, player1, false);
+    } else {
+      return new GameResult(player1, player2, false);
+    }
   }
 
   /**

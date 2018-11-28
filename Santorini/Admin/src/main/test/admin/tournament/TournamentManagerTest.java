@@ -167,7 +167,7 @@ public class TournamentManagerTest {
 
     List<GameResult> results = manager.getResults().get();
 
-    assertThat(results.size()).isEqualTo(3);
+    assertThat(results.size()).isEqualTo(1);
     for(GameResult r : results) {
       assertThat(manager.getPlayerName(r.getWinner()).get()).isEqualTo("two");
     }

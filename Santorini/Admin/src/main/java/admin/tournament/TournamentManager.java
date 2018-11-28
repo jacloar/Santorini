@@ -197,17 +197,16 @@ public class TournamentManager implements ITournamentManager {
       return;
     }
 
-    List<GameResult> meetUpResults = ref.bestOfN(player1, player2, MEET_UP_GAMES);
+    GameResult meetUpResult = ref.bestOfN(player1, player2, MEET_UP_GAMES);
 
-    for (GameResult result : meetUpResults) {
-      if (result.didLoserCheat()) {
-        // if a player cheated, add it to the list of cheaters
-        cheaters.add(result.getLoser());
-      }
-
-      // Add this result to the list of results
-      this.results.add(result);
+    if (meetUpResult.didLoserCheat()) {
+      // if a player cheated, add it to the list of cheaters
+      cheaters.add(meetUpResult.getLoser());
     }
+
+    // Add this result to the list of results
+    this.results.add(meetUpResult);
+
   }
 
   /**
