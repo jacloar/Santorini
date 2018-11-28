@@ -1,6 +1,7 @@
 package server;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
@@ -13,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.StringReader;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -206,5 +208,47 @@ public class ServerTest {
     verify(s2, atLeastOnce()).close();
 
     assertThat(out.toString()).isEqualToIgnoringWhitespace("[]");
+  }
+
+  /**
+   * Start the server with the given config.
+   * @param config config to start server with
+   */
+  private void startServerWithConfig(String config) {
+    StringReader reader = new StringReader(config);
+
+    Server server = new Server(reader);
+    server.readConfig();
+  }
+
+  @Test
+  public void testInvalidJsonConfig() {
+    String config = "{";
+    assertThatThrownBy(() -> startServerWithConfig(config)).isInstanceOf(IllegalArgumentException.class)
+                                                           .hasMessage("Must be given valid Json");
+  }
+
+  @Test
+  public void testNotObjectConfig() {
+    String config = "[]";
+    assertThatThrownBy(() -> startServerWithConfig(config)).isInstanceOf(IllegalArgumentException.class)
+                                                           .hasMessage("Must be given Json object with \"min players\", \"port\", "
+                                                               + "\"waiting for\", and \"repeat\". All values must be integers.");
+  }
+
+  @Test
+  public void testMissingFieldConfig() {
+    String config = "{\"min players\": 3, \"waiting for\": 5, \"port\": 8000}";
+    assertThatThrownBy(() -> startServerWithConfig(config)).isInstanceOf(IllegalArgumentException.class)
+                                                           .hasMessage("Must be given Json object with \"min players\", \"port\", "
+                                                               + "\"waiting for\", and \"repeat\". All values must be integers.");
+  }
+
+  @Test
+  public void testBadRepeat() {
+    String config = "{\"min players\": 3, \"waiting for\": 5, \"port\": 8000, \"repeat\": 2}";
+    assertThatThrownBy(() -> startServerWithConfig(config)).isInstanceOf(IllegalArgumentException.class)
+                                                           .hasMessage("\"min players\" and \"port\" must be greater than or equal to 0, "
+                                                               + "\"waiting for\" must be greater than 0, and \"repeat\" must be equal to 0 or 1");
   }
 }

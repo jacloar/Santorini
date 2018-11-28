@@ -183,7 +183,12 @@ public class Client {
           String name = observerNode.get(0).asText();
           String path = observerNode.get(1).asText();
 
-          IObserver observer = makeObserver(name, path);
+          IObserver observer;
+          try {
+            observer = makeObserver(name, path);
+          } catch (Exception e) {
+            throw new IllegalArgumentException("An observer has invalid class path");
+          }
           observers.add(observer);
         } else {
           throw new IllegalArgumentException("Every element in \"observers\" must be an array of strings of size 2");
@@ -213,7 +218,7 @@ public class Client {
           try {
             player = makePlayer(name, path);
           } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid class path");
+            throw new IllegalArgumentException("A player has invalid class path");
           }
           players.add(player);
         } else {
@@ -250,20 +255,12 @@ public class Client {
    * @param path path to the class
    * @return IObservers specified by name and path
    */
-  private static IObserver makeObserver(String name, String path) {
+  private static IObserver makeObserver(String name, String path) throws Exception {
     ClassLoader loader = Utils.getClassLoader(path);
 
-    try {
-      return (IObserver) loader.loadClass(Utils.classNameFromPath(path))
-                               .getConstructor()
-                               .newInstance();
-    } catch (ClassNotFoundException |
-        IllegalAccessException |
-        InstantiationException |
-        NoSuchMethodException |
-        InvocationTargetException e) {
-      throw new RuntimeException(e);
-    }
+    return (IObserver) loader.loadClass(Utils.classNameFromPath(path))
+                             .getConstructor()
+                             .newInstance();
   }
 
 }
