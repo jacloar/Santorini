@@ -2,6 +2,6 @@
                ["infinite", "two", "file://Santorini/Player/src/main/java/player/InfinitePlayer.java"],
 			   ["infinite", "three", "file://Santorini/Player/src/main/java/player/InfiniteTurnPlayer.java"]],
   "observers" : [],
-  "ip": "127.0.0.1",
+  "ip": "antarctica.ccs.neu.edu",
   "port": 55556
 }

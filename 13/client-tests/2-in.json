@@ -1,0 +1,8 @@
+{ "players" : [["good", "one", "file://Santorini/Player/src/main/java/player/AIPlayer.java"],
+               ["good", "two", "file://Santorini/Player/src/main/java/player/AIPlayer.java"],
+			   ["good", "three", "file://Santorini/Player/src/main/java/player/AIPlayer.java"],
+			   ["good", "four", "file://Santorini/Player/src/main/java/player/AIPlayer.java"]],
+  "observers" : [],
+  "ip": "antarctica.ccs.neu.edu",
+  "port": 55556
+}
